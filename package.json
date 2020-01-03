@@ -1,5 +1,5 @@
 {
-  "name": "crypto-faces",
+  "name": "cryptofaces",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
@@ -7,6 +7,7 @@
     "test": "test"
   },
   "scripts": {
+    "build": "webpack",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint ./app.js"
   },
@@ -23,7 +24,7 @@
     "openzepplin"
   ],
   "author": "Blockboard",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/blockboard/crypto-faces/issues"
   },
@@ -53,7 +54,10 @@
     "style-loader": "^1.1.2",
     "truffle": "^5.1.6",
     "truffle-contract": "^4.0.31",
-    "web3": "^1.2.4"
+    "web3": "^1.2.4",
+    "webpack": "^4.41.5",
+    "webpack-dev-server": "^3.10.1",
+    "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
