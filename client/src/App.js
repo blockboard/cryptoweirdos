@@ -1,18 +1,18 @@
 import React, { Component } from 'react';
 
 import Layout from './hoc/Layout/Layout';
-import Cryptofaces from "./containers/Cryptofaces/Cryptofaces";
+import BurgerBuilder from './containers/BurgerBuilder/BurgerBuilder';
 
 class App extends Component {
-    render () {
-        return (
-            <div>
-                <Layout>
-                    <Cryptofaces />
-                </Layout>
-            </div>
-        );
-    }
+  render () {
+    return (
+      <div>
+        <Layout>
+          <BurgerBuilder />
+        </Layout>
+      </div>
+    );
+  }
 }
 
 export default App;
