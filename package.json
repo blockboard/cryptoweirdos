@@ -1,7 +1,6 @@
 {
   "name": "cryptofaces",
   "version": "1.0.0",
-  "description": "",
   "main": "app.js",
   "directories": {
     "test": "test"
@@ -64,5 +63,6 @@
     "express": "^4.17.1",
     "jquery": "^3.4.1",
     "nodemon": "^2.0.2"
-  }
+  },
+  "description": ""
 }
