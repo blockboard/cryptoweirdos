@@ -1,10 +1,9 @@
 import Layout from "../component/Layout";
-import Link from 'next/link'
 
-export default function Index() {
+export default function About() {
     return (
         <Layout>
-            <p>Hello NextJS</p>
+            <p>This is the about page</p>
         </Layout>
     )
 }
