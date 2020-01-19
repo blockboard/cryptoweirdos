@@ -1,13 +1,11 @@
 import React from "react";
-import MetaTags from 'react-meta-tags';
+//import MetaTags from 'react-meta-tags';
+
 import Styles from './Header.module.css'
 
 const Header = (props) => {
     return (
         <div>
-            <MetaTags>
-                <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
-            </MetaTags>
             <header>
                 <nav className={Styles.nav}>
                     <div className={Styles.container}>
@@ -16,7 +14,7 @@ const Header = (props) => {
                                 // TODO: Button Actions "look to codepen fork"
                             }
                             <button className={Styles.toggleNav} data-toggle="open-navbar1">
-                                <i className="fa fa-align-right"/>
+                                <i className="fa fa-bars"/>
                             </button>
                             <a className={Styles.brand} href="/">Cryptofaces</a>
                         </div>

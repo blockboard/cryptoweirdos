@@ -8,9 +8,9 @@
     outline: none;
     font-family: sans-serif;
 }
-header {
+/*header {
     height: 100vh;
-}
+}*/
 .container:after, .container:before {
     content: "";
     display: block;
@@ -23,6 +23,9 @@ header {
     border-bottom: 1px solid #ececec;
     min-height: 50px;
     height: auto;
+    position: fixed; /* Set the navbar to fixed position */
+    top: 0; /* Position the navbar at the top of the page */
+    width: 100%; /* Full width */
 }
 .nav .navHead {float: left}
 
@@ -74,7 +77,8 @@ header {
     border: 1px solid transparent;
 }
 
-/* Start drodpwn menu */
+/*
+!* Start drodpwn menu *!
 .categories {
     position: relative;
 }
@@ -109,8 +113,10 @@ header {
 .show {
     display: block
 }
+*/
 
-/* Sub dropdown menu */
+/*
+!* Sub dropdown menu *!
 .categories .drop-down .sub-drop-down {position: relative}
 .categories .drop-down .sub-drop-down:hover .sub-dropdown {
     display: block;
@@ -144,7 +150,8 @@ header {
     padding: 5px 0;
     display: block
 }
-/* End sub dropdown menu */
+!* End sub dropdown menu *!
+*/
 /* Dark theme */
 .darkNav {background-color: #2f3340}
 
