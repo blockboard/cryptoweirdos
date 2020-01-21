@@ -3,6 +3,7 @@ import axios from "axios";
 
 //import ImageDetails from "./Details/ImageDetails";
 import Message from "./Message";
+import Progress from "./Progress";
 
 const ImageUploader = (props) => {
     const [image, setImage] = useState('undefined');
@@ -14,6 +15,7 @@ const ImageUploader = (props) => {
         imagePath: ''
     });
     const [message, setMessage] = useState('');
+    const [uploadPercentage, setUploadPercentage] = useState(0);
 
     const onChange = e => {
         setImage(e.target.files[0]);
@@ -31,6 +33,18 @@ const ImageUploader = (props) => {
             const res = await axios.post('/upload', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
+                },
+                onUploadProgress: progressEvent => {
+                    setUploadPercentage(
+                        parseInt(
+                            Math.round(
+                                (progressEvent.loaded * 100 / progressEvent.total)
+                            )
+                        )
+                    );
+
+                    // Clear Percentage
+                    setTimeout(() => setUploadPercentage(0), 10000)
                 }
             });
 
@@ -66,7 +80,9 @@ const ImageUploader = (props) => {
                         {imageName}
                     </label>
                 </div>
-
+                
+                <Progress percentage={uploadPercentage}/>
+                
                 <input type="submit"
                        value="Upload"
                        className="btn btn-primary btn-block mt-4"
