@@ -1,4 +1,4 @@
-
+// POST /artist/upload
 exports.postImage = (req, res, next) => {
     if(req.files === null) {
         return res.status(400).json({ msg: 'No image uploaded!' });
