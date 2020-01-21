@@ -2,6 +2,7 @@ import React, { Fragment, useState } from "react";
 import axios from "axios";
 
 //import ImageDetails from "./Details/ImageDetails";
+import Message from "./Message";
 
 const ImageUploader = (props) => {
     const [image, setImage] = useState('undefined');
@@ -12,6 +13,7 @@ const ImageUploader = (props) => {
         imageName: '',
         imagePath: ''
     });
+    const [message, setMessage] = useState('');
 
     const onChange = e => {
         setImage(e.target.files[0]);
@@ -38,17 +40,20 @@ const ImageUploader = (props) => {
                 imageName: imageName,
                 imagePath: imagePath
             });
+
+            setMessage('Image Uploaded');
         } catch (e) {
             if (e.response.status === 500) {
-                console.log('There was a problem with the server');
+                setMessage('There was a problem with the server');
             } else {
-                console.log(e.response.data.msg);
+                setMessage(e.response.data.msg);
             }
         }
     };
 
     return (
         <Fragment>
+            {message ? <Message msg={message} /> : null}
             <form onSubmit={onSubmit}>
                 <div className="custom-file mt-4">
                     <input type="file"
