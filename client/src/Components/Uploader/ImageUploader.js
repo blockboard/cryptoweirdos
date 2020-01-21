@@ -30,7 +30,7 @@ const ImageUploader = (props) => {
         formData.append('image', image);
 
         try {
-            const res = await axios.post('/upload', formData, {
+            const res = await axios.post('/artist/upload', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 },
@@ -80,9 +80,9 @@ const ImageUploader = (props) => {
                         {imageName}
                     </label>
                 </div>
-                
+
                 <Progress percentage={uploadPercentage}/>
-                
+
                 <input type="submit"
                        value="Upload"
                        className="btn btn-primary btn-block mt-4"
