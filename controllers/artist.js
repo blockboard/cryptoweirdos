@@ -6,6 +6,8 @@ exports.postImage = (req, res, next) => {
 
     const image = req.files.image;
 
+    console.log('Image: ', image);
+
     image.mv(`client/public/uploads/${image.name}`, err => {
         if (err) {
             console.error(err);

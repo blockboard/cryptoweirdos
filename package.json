@@ -58,17 +58,20 @@
     "style-loader": "^1.1.2",
     "truffle": "^5.1.6",
     "truffle-contract": "^4.0.31",
-    "web3": "^1.2.4",
     "webpack": "^4.41.5",
     "webpack-dev-server": "^3.10.1",
     "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
+    "ethereumjs-tx": "^2.1.2",
     "express": "^4.17.1",
+    "ipfs-api": "^26.1.2",
+    "ipfs-http-client": "^41.0.1",
     "jquery": "^3.4.1",
     "mongodb": "^3.5.2",
-    "nodemon": "^2.0.2"
+    "nodemon": "^2.0.2",
+    "web3": "^1.2.5-rc.0"
   },
   "description": ""
 }

@@ -10,7 +10,7 @@ const artistRoutes = require('./routes/artist');
 // Controllers
 
 // Utils
-const mongoConnect = require('./util/database');
+const mongoConnect = require('./util/dbConnection');
 
 // Constants
 const app = express();
