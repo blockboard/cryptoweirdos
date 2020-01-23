@@ -7,16 +7,20 @@ const path = require('path');
 // Routes
 const artistRoutes = require('./routes/artist');
 
+// Controllers
+
+// Utils
+const mongoConnect = require('./util/database');
+
 // Constants
 const app = express();
+
 
 //app.use(bodyParser.urlencoded()); // x-www-form-urlencoded <form>
 app.use(bodyParser.json()); // application/json
 app.use(fileUploader());
 //app.use('/app', express.favicon(__dirname + '/public/favicon.ico'));
 //app.use(express.static(path.join(__dirname, 'client/public')));
-
-console.log(path.join(__dirname, '/client/public'));
 
 // CORS Error
 app.use((req, res, next) => {
@@ -28,4 +32,7 @@ app.use((req, res, next) => {
 
 app.use('/artist', artistRoutes);
 
-app.listen(5000, () => console.log('Server Started...'));
+mongoConnect(client => {
+   //console.log(client);
+   app.listen(5000, () => console.log('Server Started...'));
+});
