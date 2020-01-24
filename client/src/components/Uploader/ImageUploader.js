@@ -1,5 +1,7 @@
 import React, { Fragment, useState } from "react";
-import axios from "axios";
+//import axios from "axios";
+
+import ipfs from "../../util/ipfs";
 
 //import ImageDetails from "./Details/ImageDetails";
 import Message from "./Message";
@@ -7,6 +9,7 @@ import Progress from "./Progress";
 
 const ImageUploader = (props) => {
     const [image, setImage] = useState('undefined');
+    const [imgaeBinary, setImageBinary] = useState(0);
     const [imageName, setImageName] = useState('choose image');
     const [imageType, setImageType] = useState('image/undefined');
     const [imageSize, setImageSize] = useState('0 bytes');
@@ -25,6 +28,20 @@ const ImageUploader = (props) => {
     };
 
     const onSubmit = async e => {
+        e.preventDefault();
+        const IReader = new FileReader();
+        IReader.readAsArrayBuffer(image);
+        console.log('Ireader', IReader);
+        IReader.Load = (e) => {
+            setImageBinary(Buffer(IReader.result));
+            console.log(imgaeBinary);
+            console.log('Helloooooooooooooooooo');
+            console.log(e);
+        }
+    };
+
+    // dev-client-server-contracts
+    /*const onSubmit = async e => {
         e.preventDefault();
         const formData = new FormData();
         formData.append('image', image);
@@ -63,7 +80,7 @@ const ImageUploader = (props) => {
                 setMessage(e.response.data.msg);
             }
         }
-    };
+    };*/
 
     return (
         <Fragment>
