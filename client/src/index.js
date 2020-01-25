@@ -2,9 +2,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import App from './containers/App';
 import { Web3Provider } from 'react-web3';
-import * as serviceWorker from './serviceWorker';
+import * as serviceWorker from './util/serviceWorker';
 
 ReactDOM.render(
 

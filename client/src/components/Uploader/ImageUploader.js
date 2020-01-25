@@ -9,7 +9,8 @@ import Progress from "./Progress";
 
 const ImageUploader = (props) => {
     const [image, setImage] = useState('undefined');
-    const [imgaeBinary, setImageBinary] = useState(0);
+    const [imgaeBinary, setImageBinary] = useState();
+    const [imageHash, setImageHash] = useState('');
     const [imageName, setImageName] = useState('choose image');
     const [imageType, setImageType] = useState('image/undefined');
     const [imageSize, setImageSize] = useState('0 bytes');
@@ -21,23 +22,32 @@ const ImageUploader = (props) => {
     const [uploadPercentage, setUploadPercentage] = useState(0);
 
     const onChange = e => {
+        e.preventDefault();
         setImage(e.target.files[0]);
         setImageName(e.target.files[0].name);
         setImageType(e.target.files[0].type);
         setImageSize(e.target.files[0].size + " bytes");
+        const IReader = new FileReader();
+        IReader.readAsArrayBuffer(image);
+        IReader.onloadend = (e) => {
+            const bufferResult = Buffer(IReader.result);
+            setImageBinary(bufferResult);
+        }
     };
 
     const onSubmit = async e => {
         e.preventDefault();
-        const IReader = new FileReader();
-        IReader.readAsArrayBuffer(image);
-        console.log('Ireader', IReader);
-        IReader.Load = (e) => {
-            setImageBinary(Buffer(IReader.result));
-            console.log(imgaeBinary);
-            console.log('Helloooooooooooooooooo');
-            console.log(e);
-        }
+        ipfs.files.add(imgaeBinary, (e, result) => {
+            if (e) {
+                console.error(e);
+            }
+
+            console.log('hash: ', result);
+            console.log(result[0]);
+            console.log(result[0].hash);
+
+            setImageHash(result[0].hash);
+        });
     };
 
     // dev-client-server-contracts
