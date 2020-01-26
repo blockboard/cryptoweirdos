@@ -58,7 +58,10 @@ class App extends Component {
 
   render() {
     return (
-        <ImageUpload />
+        <div>
+          <MetaMaskLoginButton/>
+          <ImageUpload />
+        </div>
     );
   }
 }

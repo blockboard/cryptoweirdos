@@ -14,10 +14,6 @@ const ImageUploader = (props) => {
     const [imageName, setImageName] = useState('choose image');
     const [imageType, setImageType] = useState('image/undefined');
     const [imageSize, setImageSize] = useState('0 bytes');
-    const [uploadedImage, setUploadedImage] = useState({
-        imageName: '',
-        imagePath: ''
-    });
     const [message, setMessage] = useState('');
     const [uploadPercentage, setUploadPercentage] = useState(0);
 
@@ -117,11 +113,11 @@ const ImageUploader = (props) => {
                 <ImageDetails imgName={uploadedImage.imageName} imgPath={uploadedImage.imagePath}/> :
                 <ImageDetails imgName={"undefined"} imgPath={"undefined"}/>
             }*/}
-            {uploadedImage ? (
+            {imageHash ? (
                 <div className='row mt-5'>
                     <div className='col-md-6 m-auto'>
-                        <h3 className='text-center'>{uploadedImage.imageName}</h3>
-                        <img style={{ width: '100%' }} src={uploadedImage.imagePath} alt='' />
+                        <h3 className='text-center'>{imageName}</h3>
+                        <img style={{ width: '100%' }} src={`https://ipfs.io/ipfs/${imageHash}`} alt='' />
                     </div>
                 </div>
             ) : null}
