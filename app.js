@@ -2,6 +2,7 @@
 const express = require('express');
 const fileUploader = require('express-fileupload');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 const path = require('path');
 
 // Routes
@@ -10,7 +11,7 @@ const artistRoutes = require('./routes/artist');
 // Controllers
 
 // Utils
-const mongoConnect = require('./util/dbConnection');
+//const mongoConnect = require('./util/dbConnection');
 
 // Constants
 const app = express();
@@ -32,7 +33,15 @@ app.use((req, res, next) => {
 
 app.use('/artist', artistRoutes);
 
-mongoConnect(client => {
-   //console.log(client);
-   app.listen(5000, () => console.log('Server Started...'));
-});
+mongoose
+    .connect(
+        'mongodb+srv://alex:JgU76Cpq8vSgUmNq@cf-r3ep6.mongodb.net/test?retryWrites=true&w=majority'
+    )
+    .then(result => {
+        app.listen(5000);
+        console.log('MongoDB Connected...');
+        console.log('Server Connected...');
+    })
+    .catch(err =>{
+        console.log(err)
+    });

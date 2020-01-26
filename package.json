@@ -32,7 +32,6 @@
   },
   "homepage": "https://github.com/blockboard/crypto-faces#readme",
   "devDependencies": {
-    "@openzeppelin/contracts": "^1.4.0",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-eslint": "^10.0.3",
@@ -70,6 +69,7 @@
     "ipfs-http-client": "^41.0.1",
     "jquery": "^3.4.1",
     "mongodb": "^3.5.2",
+    "mongoose": "^5.8.9",
     "nodemon": "^2.0.2",
     "web3": "^1.2.5-rc.0"
   },

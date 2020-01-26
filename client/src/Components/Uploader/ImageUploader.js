@@ -30,7 +30,7 @@ const ImageUploader = (props) => {
         formData.append('image', image);
 
         try {
-            const res = await axios.post('/artist/upload', formData, {
+            const res = await axios.post('/artist/upload-image', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 },
