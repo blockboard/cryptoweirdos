@@ -18,6 +18,6 @@ const transactionsSchema= new Schema({
        require: true,
        unique: true
    }
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model('Transactions', transactionsSchema);

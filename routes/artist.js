@@ -1,7 +1,6 @@
-// Imports
 const express = require('express');
+const { body } = require('express-validator/check');
 
-// Controllers
 const artistController = require('../controllers/artist');
 
 // Constants
