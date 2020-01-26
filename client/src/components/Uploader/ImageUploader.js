@@ -23,31 +23,29 @@ const ImageUploader = (props) => {
 
     const onChange = e => {
         e.preventDefault();
-        setImage(e.target.files[0]);
-        setImageName(e.target.files[0].name);
-        setImageType(e.target.files[0].type);
-        setImageSize(e.target.files[0].size + " bytes");
+        const uploadedImage = e.target.files[0];
+        setImage(uploadedImage);
+        setImageName(uploadedImage.name);
+        setImageType(uploadedImage.type);
+        setImageSize(uploadedImage.size + " bytes");
         const IReader = new FileReader();
-        IReader.readAsArrayBuffer(image);
+        IReader.readAsArrayBuffer(uploadedImage);
         IReader.onloadend = (e) => {
             const bufferResult = Buffer(IReader.result);
             setImageBinary(bufferResult);
-        }
+        };
     };
 
     const onSubmit = async e => {
         e.preventDefault();
-        ipfs.files.add(imgaeBinary, (e, result) => {
-            if (e) {
-                console.error(e);
+        ipfs.add(imgaeBinary, (err, result) => {
+            if (err) {
+                console.error(err)
             }
-
-            console.log('hash: ', result);
-            console.log(result[0]);
-            console.log(result[0].hash);
-
-            setImageHash(result[0].hash);
-        });
+            const resultHash = result[0].hash;
+            setImageHash(resultHash);
+            console.log(resultHash);
+        })
     };
 
     // dev-client-server-contracts

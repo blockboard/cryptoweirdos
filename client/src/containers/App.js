@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import './App.css';
 
-import getWeb3 from "./util/getWeb3";
-import ipfs from "./util/ipfs";
+import getWeb3 from "../util/getWeb3";
+import ipfs from "../util/ipfs";
 
-import Home from './pages/Home';
-import ImageUpload from "./pages/ImageUpload";
+import Home from "../pages/Home";
+import ImageUpload from "../pages/ImageUpload";
 
 class App extends Component {
   state = {
