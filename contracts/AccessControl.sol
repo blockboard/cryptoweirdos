@@ -1,6 +1,6 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.12;
 
-import "openzeppelin-solidity/contracts/access/rbac/Roles.sol";
+import "openzeppelin-solidity/contracts/access/Roles.sol";
 
 
 /**
@@ -55,19 +55,19 @@ contract AccessControl {
     // Whitelist/RBCA Derived Methods //
     ////////////////////////////////////
 
-    function onlyIfCryptoFaces(address _operator, uint8 _role) public onlyIfKnownOrigin {
+    function addAddressToAccessControl(address _operator, uint8 _role) public onlyIfCryptoFaces {
         roles[_role].add(_operator);
         emit RoleAdded(_operator, _role);
     }
 
-    function onlyIfCryptoFaces(address _operator, uint8 _role) public onlyIfKnownOrigin {
+    function removeAddressFromAccessControl(address _operator, uint8 _role) public onlyIfCryptoFaces {
         roles[_role].remove(_operator);
         emit RoleRemoved(_operator, _role);
     }
 
-    function checkRole(address _operator, uint8 _role) public view {
+    /*function checkRole(address _operator, uint8 _role) public view {
         roles[_role].check(_operator);
-    }
+    }*/
 
     function hasRole(address _operator, uint8 _role) public view returns (bool) {
         return roles[_role].has(_operator);

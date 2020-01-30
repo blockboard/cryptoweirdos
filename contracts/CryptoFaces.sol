@@ -4,7 +4,7 @@ pragma solidity 0.5.12;
 import "./AccessControl.sol";
 
 // Prevents stuck ether
-import "openzeppelin-solidity/contracts/ownership/HasNoEther.sol";
+//import "openzeppelin-solidity/contracts/ownership/HasNoEther.sol";
 
 // For safe maths operations
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
@@ -20,25 +20,24 @@ import "./Strings.sol";
 
 /**
  * @title CF-V1
+ * @author IskanderAndrews
  * Creature - a contract for CF NFTs.
  */
 
-contract CryptoFaces is ERC721Full, AccessControl, HasNoEther, Pausable {
+contract CryptoFaces is ERC721Full, AccessControl, Pausable {
     using SafeMath for uint256;
+
+    /*
+     * Properties
+     */
 
     string internal tokenBaseURI = "https://ipfs.infura.io/ipfs/";
 
     // To begin from index 1
-    uint public nextFaceIndexToAssign = 0;
-
-    // Total wei been processed through the contract
-    uint256 public totalPurchaseValueInWei;
+    uint public nextFaceIndexToAssign = 100001;
 
     // Number of CFs minted
     uint256 public totalFacesMinted;
-
-    // the CF account which can receive commission
-    address public cfCommissionAccount;
 
     // For single face offer
     struct Offer {
@@ -65,11 +64,30 @@ contract CryptoFaces is ERC721Full, AccessControl, HasNoEther, Pausable {
         uint value;
     }
 
+    /*
+     * Events
+     */
+    event Minted(
+        uint256 indexed _tokenId,
+        address indexed _buyer
+    );
+
+    /*
+     * Modifiers
+     */
+
 
     /*
      * Constructor
      */
-    constructor() public payable ERC721Full("Cryptofaces", "CF") {
+    constructor() public payable ERC721Full("CryptoFaces", "CF") {
 
     }
+
+    /*function mint(address _to, uint256 _tokenId) public onlyIfCryptoFacesArtists {
+        super._mint(_to, _tokenId);
+
+
+    }*/
+
 }
