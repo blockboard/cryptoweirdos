@@ -1,4 +1,4 @@
-const Cryptofaces = artifacts.require("./contracts/Cryptofaces.sol");
+const Cryptofaces = artifacts.require("./contracts/CryptoFaces.sol");
 
 require('chai')
     .use(require("chai-as-promised"))
