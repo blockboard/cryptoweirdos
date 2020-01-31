@@ -25,6 +25,7 @@ import "openzeppelin-solidity/contracts/token/ERC721/ERC721Burnable.sol";
 import "./Strings.sol";
 import "openzeppelin-solidity/contracts/drafts/Counters.sol";
 import "openzeppelin-solidity/contracts/utils/Address.sol";
+import "./ERC721Full.sol";
 
 /**
  * @title CF-V1
@@ -111,23 +112,70 @@ Pausable {
     /********************
      * Basic Operations *
      ********************/
+    // TODO: Test mintTo
     /**
-     * @dev Internal function to mint a new token.
+     * @dev Internal function to mint a new token to specific address
+     * @dev Private (CF Artists only)
+     * @dev Payment not needed for this method
+     * Reverts if the given token ID already exists, and if the face already exists
+     * @param _to The account address of the received address
+     * @param _tokenURI The Face Hash the will be minted with the token
+     * @param _priceInWei The initial price to the nft
+     */
+    function mintTo(address _to ,string memory _tokenURI, uint256 _priceInWei) public
+    onlyIfCryptoFacesArtists {
+        // Checks that tokenURI is unique
+        require(!tokenURIExists[_tokenURI]);
+
+        // Mint token form parent "ERC721MetadataMintable"
+        mintWithTokenURI(_to, tokenId, _tokenURI);
+
+        // Update the new minted token data
+        tokenURIExists[_tokenURI] = true;
+        tokenURIs.push(_tokenURI);
+        tokenIdToTokenDetails[tokenId] = TokenDetails({
+               tokenId: tokenId,
+               artistAccount: _to,
+               priceInWei: _priceInWei,
+               tokenURI: _tokenURI,
+               totalPurchases: 0
+            });
+
+        // Emitting Minted event when finished successfully
+        emit Minted(tokenId, _tokenURI, _to);
+
+        tokenId = tokenId.add(1);
+    }
+
+    // TODO: Test mint
+    /**
+     * @dev Internal function to mint a new token to the creator (caller)
      * @dev Private (CF Artists only)
      * @dev Payment not needed for this method
      * Reverts if the given token ID already exists, and if the face already exists
      * @param _tokenURI The Face Hash the will be minted with the token
+     * @param _priceInWei The initial price to the nft
      */
-    function mint(address _to ,string memory _tokenURI) public
+    function mint(string memory _tokenURI, uint256 _priceInWei) public
     onlyIfCryptoFacesArtists {
+        // Checks that tokenURI is unique
         require(!tokenURIExists[_tokenURI]);
 
-        mintWithTokenURI(_to, tokenId, _tokenURI);
+        // Mint token form parent "ERC721MetadataMintable"
+        mintWithTokenURI(_msgSender(), tokenId, _tokenURI);
 
+        // Update the new minted token data
         tokenURIExists[_tokenURI] = true;
         tokenURIs.push(_tokenURI);
+        tokenIdToTokenDetails[tokenId] = TokenDetails({
+            tokenId: tokenId,
+            artistAccount: _msgSender(),
+            priceInWei: _priceInWei,
+            tokenURI: _tokenURI,
+            totalPurchases: 0
+            });
 
-        // inheriting ti
+        // Emitting Minted event when finished successfully
         emit Minted(tokenId, _tokenURI, _to);
 
         tokenId = tokenId.add(1);
