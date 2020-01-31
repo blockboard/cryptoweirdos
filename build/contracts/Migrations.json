@@ -1387,12 +1387,12 @@
     "1580470426685": {
       "events": {},
       "links": {},
-      "address": "0x70a177fFfA19ABa64113983536b7128982199ae0",
-      "transactionHash": "0xc013215a95b1dd0cce3583831a5366e946a24e962b520a5bba3638f9380e8775"
+      "address": "0x4490aFe42AA187A78086B82fda480F89750C427f",
+      "transactionHash": "0xecb6c20f2a9e1e9f874b42d6c2ca5ab17c1e2daaf7ad2477c5de6e646d1cdba0"
     }
   },
   "schemaVersion": "3.0.20",
-  "updatedAt": "2020-01-31T11:35:31.745Z",
+  "updatedAt": "2020-01-31T15:11:15.963Z",
   "networkType": "ethereum",
   "devdoc": {
     "methods": {}

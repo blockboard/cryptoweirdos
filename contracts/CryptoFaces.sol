@@ -43,7 +43,7 @@ contract CryptoFaces is ERC721Full, AccessControl, Pausable {
     uint256[] private ownerTokens;
 
     // Faces Exits
-    mapping(string => bool) faceExits;
+    mapping(string => bool) faceExists;
 
     /*
      * Events
@@ -60,7 +60,14 @@ contract CryptoFaces is ERC721Full, AccessControl, Pausable {
 
     }
 
-    function tokensOf(address _owner) public view returns (uint256[] memory _tokenIds) {
+
+
+    /**
+     * @dev Gets the list of token IDs of the requested owner, inherited from ERC721 Enumerable
+     * @param _owner address owning the tokens
+     * @return uint256[] List of token IDs owned by the requested address
+     */
+    function tokensOf(address _owner) public onlyIfCryptoFaces view returns (uint256[] memory _tokenIds) {
         require(_owner != address(0));
 
         _tokenIds = super._tokensOfOwner(owner);
@@ -68,8 +75,13 @@ contract CryptoFaces is ERC721Full, AccessControl, Pausable {
         return _tokenIds;
     }
 
-    function mintFaceToken(string memory _tokenURI) public onlyIfCryptoFacesArtists {
-        require(!faceExits[_tokenURI]);
+    /**
+     * @dev Internal function to mint a new token.
+     * Reverts if the given token ID already exists, and if the face already exists
+     * @param _tokenURI The Face Hash the will be minted with the token
+     */
+    function mint(string memory _tokenURI) public onlyIfCryptoFacesArtists {
+        require(!faceExists[_tokenURI]);
 
         super._mint(msg.sender, tokenId);
         super._setTokenURI(tokenId, _tokenURI);
