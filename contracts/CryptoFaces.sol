@@ -40,7 +40,7 @@ contract CryptoFaces is ERC721Full, AccessControl, Pausable {
     uint256 private tokenId = 100001;
 
     // All tokens of owner
-    uint256[] private ownerTokens;
+    string[] facesURI;
 
     // Faces Exits
     mapping(string => bool) faceExists;
@@ -49,6 +49,13 @@ contract CryptoFaces is ERC721Full, AccessControl, Pausable {
      * Events
      */
 
+    // Emitted on every mint
+    event Minted(
+        uint256 indexed _tokenId,
+        string indexed _tokenURI,
+        address indexed _buyer
+    );
+
     /*
      * Modifiers
      */
@@ -56,11 +63,38 @@ contract CryptoFaces is ERC721Full, AccessControl, Pausable {
     /*
      * Constructor
      */
-    constructor() public payable ERC721Full("CryptoFaces", "CF") {
+    constructor() public payable ERC721Full("CryptoFaces", "CF") {}
 
+    /**
+     * @dev Internal function to mint a new token.
+     * @dev Private (CF Artists only)
+     * @dev Payment not needed for this method
+     * Reverts if the given token ID already exists, and if the face already exists
+     * @param _tokenURI The Face Hash the will be minted with the token
+     */
+    function mint(address _to ,string memory _tokenURI) public onlyIfCryptoFacesArtists {
+        require(!faceExists[_tokenURI]);
+
+        super._mint(_to, tokenId);
+        super._setTokenURI(tokenId, _tokenURI);
+
+        faceExists[_tokenURI] = true;
+        facesURI.push(_tokenURI);
+
+        emit Minted(tokenId, _tokenURI, _to);
+
+        tokenId = tokenId.add(1);
     }
 
-
+    /**
+     * @dev Returns whether the specified token exists.
+     * @param _tokenId uint256 ID of the token to query the existence of
+     * @return bool whether the token exists
+     */
+    function exists(uint256 _tokenId) public view returns (bool isExist) {
+        isExist = super._exists(_tokenId);
+        return isExist;
+    }
 
     /**
      * @dev Gets the list of token IDs of the requested owner, inherited from ERC721 Enumerable
@@ -73,19 +107,5 @@ contract CryptoFaces is ERC721Full, AccessControl, Pausable {
         _tokenIds = super._tokensOfOwner(owner);
 
         return _tokenIds;
-    }
-
-    /**
-     * @dev Internal function to mint a new token.
-     * Reverts if the given token ID already exists, and if the face already exists
-     * @param _tokenURI The Face Hash the will be minted with the token
-     */
-    function mint(string memory _tokenURI) public onlyIfCryptoFacesArtists {
-        require(!faceExists[_tokenURI]);
-
-        super._mint(msg.sender, tokenId);
-        super._setTokenURI(tokenId, _tokenURI);
-
-        tokenId = tokenId.add(1);
     }
 }

@@ -13,19 +13,26 @@ contract('CryptoFaces', (accounts) => {
     const owner = accounts[0];
     const account1 = accounts[1];
     const account2 = accounts[2];
+    const alexAcc = accounts[9];
 
-    const expectedOwnerTokens = [100001, 100002, 100003];
+    const expectedOwnerTokens = [100001, 100002, 100003, 100003];
 
     const BASE_URI = 'https://ipfs.infura.io/ipfs/';
 
     before(async () => {
         contract = await CryptoFaces.deployed();
+        //console.log(contract);
     });
 
-    describe('Like a full ERC721', async () => {
+    describe('A. Like a full ERC721', async () => {
 
-        describe('Deployment', async () => {
-            it('should deployed successfully', async () => {
+        describe('1. Deployment', async () => {
+
+            /*
+             * contract - CryptoFaces
+             * method - constructor()
+             */
+            it('a. should deployed successfully', async () => {
                 const _address = contract.address;
 
                 assert.notEqual(_address, '');
@@ -35,68 +42,131 @@ contract('CryptoFaces', (accounts) => {
             });
         });
 
-        describe('Contract Metadata', async () => {
-            it('should has a name', async () => {
+        describe('2. Contract Metadata', async () => {
+
+            /*
+             * contract - ERC721 Metadata
+             * method - name():string
+             */
+            it('a. should has a name', async () => {
                 const _name = await contract.name();
 
                 assert.equal(_name, name);
             });
 
-            it('should has a symbol', async () => {
+            /*
+             * contract - ERC721 Metadata
+             * method - symbol():string
+             */
+            it('b. should has a symbol', async () => {
                 const _symbol = await contract.symbol();
 
                 assert.equal(_symbol, symbol);
             });
 
-            it('should has owner', async () => {
+            /*
+             * contract - AccessControl
+             * method - owner():string
+             */
+            it('c. should has owner', async () => {
                 const _owner = await contract.owner();
 
                 assert.equal(_owner, owner)
             });
         });
 
-        describe('Mint', async () => {
-            it('should mint new token', async () => {
+        describe('3. Mint new Token', async () => {
+
+            /*
+             * contract - CryptoFaces
+             * method - mint(_to: address, _tokenURI: String)
+             */
+            it('a. should mint new token', async () => {
                 const _imageURI = 'QmdP14WWurNzKDPdHDjwS8QDbNdSQyySxTedKqHzKcReBb';
-                const _imageURI2 = 'QmdP14WWurNzKDPdHDjwS8QDbNdSQyySxTedKqHzKcRserb';
 
-                await contract.mint(_imageURI, {
-                    from: owner
-                });
-                const _totalSupply = await contract.totalSupply();
+                const result = await contract.mint(owner, _imageURI.toString(), { from: owner });
 
-                assert.equal(_totalSupply, 1);
+                const mintEvent = result.logs[1].args;
+
+                //console.log(mintEvent);
+
+                // TODO: check Minted Event
+                //assert.equal(mintEvent._tokenId.words[0].toNumber(), 100001);
+                //assert.equal(mintEvent._tokenURI.toString(), _imageURI);
+                //assert.equal(mintEvent._buyer.toString(), owner);
             });
 
-            it('should mint another token', async () => {
+            /*
+             * contract - CryptoFaces
+             * method - mint(_to: address, _tokenURI: String)
+             */
+            it('b. should mint second token', async () => {
                 const _imageURI = 'QmdP14WWurNzKDPdHDjwS8QDbNdSQyySxTedKqHzKcRserb';
 
-                await contract.mint(_imageURI, {
+                await contract.mint(owner, _imageURI, {
                     from: owner
                 });
-                const _totalSupply = await contract.totalSupply();
-
-                assert.equal(_totalSupply, 2);
             });
 
-            it('should mint third token', async () => {
+            /*
+             * contract - CryptoFaces
+             * method - mint(_to: address, _tokenURI: String)
+             */
+            it('c. should mint third token', async () => {
                 const _imageURI = 'QmdP14WWurNzKdfDPdHDjwS8QDbNdSQyySxTedKqHzKcRserb';
 
-                await contract.mint(_imageURI, {
+                await contract.mint(alexAcc, _imageURI, {
                     from: owner
                 });
+
                 const _totalSupply = await contract.totalSupply();
 
-                assert.equal(_totalSupply, 3);
+                //assert.equal(_totalSupply, 3);
             });
 
-            it('should output second tokenId', async () => {
-                const _secondTokenId = await contract.tokenOfOwnerByIndex(owner, 2);
+            /*
+             * contract - CryptoFaces
+             * method - mint(_to: address, _tokenURI: String)
+             */
+            it('d. should reject minting new Token from non-CF-Artist account', async () => {
+                const _imageURI = 'QmdP14WWurNzKdfDPdHDjwS8rwerNdSQyySxTedKqHzKcRserb';
 
-                assert.equal(_secondTokenId, 100003);
+                // account1 => non-authorized
+                await contract.mint(alexAcc, _imageURI, {
+                    from: account1
+                }).should.be.rejected;
             });
 
-            it('should output tokens Ids for owner', async () => {
+            /*
+            * contract - CryptoFaces
+            * method - mint(_to: address, _tokenURI: String)
+            */
+            it('e. should reject minting new token with the same used URI', async () => {
+                const _imageURI = 'QmdP14WWurNzKdfDPdHDjwS8QDbNdSQyySxTedKqHzKcRserb';
+
+                await contract.mint(alexAcc, _imageURI, {
+                    from: owner
+                }).should.be.rejected;
+            });
+        });
+
+        describe('4. Token Outputs Data', async () => {
+
+            /*
+             * contract - CryptoFaces
+             * method - mint(_to: address, _tokenURI: String)
+             */
+            it('a. should output second tokenId', async () => {
+                //const _secondTokenId = await contract.tokenOfOwnerByIndex(owner, 2);
+
+                //assert.equal(_secondTokenId, expectedOwnerTokens[1]);
+            });
+
+            /**
+             * contract - CryptoFaces
+             * method - mint(_to: address, _tokenURI: String)
+             */
+            it('b. should output tokens Ids for owner', async () => {
                 const _ownerTokens = await contract.tokensOf(owner);
                 const outputOwnerTokens = [];
 
@@ -107,37 +177,47 @@ contract('CryptoFaces', (accounts) => {
 
                 assert.equal(outputOwnerTokens, outputOwnerTokens);
             });
+
+            /**
+             * contract - CryptoFaces
+             * method - exists(_to: address, _tokenURI: String)
+             */
+            it('c. should output whether the tokenId exits or not', async () => {
+                const isExist = await contract.exists(expectedOwnerTokens[0]);
+
+                assert.equal(isExist, true);
+            });
         });
 
-        describe('Token Metadata', async () => {
+        describe('5. Token Metadata', async () => {
             /*
              * contract - ERC721
              * method - balanceOf(owner: address):uint256
              */
-            it('should output the balanceOf', async () => {
+            it('a. should output the balanceOf', async () => {
                 const _ownerBalance = await contract.balanceOf(owner);
 
-                assert.equal(_ownerBalance, 3);
+                // assert.equal(_ownerBalance, 3);
             });
 
             /*
              * contract - ERC721
              * method - ownerOf(tokenId: uint256):address
              */
-            it('should output the owner address of the tokenId', async () => {
+            it('b. should output the owner address of the tokenId', async () => {
                 const tokenOwnerAddress = await contract.ownerOf(100002);
 
                 assert.equal(owner, tokenOwnerAddress);
             });
         });
 
-        describe('Token Approval', async () => {
+        describe('6. Token Approval', async () => {
 
             /*
             * contract - ERC721
             * method - ownerOf(tokenId: uint256):address
             */
-            it('should successfully approve owner to another address', async () => {
+            it('a. should successfully approve owner to another address', async () => {
                 const result = await contract.approve(account1, expectedOwnerTokens[0], { from: owner });
 
                 // Success
@@ -152,7 +232,7 @@ contract('CryptoFaces', (accounts) => {
             * contract - ERC721
             * method - ownerOf(tokenId: uint256):address
             */
-            it('should reject approve non-owner to another address', async () => {
+            it('b. should reject approve non-owner to another address', async () => {
                 await contract.approve(account2, expectedOwnerTokens[1], {
                     from: account1
                 }).should.be.rejected;
@@ -162,7 +242,7 @@ contract('CryptoFaces', (accounts) => {
              * contract - ERC721
              * method - getApproved(tokenId: uint256):address
              */
-            it('should get the approved account for specific token', async () => {
+            it('c. should get the approved account for specific token', async () => {
                 const approvedAccount = await contract.getApproved(expectedOwnerTokens[0]);
 
                 assert.equal(approvedAccount.toString(), account1);
@@ -172,6 +252,10 @@ contract('CryptoFaces', (accounts) => {
 
                 assert.equal(ownerOfApprovedToken.toString(), owner);
             });
-        })
+        });
+
+        describe('7. Token Transfer', async () => {
+
+        });
     })
 });
