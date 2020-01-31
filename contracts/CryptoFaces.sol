@@ -12,8 +12,11 @@ import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 // Pause purchasing only in case of emergency/migration
 import "openzeppelin-solidity/contracts/lifecycle/Pausable.sol";
 
-// ERC721
+// ERC721, ERC721 Enumerable, ERC721 Metadata
 import "openzeppelin-solidity/contracts/token/ERC721/ERC721Full.sol";
+
+// ERC721 MetadataMintable
+import "openzeppelin-solidity/contracts/token/ERC721/ERC721MetadataMintable.sol";
 
 // Utils only
 import "./Strings.sol";
@@ -26,7 +29,11 @@ import "openzeppelin-solidity/contracts/utils/Address.sol";
  * Creature - a contract for CF NFTs.
  */
 
-contract CryptoFaces is ERC721Full, AccessControl, Pausable {
+contract CryptoFaces is
+ERC721Full,
+ERC721MetadataMintable,
+AccessControl,
+Pausable {
     using SafeMath for uint256;
     using Address for address;
     using Counters for uint256;
@@ -75,8 +82,7 @@ contract CryptoFaces is ERC721Full, AccessControl, Pausable {
     function mint(address _to ,string memory _tokenURI) public onlyIfCryptoFacesArtists {
         require(!faceExists[_tokenURI]);
 
-        super._mint(_to, tokenId);
-        super._setTokenURI(tokenId, _tokenURI);
+        mintWithTokenURI(_to, tokenId, _tokenURI);
 
         faceExists[_tokenURI] = true;
         facesURI.push(_tokenURI);
