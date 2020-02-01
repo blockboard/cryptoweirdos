@@ -181,19 +181,19 @@ Pausable {
         tokenId = tokenId.add(1);
     }
 
+    // TODO: Test purchase
     /**
      * @dev Public entry point for purchasing a Token
      * @dev Reverts if payment not provided in full
      * @dev Reverts if token is sold out
      * @dev Reverts if token is not active or available
      */
-    function purchase(uint256 _tokenId)
-    public
-    payable
+    function purchase(uint256 _tokenId) public payable
     returns (uint256) {
         return purchaseTo(msg.sender, _tokenId);
     }
 
+    // TODO: Test purchaseTo
     /**
      * @dev Public entry point for purchasing an edition on behalf of someone else
      * @dev Reverts if edition is invalid
@@ -201,27 +201,46 @@ Pausable {
      * @dev Reverts if edition is sold out
      * @dev Reverts if edition is not active or available
      */
-    /*function purchaseTo(address _to, uint256 _tokenId)
-    public
-    payable
+    function purchaseTo(address _to, uint256 _tokenId) public payable
+    whenNotPaused
     returns (uint256) {
 
-        require(msg.value >= _editionDetails.priceInWei, "Value must be greater than price of edition");
-
-        // Construct next token ID e.g. 100000 + 1 = ID of 100001 (this first in the edition set)
-        uint256 _tokenId = _nextTokenId(_editionNumber);
-
-        // Create the token
-        _mintToken(_to, _tokenId, _editionNumber, _editionDetails.tokenURI);
+        TokenDetails storage _tokenDetails = tokenIdToTokenDetails[_tokenId];
+        require(msg.value >= _tokenDetails.priceInWei, "Value must be greater than price of edition");
 
         // Splice funds and handle commissions
-        _handleFunds(_editionNumber, _editionDetails.priceInWei, _editionDetails.artistAccount, _editionDetails.artistCommission);
+        _handleTransfer(_tokenId, _tokenDetails.priceInWei, _tokenDetails.artistAccount);
 
         // Broadcast purchase
         emit Purchase(_tokenId, _editionNumber, _to, msg.value);
 
         return _tokenId;
-    }*/
+    }
+
+    function _handleTransfer(uint256 _tokenId, uint256 _priceInWei, address _artistAccount) internal {
+
+        // Extract the artists commission and send it
+        uint256 artistPayment = _priceInWei.div(100).mul(_artistCommission);
+        if (artistPayment > 0) {
+            _artistAccount.transfer(artistPayment);
+        }
+
+        // Load any commission overrides
+        CommissionSplit storage commission = editionNumberToOptionalCommissionSplit[_tokenId];
+
+        // Apply optional commission structure
+        if (commission.rate > 0) {
+            uint256 rateSplit = _priceInWei.div(100).mul(commission.rate);
+            commission.recipient.transfer(rateSplit);
+        }
+
+        // Send remaining eth to KO
+        uint256 remainingCommission = msg.value.sub(artistPayment).sub(rateSplit);
+        koCommissionAccount.transfer(remainingCommission);
+
+        // Record wei sale value
+        totalPurchaseValueInWei = totalPurchaseValueInWei.add(msg.value);
+    }
 
     /***************
      * Token Query *
