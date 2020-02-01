@@ -35,7 +35,8 @@ app.use('/artist', artistRoutes);
 
 mongoose
     .connect(
-        'mongodb+srv://alex:JgU76Cpq8vSgUmNq@cf-r3ep6.mongodb.net/test?retryWrites=true&w=majority'
+        'mongodb+srv://alex:S65sDNlkaXzlTCDa@cf-r3ep6.mongodb.net/test?retryWrites=true&w=majority',
+        { useNewUrlParser: true }
     )
     .then(result => {
         app.listen(5000);

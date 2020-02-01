@@ -10,7 +10,8 @@ const userSchema = new Schema({
     publicAddress: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        default: () => Math.floor(Math.random() * 1000000)
     },
     userName: {
         type: String,
