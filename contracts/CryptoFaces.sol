@@ -25,7 +25,6 @@ import "openzeppelin-solidity/contracts/token/ERC721/ERC721Burnable.sol";
 import "./Strings.sol";
 import "openzeppelin-solidity/contracts/drafts/Counters.sol";
 import "openzeppelin-solidity/contracts/utils/Address.sol";
-import "./ERC721Full.sol";
 
 /**
  * @title CF-V1
@@ -65,35 +64,29 @@ Pausable {
     uint256 public totalPurchaseValueInWei;
 
     // Object for token details
-    struct TokenDetails{
+    struct TokenDetails {
         // Identifiers
         uint256 tokenId;    // the range e.g. 10000
-        // Config
         address artistAccount;    // artists account
+        // Config
         uint256 priceInWei;       // base price for edition, could be overridden by external contracts
         string tokenURI;          // IPFS hash - see base URI
+        address payable currentOwner;      // Will changed after any purchase happen
         // Counters
         uint256 totalPurchases;      // Total purchases
     }
 
-    // _tokenId : EditionDetails
-    mapping(uint256 => TokenDetials) internal tokenIdToTokenDetails;
+    // _tokenId : TokenDetails
+    mapping(uint256 => TokenDetails) internal tokenIdToTokenDetails;
 
     /**********
      * Events *
      **********/
-    // Emitted on every mint
-    event Minted(
-        uint256 indexed _tokenId,
-        string indexed _tokenURI,
-        address indexed _buyer
-    );
-
     // Emitted on purchases from within this contract
     event Purchase(
         uint256 indexed _tokenId,
         address indexed _buyer,
-        uint256 _priceInWei
+        uint256 indexed _priceInWei
     );
 
     /*************
@@ -112,42 +105,7 @@ Pausable {
     /********************
      * Basic Operations *
      ********************/
-    // TODO: Test mintTo
-    /**
-     * @dev Internal function to mint a new token to specific address
-     * @dev Private (CF Artists only)
-     * @dev Payment not needed for this method
-     * Reverts if the given token ID already exists, and if the face already exists
-     * @param _to The account address of the received address
-     * @param _tokenURI The Face Hash the will be minted with the token
-     * @param _priceInWei The initial price to the nft
-     */
-    function mintTo(address _to ,string memory _tokenURI, uint256 _priceInWei) public
-    onlyIfCryptoFacesArtists {
-        // Checks that tokenURI is unique
-        require(!tokenURIExists[_tokenURI]);
 
-        // Mint token form parent "ERC721MetadataMintable"
-        mintWithTokenURI(_to, tokenId, _tokenURI);
-
-        // Update the new minted token data
-        tokenURIExists[_tokenURI] = true;
-        tokenURIs.push(_tokenURI);
-        tokenIdToTokenDetails[tokenId] = TokenDetails({
-               tokenId: tokenId,
-               artistAccount: _to,
-               priceInWei: _priceInWei,
-               tokenURI: _tokenURI,
-               totalPurchases: 0
-            });
-
-        // Emitting Minted event when finished successfully
-        emit Minted(tokenId, _tokenURI, _to);
-
-        tokenId = tokenId.add(1);
-    }
-
-    // TODO: Test mint
     /**
      * @dev Internal function to mint a new token to the creator (caller)
      * @dev Private (CF Artists only)
@@ -172,11 +130,41 @@ Pausable {
             artistAccount: _msgSender(),
             priceInWei: _priceInWei,
             tokenURI: _tokenURI,
+            currentOwner: _msgSender(),
             totalPurchases: 0
             });
 
-        // Emitting Minted event when finished successfully
-        emit Minted(tokenId, _tokenURI, _to);
+        tokenId = tokenId.add(1);
+    }
+
+    /**
+     * @dev Internal function to mint a new token to specific address
+     * @dev Private (CF Artists only)
+     * @dev Payment not needed for this method
+     * Reverts if the given token ID already exists, and if the face already exists
+     * @param _to The account address of the received address
+     * @param _tokenURI The Face Hash the will be minted with the token
+     * @param _priceInWei The initial price to the nft
+     */
+    function mintTo(address payable _to ,string memory _tokenURI, uint256 _priceInWei) public
+    onlyIfCryptoFacesArtists {
+        // Checks that tokenURI is unique
+        require(!tokenURIExists[_tokenURI]);
+
+        // Mint token form parent "ERC721MetadataMintable"
+        mintWithTokenURI(_to, tokenId, _tokenURI);
+
+        // Update the new minted token data
+        tokenURIExists[_tokenURI] = true;
+        tokenURIs.push(_tokenURI);
+        tokenIdToTokenDetails[tokenId] = TokenDetails({
+               tokenId: tokenId,
+               artistAccount: _msgSender(),
+               priceInWei: _priceInWei,
+               tokenURI: _tokenURI,
+               currentOwner: _to,
+               totalPurchases: 0
+            });
 
         tokenId = tokenId.add(1);
     }
@@ -209,34 +197,24 @@ Pausable {
         require(msg.value >= _tokenDetails.priceInWei, "Value must be greater than price of edition");
 
         // Splice funds and handle commissions
-        _handleTransfer(_tokenId, _tokenDetails.priceInWei, _tokenDetails.artistAccount);
+        _handleTransfer(_tokenId, _tokenDetails.priceInWei, _tokenDetails.currentOwner);
 
         // Broadcast purchase
-        emit Purchase(_tokenId, _editionNumber, _to, msg.value);
+        emit Purchase(_tokenId, _to, msg.value);
 
         return _tokenId;
     }
 
-    function _handleTransfer(uint256 _tokenId, uint256 _priceInWei, address _artistAccount) internal {
+    function _handleTransfer(uint256 _tokenId, uint256 _priceInWei, address payable _currentOwner) internal {
 
         // Extract the artists commission and send it
-        uint256 artistPayment = _priceInWei.div(100).mul(_artistCommission);
+        uint256 artistPayment = _priceInWei.div(100);
         if (artistPayment > 0) {
-            _artistAccount.transfer(artistPayment);
+            _currentOwner.transfer(artistPayment);
         }
 
-        // Load any commission overrides
-        CommissionSplit storage commission = editionNumberToOptionalCommissionSplit[_tokenId];
-
-        // Apply optional commission structure
-        if (commission.rate > 0) {
-            uint256 rateSplit = _priceInWei.div(100).mul(commission.rate);
-            commission.recipient.transfer(rateSplit);
-        }
-
-        // Send remaining eth to KO
-        uint256 remainingCommission = msg.value.sub(artistPayment).sub(rateSplit);
-        koCommissionAccount.transfer(remainingCommission);
+        // Transfer the ownership of the token to the buyer
+        safeTransferFrom(_currentOwner, _msgSender(), _tokenId);
 
         // Record wei sale value
         totalPurchaseValueInWei = totalPurchaseValueInWei.add(msg.value);

@@ -1,7 +1,12 @@
+const bnChai = require('bn-chai');
+
+const etherToWei = require('./helper/etherToWei');
+
 const CryptoFaces = artifacts.require("./contracts/CryptoFaces.sol");
 
 require('chai')
     .use(require("chai-as-promised"))
+    .use(bnChai(web3.utils.BN))
     .should();
 
 contract('CryptoFaces', (accounts) => {
@@ -13,9 +18,27 @@ contract('CryptoFaces', (accounts) => {
     const owner = accounts[0];
     const account1 = accounts[1];
     const account2 = accounts[2];
-    const alexAcc = accounts[9];
+    const account3 = accounts[3];
+    const artistAccount = accounts[9];
 
-    const expectedOwnerTokens = [100001, 100002, 100003, 100003];
+    const zeroAddress = '0x0000000000000000000000000000000000000000';
+
+    const tokenIds = [100001, 100002, 100003, 100004, 100005];
+
+    const firstTokenPrice = etherToWei(0.1);
+    const firstTokenURI = 'QmdP14WWurNzKDPdHDjwS8QDbNdSQyySxTedKqHzKcReBb';
+
+    const secondTokenPrice = etherToWei(0.1);
+    const secondTokenURI = 'QmdP14WWurNzKDPdHDjwS8QDbNdSQyySxTedKqHzKcRserb';
+
+    const thirdTokenPrice = etherToWei(0.1);
+    const thirdTokenURI = 'QmdP14WWurNzKdfDPdHDjwS8QDbNdSQyySxTedKqHzKcRserb';
+
+    const fourthTokenPrice = etherToWei(0.1);
+    const fourthTokenURI = 'QmdP14WWurNzKdfDPdHDjwS8QDbNdSQyySxTedereRserb';
+
+    const fifthTokenPrice = etherToWei(0.1);
+    const fifthTokenURI = 'QmdP14WWurNzKDPdHDjwS8QDbNdSQyySxTedKqHzKcReBb';
 
     const BASE_URI = 'https://ipfs.infura.io/ipfs/';
 
@@ -26,7 +49,7 @@ contract('CryptoFaces', (accounts) => {
 
     describe('A. Like a full ERC721', async () => {
 
-        describe('1. Deployment', async () => {
+        describe('Deployment', async () => {
 
             /*
              * contract - CryptoFaces
@@ -42,7 +65,7 @@ contract('CryptoFaces', (accounts) => {
             });
         });
 
-        describe('2. Contract Metadata', async () => {
+        describe('Contract Metadata', async () => {
 
             /*
              * contract - ERC721 Metadata
@@ -75,64 +98,63 @@ contract('CryptoFaces', (accounts) => {
             });
         });
 
-        describe('3. Mint new Token', async () => {
+        /****************************
+         * Testing Basic Operations *
+         ****************************/
+        describe('Mint new Token', async () => {
 
             /*
              * contract - CryptoFaces
              * method - mint(_to: address, _tokenURI: String)
              */
-            it('a. should mint new token', async () => {
-                const _imageURI = 'QmdP14WWurNzKDPdHDjwS8QDbNdSQyySxTedKqHzKcReBb';
+            it('should mint first token', async () => {
+                const result = await contract.mint(firstTokenURI, firstTokenPrice, { from: owner });
 
-                const result = await contract.mint(owner, _imageURI.toString(), { from: owner });
+                const transferEvent = result.logs[0].args;
 
-                const mintEvent = result.logs[1].args;
+                // Test Transfer Event
+                assert.equal(transferEvent.from.toString(), zeroAddress);
+                assert.equal(transferEvent.to.toString(), owner);
+                assert.equal(transferEvent.tokenId.toNumber(), tokenIds[0]);
+            });
 
-                //console.log(mintEvent);
+            /*
+             * contract - CryptoFaces
+             * method - mintTo(_to: address, _tokenURI: String, _priceInWei: uint256)
+             */
+            it('should mint second token', async () => {
+                const result = await contract.mintTo(account1, secondTokenURI, secondTokenPrice,{ from: owner });
 
-                // TODO: check Minted Event
-                //assert.equal(mintEvent._tokenId.words[0].toNumber(), 100001);
-                //assert.equal(mintEvent._tokenURI.toString(), _imageURI);
-                //assert.equal(mintEvent._buyer.toString(), owner);
+                const transferEvent = result.logs[0].args;
+
+                // Test Transfer Event
+                assert.equal(transferEvent.from.toString(), zeroAddress);
+                assert.equal(transferEvent.to.toString(), account1);
+                assert.equal(transferEvent.tokenId.toNumber(), tokenIds[1]);
+            });
+
+            /*
+             * contract - CryptoFaces
+             * method - mintTo(_to: address, _tokenURI: String, _priceInWei: uint256)
+             */
+            it('should mint third token', async () => {
+                const result = await contract.mintTo(account2, thirdTokenURI, thirdTokenPrice, { from: owner });
+
+                const transferEvent = result.logs[0].args;
+
+                // Test Transfer Event
+                assert.equal(transferEvent.from.toString(), zeroAddress);
+                assert.equal(transferEvent.to.toString(), account2);
+                assert.equal(transferEvent.tokenId.toNumber(), tokenIds[2]);
             });
 
             /*
              * contract - CryptoFaces
              * method - mint(_to: address, _tokenURI: String)
              */
-            it('b. should mint second token', async () => {
-                const _imageURI = 'QmdP14WWurNzKDPdHDjwS8QDbNdSQyySxTedKqHzKcRserb';
-
-                await contract.mint(owner, _imageURI, {
-                    from: owner
-                });
-            });
-
-            /*
-             * contract - CryptoFaces
-             * method - mint(_to: address, _tokenURI: String)
-             */
-            it('c. should mint third token', async () => {
-                const _imageURI = 'QmdP14WWurNzKdfDPdHDjwS8QDbNdSQyySxTedKqHzKcRserb';
-
-                await contract.mint(alexAcc, _imageURI, {
-                    from: owner
-                });
-
-                const _totalSupply = await contract.totalSupply();
-
-                //assert.equal(_totalSupply, 3);
-            });
-
-            /*
-             * contract - CryptoFaces
-             * method - mint(_to: address, _tokenURI: String)
-             */
-            it('d. should reject minting new Token from non-CF-Artist account', async () => {
-                const _imageURI = 'QmdP14WWurNzKdfDPdHDjwS8rwerNdSQyySxTedKqHzKcRserb';
-
+            it('should reject minting new Token from non-CF-Artist account', async () => {
                 // account1 => non-authorized
-                await contract.mint(alexAcc, _imageURI, {
+                await contract.mintTo(account1, fourthTokenURI, fourthTokenPrice, {
                     from: account1
                 }).should.be.rejected;
             });
@@ -141,10 +163,9 @@ contract('CryptoFaces', (accounts) => {
             * contract - CryptoFaces
             * method - mint(_to: address, _tokenURI: String)
             */
-            it('e. should reject minting new token with the same used URI', async () => {
-                const _imageURI = 'QmdP14WWurNzKdfDPdHDjwS8QDbNdSQyySxTedKqHzKcRserb';
-
-                await contract.mint(alexAcc, _imageURI, {
+            it('should reject minting new token with the same used URI', async () => {
+                // tokenURI exists
+                await contract.mint(fifthTokenURI, fifthTokenPrice, {
                     from: owner
                 }).should.be.rejected;
             });
@@ -159,7 +180,7 @@ contract('CryptoFaces', (accounts) => {
             it('a. should output second tokenId', async () => {
                 //const _secondTokenId = await contract.tokenOfOwnerByIndex(owner, 2);
 
-                //assert.equal(_secondTokenId, expectedOwnerTokens[1]);
+                //assert.equal(_secondTokenId, tokenIds[1]);
             });
 
             /**
@@ -183,7 +204,7 @@ contract('CryptoFaces', (accounts) => {
              * method - exists(_to: address, _tokenURI: String)
              */
             it('c. should output whether the tokenId exits or not', async () => {
-                const isExist = await contract.exists(expectedOwnerTokens[0]);
+                const isExist = await contract.exists(tokenIds[0]);
 
                 assert.equal(isExist, true);
             });
@@ -213,19 +234,19 @@ contract('CryptoFaces', (accounts) => {
 
         describe('6. Token Approval', async () => {
 
-            /*
-            * contract - ERC721
-            * method - ownerOf(tokenId: uint256):address
-            */
+            /**
+             * contract - ERC721
+             * method - ownerOf(tokenId: uint256):address
+             */
             it('a. should successfully approve owner to another address', async () => {
-                const result = await contract.approve(account1, expectedOwnerTokens[0], { from: owner });
+                const result = await contract.approve(account1, tokenIds[0], { from: owner });
 
                 // Success
                 const approvalEvent = result.logs[0].args;
 
                 assert.equal(approvalEvent.owner.toString(), owner);
                 assert.equal(approvalEvent.approved.toString(), account1);
-                assert.equal(approvalEvent.tokenId.toNumber(), expectedOwnerTokens[0])
+                assert.equal(approvalEvent.tokenId.toNumber(), tokenIds[0])
             });
 
             /*
@@ -233,7 +254,7 @@ contract('CryptoFaces', (accounts) => {
             * method - ownerOf(tokenId: uint256):address
             */
             it('b. should reject approve non-owner to another address', async () => {
-                await contract.approve(account2, expectedOwnerTokens[1], {
+                await contract.approve(account2, tokenIds[1], {
                     from: account1
                 }).should.be.rejected;
             });
@@ -243,12 +264,12 @@ contract('CryptoFaces', (accounts) => {
              * method - getApproved(tokenId: uint256):address
              */
             it('c. should get the approved account for specific token', async () => {
-                const approvedAccount = await contract.getApproved(expectedOwnerTokens[0]);
+                const approvedAccount = await contract.getApproved(tokenIds[0]);
 
                 assert.equal(approvedAccount.toString(), account1);
 
                 // Check the ownership of the approved token
-                const ownerOfApprovedToken = await contract.ownerOf(expectedOwnerTokens[0]);
+                const ownerOfApprovedToken = await contract.ownerOf(tokenIds[0]);
 
                 assert.equal(ownerOfApprovedToken.toString(), owner);
             });
@@ -256,6 +277,13 @@ contract('CryptoFaces', (accounts) => {
 
         describe('7. Token Transfer', async () => {
 
+            /**
+             * contract - ERC721
+             * method - ownerOf(tokenId: uint256):address
+             */
+            it('should purchase minted token', async () => {
+
+            });
         });
     })
 });
