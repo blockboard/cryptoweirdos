@@ -18,8 +18,14 @@ contract('CryptoFaces', (accounts) => {
     const owner = accounts[0];
     const account1 = accounts[1];
     const account2 = accounts[2];
-    const account3 = accounts[3];
+    const buyer1 = accounts[3];
     const artistAccount = accounts[9];
+
+    console.log('Owner Account:', owner);
+    console.log('Account 1:', account1);
+    console.log('Account 2:', account2);
+    console.log('Buyer 1:', buyer1);
+    console.log('Artist Account:', artistAccount);
 
     const zeroAddress = '0x0000000000000000000000000000000000000000';
 
@@ -171,7 +177,36 @@ contract('CryptoFaces', (accounts) => {
             });
         });
 
-        describe('4. Token Outputs Data', async () => {
+        describe('Purchase Token', async () => {
+
+            /**
+             * contract - ERC721
+             * method - purchaseTo(_to address, _tokenId: uint256): _tokenId: uint256
+             */
+            it('should purchase minted token', async () => {
+                const result = await contract.purchase(tokenIds[0], {
+                    from: buyer1,
+                    value: firstTokenPrice
+                });
+
+                const transferEvent = result.logs[0].args;
+                const purchaseEvent = result.logs[1].args;
+
+                // Test Transfer Event
+                assert.equal(transferEvent.from.toString(), owner);
+                assert.equal(transferEvent.to.toString(), buyer1);
+                assert.equal(transferEvent.tokenId.toNumber(), tokenIds[0]);
+
+                // Test Purchase Event
+                assert.equal(purchaseEvent.tokenId.toNumber(), tokenIds[0]);
+                assert.equal(purchaseEvent.buyer.toString(), buyer1);
+                assert.equal(purchaseEvent.priceInWei, firstTokenPrice);
+            });
+        });
+        /***********************
+         * Testing Token Query *
+         ***********************/
+        describe('Token Outputs Data', async () => {
 
             /*
              * contract - CryptoFaces
@@ -210,7 +245,7 @@ contract('CryptoFaces', (accounts) => {
             });
         });
 
-        describe('5. Token Metadata', async () => {
+        describe('Token Metadata', async () => {
             /*
              * contract - ERC721
              * method - balanceOf(owner: address):uint256
@@ -232,7 +267,7 @@ contract('CryptoFaces', (accounts) => {
             });
         });
 
-        describe('6. Token Approval', async () => {
+        describe('Token Approval', async () => {
 
             /**
              * contract - ERC721
@@ -272,17 +307,6 @@ contract('CryptoFaces', (accounts) => {
                 const ownerOfApprovedToken = await contract.ownerOf(tokenIds[0]);
 
                 assert.equal(ownerOfApprovedToken.toString(), owner);
-            });
-        });
-
-        describe('7. Token Transfer', async () => {
-
-            /**
-             * contract - ERC721
-             * method - ownerOf(tokenId: uint256):address
-             */
-            it('should purchase minted token', async () => {
-
             });
         });
     })

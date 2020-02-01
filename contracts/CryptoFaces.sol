@@ -84,9 +84,9 @@ Pausable {
      **********/
     // Emitted on purchases from within this contract
     event Purchase(
-        uint256 indexed _tokenId,
-        address indexed _buyer,
-        uint256 indexed _priceInWei
+        uint256 indexed tokenId,
+        address indexed buyer,
+        uint256 indexed priceInWei
     );
 
     /*************
@@ -177,7 +177,7 @@ Pausable {
      * @dev Reverts if token is not active or available
      */
     function purchase(uint256 _tokenId) public payable
-    returns (uint256) {
+    whenNotPaused {
         return purchaseTo(msg.sender, _tokenId);
     }
 
@@ -190,22 +190,20 @@ Pausable {
      * @dev Reverts if edition is not active or available
      */
     function purchaseTo(address _to, uint256 _tokenId) public payable
-    whenNotPaused
-    returns (uint256) {
+    whenNotPaused {
 
+        // Get an instance of TokenDetails
         TokenDetails storage _tokenDetails = tokenIdToTokenDetails[_tokenId];
         require(msg.value >= _tokenDetails.priceInWei, "Value must be greater than price of edition");
 
         // Splice funds and handle commissions
-        _handleTransfer(_tokenId, _tokenDetails.priceInWei, _tokenDetails.currentOwner);
+        _handleTransfer(_to, _tokenId, _tokenDetails.priceInWei, _tokenDetails.currentOwner);
 
         // Broadcast purchase
         emit Purchase(_tokenId, _to, msg.value);
-
-        return _tokenId;
     }
 
-    function _handleTransfer(uint256 _tokenId, uint256 _priceInWei, address payable _currentOwner) internal {
+    function _handleTransfer(address _to, uint256 _tokenId, uint256 _priceInWei, address payable _currentOwner) internal {
 
         // Extract the artists commission and send it
         uint256 artistPayment = _priceInWei.div(100);
@@ -214,7 +212,7 @@ Pausable {
         }
 
         // Transfer the ownership of the token to the buyer
-        safeTransferFrom(_currentOwner, _msgSender(), _tokenId);
+        safeTransferFrom(_currentOwner, _to, _tokenId);
 
         // Record wei sale value
         totalPurchaseValueInWei = totalPurchaseValueInWei.add(msg.value);
