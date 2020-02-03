@@ -21,6 +21,9 @@ import "openzeppelin-solidity/contracts/token/ERC721/ERC721MetadataMintable.sol"
 // ERC721 MetadataMintable
 import "openzeppelin-solidity/contracts/token/ERC721/ERC721Burnable.sol";
 
+// Escrow
+import "./Escrow.sol";
+
 // Utils only
 import "./Strings.sol";
 import "openzeppelin-solidity/contracts/drafts/Counters.sol";
@@ -55,13 +58,10 @@ Pausable {
     uint256 private tokenId = 100001;
 
     // All faces URIs
-    string[] tokenURIs;
+    string[] private tokenURIs;
 
     // Faces Exits
-    mapping(string => bool) tokenURIExists;
-
-    // Total wei been processed through the contract
-    uint256 public totalPurchaseValueInWei;
+    mapping(string => bool) private tokenURIExists;
 
     // Object for token details
     struct TokenDetails {
@@ -69,9 +69,8 @@ Pausable {
         uint256 tokenId;    // the range e.g. 10000
         address artistAccount;    // artists account
         // Config
-        uint256 priceInWei;       // base price for edition, could be overridden by external contracts
         string tokenURI;          // IPFS hash - see base URI
-        address payable currentOwner;      // Will changed after any purchase happen
+        address currentOwner;      // Will changed after any purchase happen
         // Counters
         uint256 totalPurchases;      // Total purchases
     }
@@ -82,11 +81,18 @@ Pausable {
     /**********
      * Events *
      **********/
-    // Emitted on purchases from within this contract
-    event Purchase(
-        uint256 indexed tokenId,
-        address indexed buyer,
-        uint256 indexed priceInWei
+
+    // Emitted whenever any token minted
+    event Minted(
+        uint256 indexed artist,
+        uint256 indexed tokenId
+    );
+
+    // Emitted whenever any token minted to any another address
+    event MintedTo(
+        uint256 indexed artist,
+        uint256 indexed to,
+        uint256 indexed tokenId
     );
 
     /*************
@@ -107,19 +113,18 @@ Pausable {
      ********************/
 
     /**
-     * @dev Internal function to mint a new token to the creator (caller)
+     * @dev Public function to mint a new token to the creator (caller), Mint is for general minting not for submitting any price
      * @dev Private (CF Artists only)
      * @dev Payment not needed for this method
      * Reverts if the given token ID already exists, and if the face already exists
      * @param _tokenURI The Face Hash the will be minted with the token
-     * @param _priceInWei The initial price to the nft
      */
-    function mint(string memory _tokenURI, uint256 _priceInWei) public
+    function mint(string memory _tokenURI) public
     onlyIfCryptoFacesArtists {
         // Checks that tokenURI is unique
         require(!tokenURIExists[_tokenURI]);
 
-        // Mint token form parent "ERC721MetadataMintable"
+        // Mint token from parent "ERC721MetadataMintable"
         mintWithTokenURI(_msgSender(), tokenId, _tokenURI);
 
         // Update the new minted token data
@@ -128,13 +133,14 @@ Pausable {
         tokenIdToTokenDetails[tokenId] = TokenDetails({
             tokenId: tokenId,
             artistAccount: _msgSender(),
-            priceInWei: _priceInWei,
             tokenURI: _tokenURI,
             currentOwner: _msgSender(),
             totalPurchases: 0
             });
 
         tokenId = tokenId.add(1);
+
+        emit Minted(_msgSender(), tokenId);
     }
 
     /**
@@ -146,7 +152,7 @@ Pausable {
      * @param _tokenURI The Face Hash the will be minted with the token
      * @param _priceInWei The initial price to the nft
      */
-    function mintTo(address payable _to ,string memory _tokenURI, uint256 _priceInWei) public
+    function mintTo(address payable _to ,string memory _tokenURI) public
     onlyIfCryptoFacesArtists {
         // Checks that tokenURI is unique
         require(!tokenURIExists[_tokenURI]);
@@ -160,62 +166,14 @@ Pausable {
         tokenIdToTokenDetails[tokenId] = TokenDetails({
                tokenId: tokenId,
                artistAccount: _msgSender(),
-               priceInWei: _priceInWei,
                tokenURI: _tokenURI,
                currentOwner: _to,
                totalPurchases: 0
             });
 
         tokenId = tokenId.add(1);
-    }
 
-    // TODO: Test purchase
-    /**
-     * @dev Public entry point for purchasing a Token
-     * @dev Reverts if payment not provided in full
-     * @dev Reverts if token is sold out
-     * @dev Reverts if token is not active or available
-     */
-    function purchase(uint256 _tokenId) public payable
-    whenNotPaused {
-        return purchaseTo(msg.sender, _tokenId);
-    }
-
-    // TODO: Test purchaseTo
-    /**
-     * @dev Public entry point for purchasing an edition on behalf of someone else
-     * @dev Reverts if edition is invalid
-     * @dev Reverts if payment not provided in full
-     * @dev Reverts if edition is sold out
-     * @dev Reverts if edition is not active or available
-     */
-    function purchaseTo(address _to, uint256 _tokenId) public payable
-    whenNotPaused {
-
-        // Get an instance of TokenDetails
-        TokenDetails storage _tokenDetails = tokenIdToTokenDetails[_tokenId];
-        require(msg.value >= _tokenDetails.priceInWei, "Value must be greater than price of edition");
-
-        // Splice funds and handle commissions
-        _handleTransfer(_to, _tokenId, _tokenDetails.priceInWei, _tokenDetails.currentOwner);
-
-        // Broadcast purchase
-        emit Purchase(_tokenId, _to, msg.value);
-    }
-
-    function _handleTransfer(address _to, uint256 _tokenId, uint256 _priceInWei, address payable _currentOwner) internal {
-
-        // Extract the artists commission and send it
-        uint256 artistPayment = _priceInWei.div(100);
-        if (artistPayment > 0) {
-            _currentOwner.transfer(artistPayment);
-        }
-
-        // Transfer the ownership of the token to the buyer
-        safeTransferFrom(_currentOwner, _to, _tokenId);
-
-        // Record wei sale value
-        totalPurchaseValueInWei = totalPurchaseValueInWei.add(msg.value);
+        emit MintedTo(_msgSender(), _to, tokenId);
     }
 
     /***************
