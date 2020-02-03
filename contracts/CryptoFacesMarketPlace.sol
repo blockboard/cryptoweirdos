@@ -81,12 +81,13 @@ contract CryptoFacesMarketPlace is CryptoFaces {
 
     /**
      * @dev Public function for sale tokens with specified price
-     * @dev Private (CF Artists only)
-     * @dev Payment not needed for this method
-     * Reverts if the given token ID already exists, and if the face already exists
-     * @param _tokenURI The Face Hash the will be minted with the token
+     * Reverts if the caller is not owner nor approved
+     * Reverts if the token not exits before, on other words not minted yet
+     * Reverts if the token is already on an active Escrow contract
+     * @param _tokenId Token ID
+     * @param _tokenValueInWei Value assigned from the owner
      */
-    function offerFaceForSale(uint _tokenId, uint _tokenValueInWei) public
+    function offerTokenForSale(uint _tokenId, uint _tokenValueInWei) public
     onlyForOwnerOrApproved(_msgSender(), _tokenId)
     onlyIfTokenIdExists(_tokenId)
     notInActiveEscrow(_tokenId) {
@@ -103,6 +104,30 @@ contract CryptoFacesMarketPlace is CryptoFaces {
         emit TokenOffered(_tokenId, _tokenValueInWei, _msgSender());
     }
 
+    /**
+     * @dev Public function for sale tokens with specified price
+     * Reverts if the caller is not owner nor approved
+     * Reverts if the token not exits before, on other words not minted yet
+     * Reverts if the token is already on an active Escrow contract
+     * @param _tokenId Token ID
+     * @param _tokenValueInWei Value assigned from the owner
+     */
+    function offerTokenForSaleTo(address _to, uint _tokenId, uint _tokenValueInWei) public
+    onlyForOwnerOrApproved(_msgSender(), _tokenId)
+    onlyIfTokenIdExists(_tokenId)
+    notInActiveEscrow(_tokenId) {
+        // Map tokenId with it's Value
+        tokenIdToValueInWei[_tokenId] = _tokenValueInWei;
+        address tokenEscrowContract = new Escrow(_tokenId, _tokenValueInWei);
+
+        // Map tokenId to it's Escrow contract address
+        tokenIdToEscrowAddress[_tokenId] = tokenEscrowContract;
+        // Map tokenId to it's Offer
+        tokensOfferedForSale[_tokenId] = Offer(true, _tokenId, _msgSender(), _tokenValueInWei, _to);
+
+        // Emit TokenOffered event
+        emit TokenOffered(_tokenId, _tokenValueInWei, _msgSender());
+    }
 
     // TODO: Test purchase
     /**
