@@ -84,14 +84,14 @@ Pausable {
 
     // Emitted whenever any token minted
     event Minted(
-        uint256 indexed artist,
+        address indexed artist,
         uint256 indexed tokenId
     );
 
     // Emitted whenever any token minted to any another address
     event MintedTo(
-        uint256 indexed artist,
-        uint256 indexed to,
+        address indexed artist,
+        address indexed to,
         uint256 indexed tokenId
     );
 

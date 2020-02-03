@@ -1,16 +1,14 @@
-pragma solidity ^0.4.21;
+pragma solidity ^0.5.12;
 
 //Slight Modification to run in Remix
 //Source: http://solidity.readthedocs.io/en/v0.3.2/solidity-by-example.html#safe-remote-purchase
 
 contract Escrow {
 
-    struct receipt {}
-
     uint256 public tokenId;
     uint256 public tokenValue;
-    address public seller;
-    address public buyer;
+    address payable seller;
+    address payable buyer;
 
     enum State { Created, Locked, Inactive }
     State public state;
