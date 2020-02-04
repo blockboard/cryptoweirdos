@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/blockboard/crypto-faces#readme",
   "devDependencies": {
-    "@openzeppelin/contracts": "^1.4.0",
+    "@openzeppelin/contracts": "^2.4.0",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-eslint": "^10.0.3",
