@@ -47,8 +47,11 @@ contract CryptoFacesMarketPlace is CryptoFaces {
         uint value;
     }
 
-    // Mapping offered tokens
+    // Mapping TokenId to Offer
     mapping(uint256 => Offer) tokensOfferedForSale;
+
+    // Mapping TokenId to Bid
+    mapping(uint256 => Bid) tokensBid;
 
     // Total wei been processed through the contract
     uint256 public totalPurchaseValueInWei;
@@ -71,6 +74,7 @@ contract CryptoFacesMarketPlace is CryptoFaces {
         address indexed seller
     );
 
+    // Emitted on cancel token offering
     event TokenNoLongerForSale(
         uint256 indexed tokenId
     );
@@ -117,7 +121,7 @@ contract CryptoFacesMarketPlace is CryptoFaces {
     /***************
      * Constructor *
      ***************/
-    constructor() CryptoFacesMarketPlace public { }
+    constructor() public { }
 
     /**
      * @dev Public function for sale tokens with specified price
@@ -177,9 +181,17 @@ contract CryptoFacesMarketPlace is CryptoFaces {
      * @param _tokenId Token ID
      * @param _tokenValueInWei Value assigned from the owner
      */
-    /*function offerBundleOfTokensForSale(uint256[] memory _tokenIds, uint256 _offerValueInWei) public
+    function offerBundleOfTokensForSale(uint256[] memory _tokenIds, uint256 _offerValueInWei) public
     onlyForOwnerOrApprovedToBundleTokens(_msgSender(), _tokenIds)
     onlyIfBundleOfTokenIdsExists(_tokenIds) {
+        // Remove any offers on the chosen bundle of tokens
+        for(uint i; i <= _tokenIds.length; i++) {
+            if(tokensOfferedForSale[_tokenIds[i]].isForSale) {
+                tokenNoLongerForSale(_tokenIds[i]);
+            }
+        }
+
+
         // Map tokenId with it's Value
         tokenIdToValueInWei[_tokenId] = _tokenValueInWei;
         address tokenEscrowContract = new Escrow(_tokenId, _tokenValueInWei);
@@ -191,7 +203,7 @@ contract CryptoFacesMarketPlace is CryptoFaces {
 
         // Emit TokenOffered event
         emit TokenOffered(_tokenId, _tokenValueInWei, _msgSender());
-    }*/
+    }
 
     // TODO: check if token is in active Escrow
     /**
@@ -261,6 +273,10 @@ contract CryptoFacesMarketPlace is CryptoFaces {
 
 
 
+    /*function enterBidForToken(uint256 _tokenId) public
+    onlyIfTokenIdExists(_tokenId) {
+        require(msg.value != 0, 'CF: Current address has no sufficient value');
+    }*/
 
 
 

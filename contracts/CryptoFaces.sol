@@ -111,7 +111,6 @@ Pausable {
     /********************
      * Basic Operations *
      ********************/
-
     /**
      * @dev Public function to mint a new token to the creator (caller), Mint is for general minting not for submitting any price
      * @dev Private (CF Artists only)
