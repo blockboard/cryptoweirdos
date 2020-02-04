@@ -107,8 +107,8 @@ contract CryptoFacesMarketPlace is CryptoFaces {
     }
 
     modifier onlyIfBundleOfTokenIdsExists(uint256[] memory _tokenIds) {
-        for(uint i; i <= _tokenIds; i++) {
-            require(exists(_tokenId), "CF: Token ID not found, not minted yet");
+        for(uint i; i <= _tokenIds.length; i++) {
+            require(exists(_tokenIds[i]), "CF: Token ID not found, not minted yet");
         }
         _;
     }
@@ -137,10 +137,10 @@ contract CryptoFacesMarketPlace is CryptoFaces {
     notInActiveEscrow(_tokenId) {
         // Map tokenId with it's Value
         tokenIdToValueInWei[_tokenId] = _tokenValueInWei;
-        address tokenEscrowContract = new Escrow(_tokenId, _tokenValueInWei);
+        Escrow tokenEscrowContract = new Escrow(_tokenId, _tokenValueInWei);
 
         // Map tokenId to it's Escrow contract address
-        tokenIdToEscrowAddress[_tokenId] = tokenEscrowContract;
+        tokenIdToEscrowAddress[_tokenId] = address(tokenEscrowContract);
         // Map tokenId to it's Offer
         tokensOfferedForSale[_tokenId] = Offer(true, _tokenId, _msgSender(), _tokenValueInWei, address(0));
 
@@ -153,6 +153,7 @@ contract CryptoFacesMarketPlace is CryptoFaces {
      * Reverts if the caller is not owner nor approved
      * Reverts if the token not exits before, on other words not minted yet
      * Reverts if the token is already on an active Escrow contract
+     * @param _to address
      * @param _tokenId Token ID
      * @param _tokenValueInWei Value assigned from the owner
      */
@@ -162,10 +163,10 @@ contract CryptoFacesMarketPlace is CryptoFaces {
     notInActiveEscrow(_tokenId) {
         // Map tokenId with it's Value
         tokenIdToValueInWei[_tokenId] = _tokenValueInWei;
-        address tokenEscrowContract = new Escrow(_tokenId, _tokenValueInWei);
+        Escrow tokenEscrowContract = new Escrow(_tokenId, _tokenValueInWei);
 
         // Map tokenId to it's Escrow contract address
-        tokenIdToEscrowAddress[_tokenId] = tokenEscrowContract;
+        tokenIdToEscrowAddress[_tokenId] = address(tokenEscrowContract);
         // Map tokenId to it's Offer
         tokensOfferedForSale[_tokenId] = Offer(true, _tokenId, _msgSender(), _tokenValueInWei, _to);
 
@@ -178,10 +179,10 @@ contract CryptoFacesMarketPlace is CryptoFaces {
      * Reverts if the caller is not owner nor approved
      * Reverts if the token not exits before, on other words not minted yet
      * Reverts if the token is already on an active Escrow contract
-     * @param _tokenId Token ID
-     * @param _tokenValueInWei Value assigned from the owner
+     * @param _tokenIds Token ID
+     * @param _offerValueInWei Value assigned from the owner
      */
-    function offerBundleOfTokensForSale(uint256[] memory _tokenIds, uint256 _offerValueInWei) public
+    /*function offerBundleOfTokensForSale(uint256[] memory _tokenIds, uint256 _offerValueInWei) public
     onlyForOwnerOrApprovedToBundleTokens(_msgSender(), _tokenIds)
     onlyIfBundleOfTokenIdsExists(_tokenIds) {
         // Remove any offers on the chosen bundle of tokens
@@ -203,7 +204,7 @@ contract CryptoFacesMarketPlace is CryptoFaces {
 
         // Emit TokenOffered event
         emit TokenOffered(_tokenId, _tokenValueInWei, _msgSender());
-    }
+    }*/
 
     // TODO: check if token is in active Escrow
     /**
@@ -215,7 +216,7 @@ contract CryptoFacesMarketPlace is CryptoFaces {
      * @param _tokenId Token ID
      */
     function transferTokenTo(address _to, uint256 _tokenId) public
-    onlyForOwnerOrApproved(_tokenId)
+    onlyForOwnerOrApproved(_msgSender(), _tokenId)
     onlyIfTokenIdExists(_tokenId) {
         // Check if the token is on offer, cancel the offer
         if(tokensOfferedForSale[_tokenId].isForSale) {
@@ -234,10 +235,10 @@ contract CryptoFacesMarketPlace is CryptoFaces {
     * Reverts if the token not exits before, on other words not minted yet
     * Reverts if the token is already on an active Escrow contract
     * @param _to Receiver Address
-    * @param _tokenId Token ID
+    * @param _tokenIds Token ID
     */
-    function transferTokensTo(address _to, uint256[] _tokenIds) public
-    onlyForOwnerOrApprovedToBundleTokens(_tokenIds)
+    function transferTokensTo(address _to, uint256[] memory _tokenIds) public
+    onlyForOwnerOrApprovedToBundleTokens(_msgSender(), _tokenIds)
     onlyIfBundleOfTokenIdsExists(_tokenIds) {
         // Check if the tokens are on offer, cancel the offer
         for(uint i; i <= _tokenIds.length; i++) {
@@ -247,8 +248,8 @@ contract CryptoFacesMarketPlace is CryptoFaces {
         }
 
         // Transfer the Ownership of the tokens to _to address
-        for(uint x; x<= _tokenIds.length; i++) {
-            safeTransferFrom(_msgSender(), _to, _tokenIds[i]);
+        for(uint x; x<= _tokenIds.length; x++) {
+            safeTransferFrom(_msgSender(), _to, _tokenIds[x]);
         }
     }
 
@@ -259,7 +260,7 @@ contract CryptoFacesMarketPlace is CryptoFaces {
     * @param _tokenId Token ID
     */
     function tokenNoLongerForSale(uint256 _tokenId) public
-    onlyForOwnerOrApproved(_tokenId)
+    onlyForOwnerOrApproved(_msgSender(), _tokenId)
     onlyIfTokenIdExists(_tokenId) {
         // Deactivate the offer sale
         tokensOfferedForSale[_tokenId] = Offer(false, _tokenId, _msgSender(), 0, address(0));

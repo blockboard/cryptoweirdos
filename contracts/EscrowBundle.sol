@@ -46,7 +46,7 @@ contract EscrowBundle {
     /***************
      * Constructor *
      ***************/
-    constructor(uint256[] _tokenIds, uint256 _bundleValue) public {
+    constructor(uint256[] memory _tokenIds, uint256 _bundleValue) public {
         seller = msg.sender;
         tokenIds = _tokenIds;
         bundleValue = _bundleValue;

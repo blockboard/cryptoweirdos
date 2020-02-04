@@ -21,9 +21,6 @@ import "openzeppelin-solidity/contracts/token/ERC721/ERC721MetadataMintable.sol"
 // ERC721 MetadataMintable
 import "openzeppelin-solidity/contracts/token/ERC721/ERC721Burnable.sol";
 
-// Escrow
-import "./Escrow.sol";
-
 // Utils only
 import "./Strings.sol";
 import "openzeppelin-solidity/contracts/drafts/Counters.sol";
@@ -51,6 +48,9 @@ Pausable {
     /**************
      * Properties *
      **************/
+    // Owner of the project
+    address payable cryptoFacesOwner;
+
     // Base URI link for Faces Hashes (URI)
     string internal tokenBaseURI = "https://ipfs.infura.io/ipfs/";
 
@@ -106,7 +106,9 @@ Pausable {
     /***************
      * Constructor *
      ***************/
-    constructor() public payable ERC721Full("CryptoFaces", "CF") { }
+    constructor() public payable ERC721Full("CryptoFaces", "CF") {
+        cryptoFacesOwner = msg.sender;
+    }
 
     /********************
      * Basic Operations *
@@ -149,7 +151,6 @@ Pausable {
      * Reverts if the given token ID already exists, and if the face already exists
      * @param _to The account address of the received address
      * @param _tokenURI The Face Hash the will be minted with the token
-     * @param _priceInWei The initial price to the nft
      */
     function mintTo(address payable _to ,string memory _tokenURI) public
     onlyIfCryptoFacesArtists {
@@ -201,7 +202,11 @@ Pausable {
         return _tokenIds;
     }
 
-    function burn(uint256 _tokenId) public onlyIfCryptoFacesArtists {
-
+    /**
+      * @dev Gets the address of CryptoFaces Owner
+      * @return address
+      */
+    function cryptoFacesOwnerAddress() public view returns (address payable) {
+        return cryptoFacesOwner;
     }
 }
