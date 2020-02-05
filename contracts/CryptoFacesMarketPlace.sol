@@ -6,11 +6,12 @@ import "./CryptoFaces.sol";
 // Escrow
 import "./Escrow.sol";
 
-contract CryptoFacesMarketPlace is CryptoFaces {
+contract CryptoFacesMarketPlace {
 
     /**************
      * Properties *
      **************/
+    CryptoFaces CFContract;
 
     // Escrow Contracts
     address[] offerEscrowContracts;
@@ -29,6 +30,7 @@ contract CryptoFacesMarketPlace is CryptoFaces {
         address seller;
         uint256 valueInWei;
         address onlySellTo;     // specify to sell only to a specific person
+        address offerEscrowAddress;
     }
 
     // For bundle of tokens offering
@@ -90,25 +92,25 @@ contract CryptoFacesMarketPlace is CryptoFaces {
      * Modifiers *
      *************/
     modifier onlyForOwnerOrApproved(address _caller, uint256 _tokenId) {
-        require(super._isApprovedOrOwner(_caller, _tokenId), "CF: Caller is not Owner nor Approved");
+        require(CFContract.isApprovedOrOwner(_caller, _tokenId), "CF: Caller is not Owner nor Approved");
         _;
     }
 
     modifier onlyForOwnerOrApprovedToBundleTokens(address _caller, uint256[] memory _tokenIds) {
         for(uint i = 0; i <= _tokenIds.length; i++) {
-            require(super._isApprovedOrOwner(_caller, _tokenIds[i]), "CF: Caller is not Owner nor Approved");
+            require(CFContract.isApprovedOrOwner(_caller, _tokenIds[i]), "CF: Caller is not Owner nor Approved");
         }
         _;
     }
 
     modifier onlyIfTokenIdExists(uint256 _tokenId) {
-        require(exists(_tokenId), "CF: Token ID not found, not minted yet");
+        require(CFContract.exists(_tokenId), "CF: Token ID not found, not minted yet");
         _;
     }
 
     modifier onlyIfBundleOfTokenIdsExists(uint256[] memory _tokenIds) {
         for(uint i; i <= _tokenIds.length; i++) {
-            require(exists(_tokenIds[i]), "CF: Token ID not found, not minted yet");
+            require(CFContract.exists(_tokenIds[i]), "CF: Token ID not found, not minted yet");
         }
         _;
     }
@@ -121,7 +123,9 @@ contract CryptoFacesMarketPlace is CryptoFaces {
     /***************
      * Constructor *
      ***************/
-    constructor() public { }
+    constructor(CryptoFaces _CFContract) public {
+        CFContract = _CFContract;
+    }
 
     /**
      * @dev Public function for sale tokens with specified price
@@ -132,20 +136,20 @@ contract CryptoFacesMarketPlace is CryptoFaces {
      * @param _tokenValueInWei Value assigned from the owner
      */
     function offerTokenForSale(uint256 _tokenId, uint256 _tokenValueInWei) public
-    onlyForOwnerOrApproved(_msgSender(), _tokenId)
+    onlyForOwnerOrApproved(msg.sender, _tokenId)
     onlyIfTokenIdExists(_tokenId)
     notInActiveEscrow(_tokenId) {
         // Map tokenId with it's Value
         tokenIdToValueInWei[_tokenId] = _tokenValueInWei;
-        Escrow tokenEscrowContract = new Escrow(_tokenId, _tokenValueInWei);
+        Escrow tokenEscrowContract = new Escrow(CFContract, _tokenId, _tokenValueInWei);
 
         // Map tokenId to it's Escrow contract address
         tokenIdToEscrowAddress[_tokenId] = address(tokenEscrowContract);
         // Map tokenId to it's Offer
-        tokensOfferedForSale[_tokenId] = Offer(true, _tokenId, _msgSender(), _tokenValueInWei, address(0));
+        tokensOfferedForSale[_tokenId] = Offer(true, _tokenId, msg.sender, _tokenValueInWei, address(0), address(tokenEscrowContract));
 
         // Emit TokenOffered event
-        emit TokenOffered(_tokenId, _tokenValueInWei, _msgSender());
+        emit TokenOffered(_tokenId, _tokenValueInWei, address(tokenEscrowContract));
     }
 
     /**
@@ -158,20 +162,20 @@ contract CryptoFacesMarketPlace is CryptoFaces {
      * @param _tokenValueInWei Value assigned from the owner
      */
     function offerTokenForSaleTo(address _to, uint256 _tokenId, uint256 _tokenValueInWei) public
-    onlyForOwnerOrApproved(_msgSender(), _tokenId)
+    onlyForOwnerOrApproved(msg.sender, _tokenId)
     onlyIfTokenIdExists(_tokenId)
     notInActiveEscrow(_tokenId) {
         // Map tokenId with it's Value
         tokenIdToValueInWei[_tokenId] = _tokenValueInWei;
-        Escrow tokenEscrowContract = new Escrow(_tokenId, _tokenValueInWei);
+        Escrow tokenEscrowContract = new Escrow(CFContract, _tokenId, _tokenValueInWei);
 
         // Map tokenId to it's Escrow contract address
         tokenIdToEscrowAddress[_tokenId] = address(tokenEscrowContract);
         // Map tokenId to it's Offer
-        tokensOfferedForSale[_tokenId] = Offer(true, _tokenId, _msgSender(), _tokenValueInWei, _to);
+        tokensOfferedForSale[_tokenId] = Offer(true, _tokenId, msg.sender, _tokenValueInWei, _to, address(tokenEscrowContract));
 
         // Emit TokenOffered event
-        emit TokenOffered(_tokenId, _tokenValueInWei, _msgSender());
+        emit TokenOffered(_tokenId, _tokenValueInWei, address(tokenEscrowContract));
     }
 
     /**
@@ -216,7 +220,7 @@ contract CryptoFacesMarketPlace is CryptoFaces {
      * @param _tokenId Token ID
      */
     function transferTokenTo(address _to, uint256 _tokenId) public
-    onlyForOwnerOrApproved(_msgSender(), _tokenId)
+    onlyForOwnerOrApproved(msg.sender, _tokenId)
     onlyIfTokenIdExists(_tokenId) {
         // Check if the token is on offer, cancel the offer
         if(tokensOfferedForSale[_tokenId].isForSale) {
@@ -224,7 +228,7 @@ contract CryptoFacesMarketPlace is CryptoFaces {
         }
 
         // Transfer Ownership of the token to _to address
-        safeTransferFrom(_msgSender(), _to, _tokenId);
+        CFContract.transferFromDirectly(msg.sender, _to, _tokenId);
 
         // TODO: check for the Bid
     }
@@ -238,7 +242,7 @@ contract CryptoFacesMarketPlace is CryptoFaces {
     * @param _tokenIds Token ID
     */
     function transferTokensTo(address _to, uint256[] memory _tokenIds) public
-    onlyForOwnerOrApprovedToBundleTokens(_msgSender(), _tokenIds)
+    onlyForOwnerOrApprovedToBundleTokens(msg.sender, _tokenIds)
     onlyIfBundleOfTokenIdsExists(_tokenIds) {
         // Check if the tokens are on offer, cancel the offer
         for(uint i; i <= _tokenIds.length; i++) {
@@ -249,7 +253,7 @@ contract CryptoFacesMarketPlace is CryptoFaces {
 
         // Transfer the Ownership of the tokens to _to address
         for(uint x; x<= _tokenIds.length; x++) {
-            safeTransferFrom(_msgSender(), _to, _tokenIds[x]);
+            CFContract.transferFromDirectly(msg.sender, _to, _tokenIds[x]);
         }
     }
 
@@ -260,10 +264,10 @@ contract CryptoFacesMarketPlace is CryptoFaces {
     * @param _tokenId Token ID
     */
     function tokenNoLongerForSale(uint256 _tokenId) public
-    onlyForOwnerOrApproved(_msgSender(), _tokenId)
+    onlyForOwnerOrApproved(msg.sender, _tokenId)
     onlyIfTokenIdExists(_tokenId) {
         // Deactivate the offer sale
-        tokensOfferedForSale[_tokenId] = Offer(false, _tokenId, _msgSender(), 0, address(0));
+        tokensOfferedForSale[_tokenId] = Offer(false, _tokenId, msg.sender, 0, address(0), address(0));
 
         // TODO: Burn the offer contract
 

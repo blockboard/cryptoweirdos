@@ -1,13 +1,19 @@
 pragma solidity ^0.5.12;
 
+//Source: http://solidity.readthedocs.io/en/v0.3.2/solidity-by-example.html#safe-remote-purchase
+
 // CryptoFaces
 import "./CryptoFaces.sol";
 
-//Source: http://solidity.readthedocs.io/en/v0.3.2/solidity-by-example.html#safe-remote-purchase
+// For safe maths operations
+import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
-contract Escrow is ERC721Full, CryptoFaces {
+contract Escrow {
 
-    address payable cfOwner = cryptoFacesOwnerAddress();
+    using SafeMath for uint256;
+
+    address payable CFOwner;
+    CryptoFaces CFContract;
 
     uint256 public tokenId;
     uint256 public tokenValue;
@@ -17,10 +23,12 @@ contract Escrow is ERC721Full, CryptoFaces {
     enum State { Created, Locked, Inactive }
     State public state;
 
-    constructor(uint256 _tokenId, uint256 _tokenValue) public {
-        seller = msg.sender;
+    constructor(CryptoFaces _CFContract, address payable _seller, uint256 _tokenId, uint256 _tokenValue) public {
+        seller = _seller;
         tokenId = _tokenId;
         tokenValue = _tokenValue;
+        CFContract = _CFContract;
+        CFOwner = CFContract.cryptoFacesOwnerAddress();
     }
 
     modifier condition(bool _condition) {
@@ -50,7 +58,7 @@ contract Escrow is ERC721Full, CryptoFaces {
     /// Abort the purchase and reclaim the ether.
     /// Can only be called by the seller before
     /// the contract is locked.
-    function abort() public
+    function _abort() internal
     onlySeller
     inState(State.Created) {
         emit Aborted();
@@ -61,19 +69,19 @@ contract Escrow is ERC721Full, CryptoFaces {
     /// Confirm the purchase as buyer.
     /// The ether will be locked until confirmReceived
     /// is called.
-    function confirmPurchase() public
+    function confirmPurchase() external
     inState(State.Created)
     condition(msg.value >= tokenValue) payable {
-        buyer = _msgSender();
+        buyer = msg.sender;
 
-        uint256 paymentValue = msg.value;
+        uint256 paymentValue = address(this).balance;
         uint256 ownerValue = paymentValue.div(10);
         uint256 sellerValue = paymentValue.sub(ownerValue);
 
-        cfOwner.transfer(ownerValue);
+        CFOwner.transfer(ownerValue);
         seller.transfer(sellerValue);
 
-        super._transferFrom(seller, _msgSender(), tokenId);
+        CFContract.transferFromDirectly(seller, msg.sender, tokenId);
 
         state = State.Inactive;
 
@@ -98,3 +106,4 @@ contract Escrow is ERC721Full, CryptoFaces {
         seller.transfer(address(this).balance);
     }*/
 }
+
