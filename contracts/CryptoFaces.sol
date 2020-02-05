@@ -251,7 +251,7 @@ contract CryptoFacesMarketPlace {
      * Properties *
      **************/
     CryptoFaces CFContract;
-    Escrow OfferEscrow;
+    //Escrow OfferEscrow;
 
     // Escrow Contracts
     address[] offerEscrowContracts;
@@ -261,7 +261,7 @@ contract CryptoFacesMarketPlace {
     mapping(uint256 => uint256) private tokenIdToValueInWei;
 
     // Map tokenId to Escrow
-    mapping(uint256 => Escrow) private tokenIdToEscrow;
+    //mapping(uint256 => Escrow) private tokenIdToEscrow;
 
     // Map tokenId to Escrow Address
     mapping(uint256 => address) private tokenIdToEscrowAddress;
@@ -325,11 +325,12 @@ contract CryptoFacesMarketPlace {
     );
 
     // Emitted on purchases from within this contract
-    event Purchase(
+    event TokenBought(
         uint256 indexed tokenId,
-        address indexed buyer,
-        uint256 indexed priceInWei
+        uint256 indexed tokenValueInWei,
+        address indexed toAddress
     );
+
 
     /*************
      * Modifiers *
@@ -351,6 +352,12 @@ contract CryptoFacesMarketPlace {
         _;
     }
 
+    modifier onlyIfTokenForSale(uint256 _tokenId) {
+        Offer memory offer = tokensOfferedForSale[_tokenId];
+        require(offer.isForSale);
+        _;
+    }
+
     modifier onlyIfBundleOfTokenIdsExists(uint256[] memory _tokenIds) {
         for(uint i; i <= _tokenIds.length; i++) {
             require(CFContract.exists(_tokenIds[i]), "CF: Token ID not found, not minted yet");
@@ -360,6 +367,16 @@ contract CryptoFacesMarketPlace {
 
     modifier notInActiveEscrow(uint256 _tokenId) {
         require(tokenIdToEscrowAddress[_tokenId] == address(0), "CF: This token is in an active Escrow, Please first deactivate the active Escrow contract");
+        _;
+    }
+
+    modifier notOwnerOfToken(uint256 _tokenId) {
+        require(CFContract.ownerOf(_tokenId) != msg.sender);
+        _;
+    }
+
+    modifier condition(bool _condition) {
+        require(_condition);
         _;
     }
 
@@ -388,15 +405,11 @@ contract CryptoFacesMarketPlace {
         // Create new Escrow for this offer
         Escrow tokenEscrowContract = new Escrow(CFContract, msg.sender, _tokenId, _tokenValueInWei);
 
-        // Map tokenId to it's Escrow
-        tokenIdToEscrow[_tokenId] = tokenEscrowContract;
-
         // Map tokenId to it's Escrow contract address
         tokenIdToEscrowAddress[_tokenId] = address(tokenEscrowContract);
 
         // Map tokenId to it's Offer
         tokensOfferedForSale[_tokenId] = Offer(true, _tokenId, msg.sender, _tokenValueInWei, address(0), address(tokenEscrowContract));
-        OfferEscrow = tokenEscrowContract;
 
         // Emit TokenOffered event
         emit TokenOffered(_tokenId, _tokenValueInWei, address(tokenEscrowContract));
@@ -426,7 +439,7 @@ contract CryptoFacesMarketPlace {
         tokensOfferedForSale[_tokenId] = Offer(true, _tokenId, msg.sender, _tokenValueInWei, _to, address(tokenEscrowContract));
 
         // Emit TokenOffered event
-        emit TokenOffered(_tokenId, _tokenValueInWei, address(tokenEscrowContract));
+        emit TokenOffered(_tokenId, _tokenValueInWei, tokenIdToEscrowAddress[_tokenId]);
     }
 
 
@@ -517,29 +530,49 @@ contract CryptoFacesMarketPlace {
     */
     function tokenNoLongerForSale(uint256 _tokenId) public
     onlyForOwnerOrApproved(msg.sender, _tokenId)
-    onlyIfTokenIdExists(_tokenId) {
+    onlyIfTokenIdExists(_tokenId)
+    onlyIfTokenForSale(_tokenId) {
         // Deactivate the offer sale
         tokensOfferedForSale[_tokenId] = Offer(false, _tokenId, msg.sender, 0, address(0), address(0));
 
-        // TODO: Burn the offer contract
+        // Pickup Escrow contract from it's address
+        Escrow escrowAddress = Escrow(tokenIdToEscrowAddress[_tokenId]);
+
+        address _seller = msg.sender;
+
+        // Execute Abort function
+        escrowAddress.abort(_seller);
 
         // Emit Token no longer for sale event
         emit TokenNoLongerForSale(_tokenId);
     }
 
-    function buyToken(uint256 _tokenId) public payable {
-        // Pickup Escrow contract holds tokenId offer
-        Escrow tokenEscrowOffer =  tokenIdToEscrow[_tokenId];
+    function buyToken(uint256 _tokenId) public
+    notOwnerOfToken(_tokenId)
+    condition(msg.value >= tokenIdToValueInWei[_tokenId]) payable {
 
-        address payable _buyer = msg.sender;
+        // Pickup Escrow contract holds tokenId offer
+        Escrow escrowAddress = Escrow(tokenIdToEscrowAddress[_tokenId]);
+
+        address _buyer = msg.sender;
+
+        address(uint160(tokenIdToEscrowAddress[_tokenId])).send(msg.value);
 
         // Execute Purchase function
-        tokenEscrowOffer.confirmPurchase(_buyer);
+        escrowAddress.confirmPurchase(_buyer);
+
+        // Emit successful Token Bought event
+        emit TokenBought(_tokenId, tokenIdToValueInWei[_tokenId], _buyer);
 
         // Add the purchased value in wei
         totalPurchasedValueInWei.add(tokenIdToValueInWei[_tokenId]);
-    }
 
+        // Change token mapping escrow to default
+        tokenIdToEscrowAddress[_tokenId] = address(0);
+
+        // Change token mapping offer to default
+        tokensOfferedForSale[_tokenId] = Offer(false, _tokenId, msg.sender, 0, address(0), address(0));
+    }
 
 
 
@@ -617,8 +650,8 @@ contract Escrow {
 
     uint256 public tokenId;
     uint256 public tokenValue;
-    address payable seller;
-    address payable buyer;
+    address public seller;
+    address public buyer;
 
     enum State { Created, Locked, Inactive }
     State public state;
@@ -642,8 +675,8 @@ contract Escrow {
         _;
     }
 
-    modifier onlySeller() {
-        require(msg.sender == seller);
+    modifier onlySeller(address _seller) {
+        require(_seller == seller);
         _;
     }
 
@@ -659,30 +692,32 @@ contract Escrow {
     /// Abort the purchase and reclaim the ether.
     /// Can only be called by the seller before
     /// the contract is locked.
-    function abort() public
-    onlySeller
+    function abort(address _seller) public
+    onlySeller(_seller)
     inState(State.Created) {
+        seller = _seller;
         emit Aborted();
         state = State.Inactive;
-        seller.transfer(address(this).balance);
+        selfdestruct(address(uint160(seller)));
+        //seller.transfer(address(this).balance);
     }
 
     /// Confirm the purchase as buyer.
     /// The ether will be locked until confirmReceived
     /// is called.
-    function confirmPurchase(address payable _buyer) public
-    inState(State.Created)
-    condition(msg.value >= tokenValue) payable {
-        buyer = _buyer;
+    function confirmPurchase(address _buyer) public
+    inState(State.Created) payable {
+
+        CFContract.transferFromDirectly(seller, _buyer, tokenId);
+
+        buyer = address(uint160(_buyer));
 
         uint256 paymentValue = address(this).balance;
-        uint256 ownerValue = paymentValue.div(10);
-        uint256 sellerValue = paymentValue.sub(ownerValue);
+        //uint256 ownerValue = paymentValue.div(10);
+        uint256 sellerValue = paymentValue;
 
-        CFOwner.transfer(ownerValue);
-        seller.transfer(sellerValue);
-
-        CFContract.transferFromDirectly(seller, msg.sender, tokenId);
+        //CFOwner.transfer(ownerValue);
+        address(uint160(seller)).transfer(sellerValue);
 
         state = State.Inactive;
 
@@ -707,4 +742,5 @@ contract Escrow {
         seller.transfer(address(this).balance);
     }*/
 }
+
 
