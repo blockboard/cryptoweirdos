@@ -48,8 +48,6 @@ Pausable {
     /**************
      * Properties *
      **************/
-    // Owner of the project
-    address payable cryptoFacesOwner;
 
     // Base URI link for Faces Hashes (URI)
     string internal tokenBaseURI = "https://ipfs.infura.io/ipfs/";
@@ -107,7 +105,7 @@ Pausable {
      * Constructor *
      ***************/
     constructor() public payable ERC721Full("CryptoFaces", "CF") {
-        cryptoFacesOwner = msg.sender;
+        //AccessControl(msg.sender);
     }
 
     /********************
@@ -164,11 +162,11 @@ Pausable {
         tokenURIExists[_tokenURI] = true;
         tokenURIs.push(_tokenURI);
         tokenIdToTokenDetails[tokenId] = TokenDetails({
-               tokenId: tokenId,
-               artistAccount: _msgSender(),
-               tokenURI: _tokenURI,
-               currentOwner: _to,
-               totalPurchases: 0
+            tokenId: tokenId,
+            artistAccount: _msgSender(),
+            tokenURI: _tokenURI,
+            currentOwner: _to,
+            totalPurchases: 0
             });
 
         tokenId = tokenId.add(1);
@@ -187,6 +185,7 @@ Pausable {
     function transferFromDirectly(address _from, address _to, uint256 _tokenId) public {
         super._transferFrom(_from, _to, _tokenId);
     }
+
     /***************
      * Token Query *
      ***************/
@@ -205,10 +204,10 @@ Pausable {
      * @param _owner address owning the tokens
      * @return uint256[] List of token IDs owned by the requested address
      */
-    function tokensOf(address _owner) public onlyIfCryptoFaces view returns (uint256[] memory _tokenIds) {
+    function tokensOf(address _owner) public onlyIfCryptoFacesArtists view returns (uint256[] memory _tokenIds) {
         require(_owner != address(0));
 
-        _tokenIds = super._tokensOfOwner(owner);
+        _tokenIds = super._tokensOfOwner(_owner);
 
         return _tokenIds;
     }
@@ -230,12 +229,23 @@ Pausable {
       * @dev Gets the address of CryptoFaces Owner
       * @return address
       */
-    function cryptoFacesOwnerAddress() public view returns (address payable) {
-        return cryptoFacesOwner;
+    function cryptoFacesOwnerAddress() public view returns (address) {
+        return super.whoIsOwner();
+    }
+
+    /**
+      * @dev Grand an address CF Artist Role
+      * @return address
+      */
+    function addArtistRoleToAddress(address _artist) public onlyIfCryptoFacesArtists {
+        super.addAddressToAccessControl(_artist, 1);
+        super.addMinter(_artist);
     }
 }
 
 contract CryptoFacesMarketPlace {
+
+    using SafeMath for uint256;
 
     /**************
      * Properties *
@@ -249,6 +259,9 @@ contract CryptoFacesMarketPlace {
 
     // Map tokenId with it's recent Price
     mapping(uint256 => uint256) private tokenIdToValueInWei;
+
+    // Map tokenId to Escrow
+    mapping(uint256 => Escrow) private tokenIdToEscrow;
 
     // Map tokenId to Escrow Address
     mapping(uint256 => address) private tokenIdToEscrowAddress;
@@ -286,7 +299,7 @@ contract CryptoFacesMarketPlace {
     mapping(uint256 => Bid) tokensBid;
 
     // Total wei been processed through the contract
-    uint256 public totalPurchaseValueInWei;
+    uint256 public totalPurchasedValueInWei;
 
     /**********
      * Events *
@@ -371,10 +384,16 @@ contract CryptoFacesMarketPlace {
     notInActiveEscrow(_tokenId) {
         // Map tokenId with it's Value
         tokenIdToValueInWei[_tokenId] = _tokenValueInWei;
+
+        // Create new Escrow for this offer
         Escrow tokenEscrowContract = new Escrow(CFContract, msg.sender, _tokenId, _tokenValueInWei);
+
+        // Map tokenId to it's Escrow
+        tokenIdToEscrow[_tokenId] = tokenEscrowContract;
 
         // Map tokenId to it's Escrow contract address
         tokenIdToEscrowAddress[_tokenId] = address(tokenEscrowContract);
+
         // Map tokenId to it's Offer
         tokensOfferedForSale[_tokenId] = Offer(true, _tokenId, msg.sender, _tokenValueInWei, address(0), address(tokenEscrowContract));
         OfferEscrow = tokenEscrowContract;
@@ -402,6 +421,7 @@ contract CryptoFacesMarketPlace {
 
         // Map tokenId to it's Escrow contract address
         tokenIdToEscrowAddress[_tokenId] = address(tokenEscrowContract);
+
         // Map tokenId to it's Offer
         tokensOfferedForSale[_tokenId] = Offer(true, _tokenId, msg.sender, _tokenValueInWei, _to, address(tokenEscrowContract));
 
@@ -507,6 +527,19 @@ contract CryptoFacesMarketPlace {
         emit TokenNoLongerForSale(_tokenId);
     }
 
+    function buyToken(uint256 _tokenId) public payable {
+        // Pickup Escrow contract holds tokenId offer
+        Escrow tokenEscrowOffer =  tokenIdToEscrow[_tokenId];
+
+        address payable _buyer = msg.sender;
+
+        // Execute Purchase function
+        tokenEscrowOffer.confirmPurchase(_buyer);
+
+        // Add the purchased value in wei
+        totalPurchasedValueInWei.add(tokenIdToValueInWei[_tokenId]);
+    }
+
 
 
 
@@ -595,7 +628,8 @@ contract Escrow {
         tokenId = _tokenId;
         tokenValue = _tokenValue;
         CFContract = _CFContract;
-        CFOwner = CFContract.cryptoFacesOwnerAddress();
+        address CFOwnerAddress = CFContract.cryptoFacesOwnerAddress();
+        CFOwner = address(uint160(CFOwnerAddress));
     }
 
     modifier condition(bool _condition) {
@@ -636,10 +670,10 @@ contract Escrow {
     /// Confirm the purchase as buyer.
     /// The ether will be locked until confirmReceived
     /// is called.
-    function confirmPurchase() public
+    function confirmPurchase(address payable _buyer) public
     inState(State.Created)
     condition(msg.value >= tokenValue) payable {
-        buyer = msg.sender;
+        buyer = _buyer;
 
         uint256 paymentValue = address(this).balance;
         uint256 ownerValue = paymentValue.div(10);
