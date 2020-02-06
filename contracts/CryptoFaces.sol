@@ -241,7 +241,7 @@ Pausable {
     }
 }
 
-contract CryptoFacesMarketPlace {
+contract CryptoFacesMarketPlace{
 
     using SafeMath for uint256;
 
@@ -337,7 +337,7 @@ contract CryptoFacesMarketPlace {
     }
 
     // For check if bundle of token existence
-    modifier onlyIfBundleTokenIdsExits(uint256 _tokenIds) {
+    modifier onlyIfBundleTokenIdsExists(uint256[] memory _tokenIds) {
         for(uint i = 0; i <= _tokenIds.length; i++) {
             require(CFContract.exists(_tokenIds[i]), "CF MarketPlace: Token ID not found, not minted yet");
         }
@@ -365,7 +365,7 @@ contract CryptoFacesMarketPlace {
 
     // For check that offer is for msg.sender
     modifier isOfferedTo(uint256 _tokenId) {
-        Offer tokenOffer = tokensOfferedForSale[_tokenId];
+        Offer memory tokenOffer = tokensOfferedForSale[_tokenId];
         address buyer = tokenOffer.onlySellTo;
         require(buyer != address(0) && buyer == msg.sender);
         _;
@@ -373,7 +373,7 @@ contract CryptoFacesMarketPlace {
 
     // For check that Bundle offer is for msg.sender
     modifier isBundleOfferedTo(uint256 _firstTokenId) {
-        BundleOffer _bundleOffer = firstTokenIdToBundleOffer[_firstTokenId];
+        BundleOffer memory _bundleOffer = firstTokenIdToBundleOffer[_firstTokenId];
         address buyer = _bundleOffer.onlySellTo;
         require(buyer != address(0) && buyer == msg.sender);
         _;
@@ -391,7 +391,8 @@ contract CryptoFacesMarketPlace {
     // Emitted on offerTokenForSale, and offerTokenForSaleTo
     event TokenOffered(
         uint256 indexed tokenId,
-        uint256 indexed valueInWei
+        uint256 indexed valueInWei,
+        address indexed escrowAddress
     );
 
     // Emitted on offerBundleOfTokensForSale
@@ -434,12 +435,11 @@ contract CryptoFacesMarketPlace {
      * Reverts if the token is already on an active Escrow contract
      * @param _tokenId Token ID
      * @param _tokenValueInWei Value assigned from the owner
-     * @returns success bool
      */
     function offerTokenForSale(uint256 _tokenId, uint256 _tokenValueInWei) public
     onlyForOwnerOrApproved(msg.sender, _tokenId)
     onlyIfTokenIdExists(_tokenId)
-    condition(_notInAnyActiveOffer(_tokenId)) returns (bool success) {
+    condition(_notInAnyActiveOffer(_tokenId)) {
         // Map tokenId with it's Value
         tokenIdToValueInWei[_tokenId] = _tokenValueInWei;
 
@@ -456,9 +456,7 @@ contract CryptoFacesMarketPlace {
         tokenIdToTokenStatus[_tokenId] = TokenStatus(true, false);
 
         // Emit TokenOffered event
-        emit TokenOffered(_tokenId, _tokenValueInWei);
-
-        return true;
+        emit TokenOffered(_tokenId, _tokenValueInWei, address(tokenEscrowContract));
     }
 
     /**
@@ -473,7 +471,6 @@ contract CryptoFacesMarketPlace {
     function offerTokenForSaleTo(address _to, uint256 _tokenId, uint256 _tokenValueInWei) public
     onlyForOwnerOrApproved(msg.sender, _tokenId)
     onlyIfTokenIdExists(_tokenId)
-    notInAnyActiveOffer(_tokenId)
     condition(_notInAnyActiveOffer(_tokenId)) {
         // Map tokenId with it's Value
         tokenIdToValueInWei[_tokenId] = _tokenValueInWei;
@@ -489,7 +486,7 @@ contract CryptoFacesMarketPlace {
         tokenIdToTokenStatus[_tokenId] = TokenStatus(true, false);
 
         // Emit TokenOffered event
-        emit TokenOffered(_tokenId, _tokenValueInWei);
+        emit TokenOffered(_tokenId, _tokenValueInWei, address(tokenEscrowContract));
     }
 
     /**
@@ -498,11 +495,11 @@ contract CryptoFacesMarketPlace {
      * Reverts if the token not exits before, on other words not minted yet
      * Reverts if the token is already on an active Escrow contract
      * @param _tokenIds Token ID
-     * @param _offerValueInWei Value assigned from the owner
+     * @param _bundleValueInWei Value assigned from the owner
      */
     function offerBundleOfTokensForSale(uint256[] memory _tokenIds, uint256 _bundleValueInWei) public
-    onlyForOwnerOrApprovedToBundleTokens(_msgSender(), _tokenIds)
-    onlyIfBundleOfTokenIdsExists(_tokenIds)
+    onlyForOwnerOrApprovedToBundleTokens(msg.sender, _tokenIds)
+    onlyIfBundleTokenIdsExists(_tokenIds)
     condition(_tokensNotInAnyActiveOffer(_tokenIds))
     onlyIfBundleOfTokensLargerThanOne(_tokenIds) {
 
@@ -523,7 +520,7 @@ contract CryptoFacesMarketPlace {
         firstTokenIdToBundleEscrowAddress[firstTokenId] = address(bundleTokensEscrowContract);
 
         // Map firstTokenId to it's BundleOffer
-        firstTokenIdToBundleOffer[firstTokenId] = new BundleOffer(true, _tokenIds, msg.sender, _bundleValueInWei, address(0));
+        firstTokenIdToBundleOffer[firstTokenId] = BundleOffer(true, _tokenIds, msg.sender, _bundleValueInWei, address(0));
 
         // Change token status in offer
         for(uint i; i <= _tokenIds.length; i++) {
@@ -541,11 +538,11 @@ contract CryptoFacesMarketPlace {
      * Reverts if the token is already on an active Escrow contract
      * @param _to address
      * @param _tokenIds uint256[] Token ID
-     * @param _offerValueInWei uint256 Value assigned from the owner
+     * @param _bundleValueInWei uint256 Value assigned from the owner
      */
     function offerBundleOfTokensForSaleTo(address _to, uint256[] memory _tokenIds, uint256 _bundleValueInWei) public
-    onlyForOwnerOrApprovedToBundleTokens(_msgSender(), _tokenIds)
-    onlyIfBundleOfTokenIdsExists(_tokenIds)
+    onlyForOwnerOrApprovedToBundleTokens(msg.sender, _tokenIds)
+    onlyIfBundleTokenIdsExists(_tokenIds)
     condition(_tokensNotInAnyActiveOffer(_tokenIds))
     onlyIfBundleOfTokensLargerThanOne(_tokenIds) {
 
@@ -566,7 +563,7 @@ contract CryptoFacesMarketPlace {
         firstTokenIdToBundleEscrowAddress[firstTokenId] = address(bundleTokensEscrowContract);
 
         // Map firstTokenId to it's BundleOffer
-        firstTokenIdToBundleOffer[firstTokenId] = new BundleOffer(true, _tokenIds, msg.sender, _bundleValueInWei, address(0));
+        firstTokenIdToBundleOffer[firstTokenId] = BundleOffer(true, _tokenIds, msg.sender, _bundleValueInWei, address(0));
 
         // Change token status in offer
         for(uint i; i <= _tokenIds.length; i++) {
@@ -585,12 +582,11 @@ contract CryptoFacesMarketPlace {
      * Reverts if the token is already on an active Escrow contract
      * @param _to Receiver Address
      * @param _tokenId Token ID
-     * @return bool
      */
     function transferTokenTo(address _to, uint256 _tokenId) public
     onlyForOwnerOrApproved(msg.sender, _tokenId)
     onlyIfTokenIdExists(_tokenId)
-    condition(_notInAnyActiveOffer(_tokenId)) returns (bool) {
+    condition(_notInAnyActiveOffer(_tokenId)) {
         // Check if the token is on offer, cancel the offer
         if(tokensOfferedForSale[_tokenId].isForSale) {
             tokenNoLongerForSale(_tokenId);
@@ -600,8 +596,6 @@ contract CryptoFacesMarketPlace {
         CFContract.transferFromDirectly(msg.sender, _to, _tokenId);
 
         // TODO: check for the Bid
-
-        return true;
     }
 
     /**
@@ -611,12 +605,11 @@ contract CryptoFacesMarketPlace {
     * Reverts if the token is already on an active Escrow contract
     * @param _to Receiver Address
     * @param _tokenIds Token ID
-    * @return bool
     */
     function transferBundleTokensTo(address _to, uint256[] memory _tokenIds) public
     onlyForOwnerOrApprovedToBundleTokens(msg.sender, _tokenIds)
-    onlyIfBundleOfTokenIdsExists(_tokenIds)
-    condition(_tokensNotInAnyActiveOffer(_tokenIds)) returns (bool) {
+    onlyIfBundleTokenIdsExists(_tokenIds)
+    condition(_tokensNotInAnyActiveOffer(_tokenIds)) {
         // Check if the tokens are on offer, cancel the offer
         for(uint i; i <= _tokenIds.length; i++) {
             if(tokensOfferedForSale[_tokenIds[i]].isForSale) {
@@ -630,8 +623,6 @@ contract CryptoFacesMarketPlace {
         }
 
         // TODO: check for the Bid
-
-        return true;
     }
 
     /**
@@ -642,23 +633,21 @@ contract CryptoFacesMarketPlace {
     * @param _tokenId Token ID
     */
     function purchasePublicOffer(uint256 _tokenId) public
-    whenNotPaused
-    condition(_notOwnerOfToken(_tokenId))
-    condition(msg.value >= tokenIdToValueInWei[_tokenId])
-    condition(_isInActiveOffer(_tokenId)) payable returns (bool success) {
+    payable returns (bool success) {
 
         // Check if this offer is for special address or not
-        Offer tokenOffer = tokensOfferedForSale[_tokenId];
-        address isSellTo = tokenOffer.isSellTo;
+        Offer memory tokenOffer = tokensOfferedForSale[_tokenId];
+        address isSellTo = tokenOffer.onlySellTo;
         require(isSellTo == address(0), 'CF MarketPlace: This offer is not a public offer');
 
-        // Pickup Escrow contract holds tokenId offer
-        Escrow escrowAddress = Escrow(tokenIdToEscrowAddress[_tokenId]);
-
+        address _tokenEscrowAddress = tokenIdToEscrowAddress[_tokenId];
         address _buyer = msg.sender;
 
         // Send buyer value to escrow contract
-        address(uint160(tokenIdToEscrowAddress[_tokenId])).send(msg.value);
+        address(uint160(_tokenEscrowAddress)).send(msg.value);
+
+        // Pickup Escrow contract holds tokenId offer
+        Escrow escrowAddress = Escrow(_tokenEscrowAddress);
 
         // Execute Purchase function
         escrowAddress.confirmPurchase(_buyer);
@@ -673,7 +662,7 @@ contract CryptoFacesMarketPlace {
         tokenIdToEscrowAddress[_tokenId] = address(0);
 
         // Change token mapping offer to default
-        tokenNoLongerForSale(_tokenId);
+        //tokenNoLongerForSale(_tokenId);
 
         return true;
     }
@@ -686,7 +675,6 @@ contract CryptoFacesMarketPlace {
     * @param _tokenId Token ID
     */
     function purchaseSpecialOffer(uint256 _tokenId) public
-    whenNotPaused
     condition(_notOwnerOfToken(_tokenId))
     isOfferedTo(_tokenId)
     condition(msg.value >= tokenIdToValueInWei[_tokenId])
@@ -723,18 +711,17 @@ contract CryptoFacesMarketPlace {
      * Reverts if the caller is the owner of the token and offer
      * Reverts if the offer is not a public offer
      * Reverts if msg.value is less than token value in wei
-     * @param _tokenId Token ID
+     * @param _tokenIds Token ID
      */
-    function purchasePublicBundleOffer(uint256[] _tokenIds) public
-    whenNotPaused
+    function purchasePublicBundleOffer(uint256[] memory _tokenIds) public
     condition(_notOwnerOfBundleTokens(_tokenIds))
     condition(msg.value >= _valueOfBundleOffer(_tokenIds[0]))
     condition(_tokensInAnyActiveBundleOffer(_tokenIds)) payable {
         // Check if the bundleOffer is for special address or not
         uint256 _firstTokenId = _tokenIds[0];
-        BundleOffer _bundleOffer = firstTokenIdToBundleOffer[_firstTokenId];
+        BundleOffer memory _bundleOffer = firstTokenIdToBundleOffer[_firstTokenId];
         uint256 _valueInWei = _bundleOffer.valueInWei;
-        address _isSellTo = _bundleOffer.isSellTo;
+        address _isSellTo = _bundleOffer.onlySellTo;
         require(_isSellTo == address(0), "CF MarketPlace: This offer is not a public offer");
 
         // Pickup Escrow contract holds tokenId offer
@@ -766,19 +753,18 @@ contract CryptoFacesMarketPlace {
      * Reverts if the caller is the owner of the token and offer
      * Reverts if the offer is not a public offer
      * Reverts if msg.value is less than token value in wei
-     * @param _tokenId Token ID
+     * @param _tokenIds Token ID
      */
-    function purchaseSpecialBundleOffer(uint256[] _tokenIds) public
-    whenNotPaused
+    function purchaseSpecialBundleOffer(uint256[] memory _tokenIds) public
     isBundleOfferedTo(_tokenIds[0])
     condition(_notOwnerOfBundleTokens(_tokenIds))
     condition(msg.value >= _valueOfBundleOffer(_tokenIds[0]))
     condition(_tokensInAnyActiveBundleOffer(_tokenIds)) payable {
         // Check if the bundleOffer is for special address or not
         uint256 _firstTokenId = _tokenIds[0];
-        BundleOffer _bundleOffer = firstTokenIdToBundleOffer[_firstTokenId];
+        BundleOffer memory _bundleOffer = firstTokenIdToBundleOffer[_firstTokenId];
         uint256 _valueInWei = _bundleOffer.valueInWei;
-        address _isSellTo = _bundleOffer.isSellTo;
+        address _isSellTo = _bundleOffer.onlySellTo;
         require(_isSellTo == address(0), "CF MarketPlace: This offer is not a public offer");
 
         // Pickup Escrow contract holds tokenId offer
@@ -810,7 +796,6 @@ contract CryptoFacesMarketPlace {
     * Reverts if the caller is not owner nor approved
     * Reverts if the token not exits before, on other words not minted yet
     * @param _tokenId Token ID
-    * @returns bool
     */
     function tokenNoLongerForSale(uint256 _tokenId) public
     onlyForOwnerOrApproved(msg.sender, _tokenId)
@@ -821,7 +806,7 @@ contract CryptoFacesMarketPlace {
         tokensOfferedForSale[_tokenId] = Offer(false, _tokenId, msg.sender, 0, address(0), address(0));
 
         // Change token status in offer
-        TokenStatus _tokenStatus = tokenIdToTokenStatus[_tokenId];
+        TokenStatus memory _tokenStatus = tokenIdToTokenStatus[_tokenId];
         _tokenStatus.isInCurrentOffer = false;
 
         // Pickup Escrow contract from it's address
@@ -836,12 +821,12 @@ contract CryptoFacesMarketPlace {
         emit TokenNoLongerForSale(_tokenId);
     }
 
-    function bundleTokensNoLongerForSale(uint256[] _tokenIds) public
+    function bundleTokensNoLongerForSale(uint256[] memory _tokenIds) public
     onlyForOwnerOrApprovedToBundleTokens(msg.sender, _tokenIds)
-    onlyIfBundleTokenIdsExits(_tokenIds)
+    onlyIfBundleTokenIdsExists(_tokenIds)
     onlyIfBundleTokensForSale(_tokenIds[0])
     condition(_tokensInAnyActiveBundleOffer(_tokenIds)) {
-        uint256[] _emptyList;
+        uint256[] memory _emptyList;
 
         // Deactivate the Bundle offer sale
         uint256 _firstTokenId = _tokenIds[0];
@@ -849,7 +834,7 @@ contract CryptoFacesMarketPlace {
 
         // Change token status in offer
         for(uint i; i <= _tokenIds.length; i++) {
-            TokenStatus _tokenStatus = tokenIdToTokenStatus[_tokenIds[i]];
+            TokenStatus memory _tokenStatus = tokenIdToTokenStatus[_tokenIds[i]];
             _tokenStatus.isInCurrentBundleOffer = false;
         }
 
@@ -873,7 +858,7 @@ contract CryptoFacesMarketPlace {
       * @return bool
       */
     function _isInActiveOffer(uint256 _tokenId) private returns (bool) {
-        TokenStatus _tokenStatus = tokenIdToTokenStatus[_tokenId];
+        TokenStatus memory _tokenStatus = tokenIdToTokenStatus[_tokenId];
         bool _isInCurrentOffer = _tokenStatus.isInCurrentOffer;
         return _isInCurrentOffer;
     }
@@ -883,7 +868,7 @@ contract CryptoFacesMarketPlace {
       * @return bool
       */
     function _isInActiveBundleOffer(uint256 _tokenId) private returns (bool) {
-        TokenStatus _tokenStatus = tokenIdToTokenStatus[_tokenId];
+        TokenStatus memory _tokenStatus = tokenIdToTokenStatus[_tokenId];
         bool _isInCurrentBundleOffer = _tokenStatus.isInCurrentBundleOffer;
         return _isInCurrentBundleOffer;
     }
@@ -891,44 +876,50 @@ contract CryptoFacesMarketPlace {
     /**
      * @dev Private Function for check if token is in not active in any offer
      */
-    function _notInAnyActiveOffer(uint256 _tokenId) private {
-        require(
-            !(_isInActiveOffer(_tokenId)) &&
-            !(_isInActiveBundleOffer(_tokenId))
-        );
+    function _notInAnyActiveOffer(uint256 _tokenId) private returns (bool) {
+        return !(_isInActiveOffer(_tokenId)) && !(_isInActiveBundleOffer(_tokenId));
     }
 
     /**
      * @dev Private Function for check if tokens are not in any Bundle Offer
      */
-    function _tokensNotInAnyActiveOffer(uint256[] _tokenIds) private {
+    function _tokensNotInAnyActiveOffer(uint256[] memory _tokenIds) private returns (bool) {
         for(uint i; i<= _tokenIds.length; i++) {
-            require(_notInAnyActiveOffer(_tokenIds[i]));
+            if(!_notInAnyActiveOffer(_tokenIds[i])) {
+                return false;
+            }
         }
+        return true;
     }
 
     /**
      * @dev Private Function for check if tokens are in any Bundle Offer
      */
-    function _tokensInAnyActiveBundleOffer(uint256[] _tokenIds) private {
+    function _tokensInAnyActiveBundleOffer(uint256[] memory _tokenIds) private returns (bool) {
         for(uint i; i <= _tokenIds[i]; i++) {
-            require(_isInActiveBundleOffer(_tokenIds[i]));
+            if(!_isInActiveBundleOffer(_tokenIds[i])) {
+                return false;
+            }
         }
+        return true;
     }
 
-    function _notOwnerOfToken(uint256 _tokenId) private {
-        require(CFContract.ownerOf(_tokenId) != msg.sender);
-        _;
+    function _notOwnerOfToken(uint256 _tokenId) private returns (bool) {
+        address _owner = CFContract.ownerOf(_tokenId);
+        return (_owner != msg.sender);
     }
 
-    function _notOwnerOfBundleTokens(uint256[] _tokenIds) private {
+    function _notOwnerOfBundleTokens(uint256[] memory _tokenIds) private returns (bool) {
         for(uint i; i <= _tokenIds[i]; i++) {
-            require(_notOwnerOfToken(_tokenIds[i]));
+            if(!_notOwnerOfToken(_tokenIds[i])) {
+                return false;
+            }
         }
+        return true;
     }
 
     function _valueOfBundleOffer(uint256 _firstTokenId) private returns (uint256) {
-        BundleOffer _bundleOffer = firstTokenIdToBundleOffer[_firstTokenId];
+        BundleOffer memory _bundleOffer = firstTokenIdToBundleOffer[_firstTokenId];
         return _bundleOffer.valueInWei;
     }
 
@@ -964,7 +955,7 @@ contract Escrow {
     /***************
      * Constructor *
      ***************/
-    constructor(CryptoFaces _CFContract, address _seller,address _buyer, uint256 _tokenId, uint256 _tokenValue) public {
+    constructor(CryptoFaces _CFContract, address _seller, address _buyer, uint256 _tokenId, uint256 _tokenValue) public {
         seller = _seller;
         buyer = _buyer;
         tokenId = _tokenId;
@@ -1032,19 +1023,19 @@ contract Escrow {
         buyer = address(uint160(_buyer));
 
         // Payment value stored within the contract, sent from the Market Place
-        uint256 paymentValue = address(this).balance;
+        //uint256 paymentValue = ;
 
         // Add 1% from the payment to CF Owner
-        uint256 ownerValue = paymentValue.mul(0.1);
+        //uint256 ownerValue = paymentValue.mul(1/10);
 
         // Add the rest to token owner (seller)
-        uint256 sellerValue = paymentValue.sub(ownerValue);
+        //uint256 sellerValue = paymentValue;
 
         // Transfer 1% of payment value to CF Owner
-        CFOwner.transfer(ownerValue);
+        //CFOwner.transfer(ownerValue);
 
         // Convert seller account to Payable
-        address(uint160(seller)).transfer(sellerValue);
+        address(uint160(seller)).transfer(address(this).balance);
 
         // Set state of the contract to Inactive contract
         state = State.Inactive;
@@ -1077,13 +1068,13 @@ contract Escrow {
         uint256 paymentValue = address(this).balance;
 
         // Add 1% from the payment to CF Owner
-        uint256 ownerValue = paymentValue.mul(0.1);
+        //uint256 ownerValue = paymentValue.mul(0.1);
 
         // Add the rest to token owner (seller)
-        uint256 sellerValue = paymentValue.sub(ownerValue);
+        uint256 sellerValue = paymentValue;
 
         // Transfer 1% of payment value to CF Owner
-        CFOwner.transfer(ownerValue);
+        //CFOwner.transfer(ownerValue);
 
         // Convert seller account to Payable
         address(uint160(seller)).transfer(sellerValue);
@@ -1123,7 +1114,7 @@ contract BundleEscrow {
     /***************
      * Constructor *
      ***************/
-    constructor(CryptoFaces _CFContract, address _seller, address _buyer, int256[] memory _tokenIds, uint256 _tokensValue) public {
+    constructor(CryptoFaces _CFContract, address _seller, address _buyer, uint256[] memory _tokenIds, uint256 _tokensValue) public {
         seller = _seller;
         buyer = _buyer;
         tokenIds = _tokenIds;
@@ -1196,13 +1187,13 @@ contract BundleEscrow {
         uint256 paymentValue = address(this).balance;
 
         // Add 1% from the payment to CF Owner
-        uint256 ownerValue = paymentValue.mul(0.1);
+        //uint256 ownerValue = paymentValue.mul(0.1);
 
         // Add the rest to token owner (seller)
-        uint256 sellerValue = paymentValue.sub(ownerValue);
+        uint256 sellerValue = paymentValue;
 
         // Transfer 1% of payment value to CF Owner
-        CFOwner.transfer(ownerValue);
+        //CFOwner.transfer(ownerValue);
 
         // Convert seller account to Payable
         address(uint160(seller)).transfer(sellerValue);
@@ -1240,13 +1231,13 @@ contract BundleEscrow {
         uint256 paymentValue = address(this).balance;
 
         // Add 1% from the payment to CF Owner
-        uint256 ownerValue = paymentValue.mul(0.1);
+        //uint256 ownerValue = paymentValue.mul(0.1);
 
         // Add the rest to token owner (seller)
-        uint256 sellerValue = paymentValue.sub(ownerValue);
+        uint256 sellerValue = paymentValue;
 
         // Transfer 1% of payment value to CF Owner
-        CFOwner.transfer(ownerValue);
+        //CFOwner.transfer(ownerValue);
 
         // Convert seller account to Payable
         address(uint160(seller)).transfer(sellerValue);
@@ -1261,5 +1252,3 @@ contract BundleEscrow {
         emit PurchaseConfirmed();
     }
 }
-
-
