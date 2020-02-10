@@ -32,11 +32,7 @@ import "openzeppelin-solidity/contracts/utils/Address.sol";
  * Creature - a contract for CF NFTs.
  */
 
-contract CryptoFaces is
-ERC721Full,
-ERC721MetadataMintable,
-AccessControl,
-Pausable {
+contract CryptoFaces is ERC721Full, ERC721MetadataMintable, AccessControl, Pausable {
 
     /*************
      * Libraries *
@@ -253,7 +249,6 @@ contract CryptoFacesMarketPlace{
     // For Each tokenStatus
     struct TokenStatus {
         bool isInCurrentOffer;
-        bool isInCurrentBundleOffer;
     }
 
     // For single token offering
@@ -264,15 +259,6 @@ contract CryptoFacesMarketPlace{
         uint256 valueInWei;
         address onlySellTo;     // specify to sell only to a specific person
         address offerEscrowAddress;
-    }
-
-    // For bundle of tokens offering
-    struct BundleOffer {
-        bool areForSale;
-        uint256[] tokenIds;
-        address seller;
-        uint256 valueInWei;
-        address onlySellTo;     // specify to sell only to a specific person
     }
 
     struct Bid {
@@ -329,24 +315,10 @@ contract CryptoFacesMarketPlace{
         _;
     }
 
-    modifier onlyIfBundleTokensForSale(uint256 _firstTokenId) {
-        BundleOffer memory _bundleOffer = firstTokenIdToBundleOffer[_firstTokenId];
-        require(_bundleOffer.areForSale);
-        _;
-    }
-
     // For check that offer is for msg.sender
     modifier isOfferedTo(uint256 _tokenId) {
         Offer memory tokenOffer = tokensOfferedForSale[_tokenId];
         address buyer = tokenOffer.onlySellTo;
-        require(buyer != address(0) && buyer == msg.sender);
-        _;
-    }
-
-    // For check that Bundle offer is for msg.sender
-    modifier isBundleOfferedTo(uint256 _firstTokenId) {
-        BundleOffer memory _bundleOffer = firstTokenIdToBundleOffer[_firstTokenId];
-        address buyer = _bundleOffer.onlySellTo;
         require(buyer != address(0) && buyer == msg.sender);
         _;
     }
@@ -372,21 +344,10 @@ contract CryptoFacesMarketPlace{
         uint256 indexed tokenId
     );
 
-    event BundleNoLongerForSale(
-        uint256 indexed firstTokenId
-    );
-
     // Emitted on purchases from within this contract
     event OfferBought(
         uint256 indexed tokenId,
         uint256 indexed offerValueInWei,
-        address indexed buyer
-    );
-
-    // Emitted on Bundle purchases from within this contract
-    event BundleOfferBought(
-        uint256 indexed firstTokenId,
-        uint256 indexed bundleValueInWei,
         address indexed buyer
     );
 
