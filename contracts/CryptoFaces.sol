@@ -608,6 +608,11 @@ contract Escrow {
     /*************
      * Modifiers *
      *************/
+    function() external payable {}
+
+    /*************
+     * Modifiers *
+     *************/
     modifier onlySeller(address _seller) {
         require(_seller == seller);
         _;
