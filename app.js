@@ -21,7 +21,7 @@ const app = express();
 app.use(bodyParser.json()); // application/json
 app.use(fileUploader());
 //app.use('/app', express.favicon(__dirname + '/public/favicon.ico'));
-//app.use(express.static(path.join(__dirname, 'client/public')));
+//app.use(express.static(path.join(__dirname, 'client-suspended/public')));
 
 // CORS Error
 app.use((req, res, next) => {
