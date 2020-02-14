@@ -1,11 +1,6 @@
 {
-<<<<<<< HEAD
-  "short_name": "CF",
-  "name": "Cryptofaces",
-=======
   "short_name": "React App",
   "name": "Create React App Sample",
->>>>>>> react-template/master
   "icons": [
     {
       "src": "favicon.ico",
@@ -13,11 +8,7 @@
       "type": "image/x-icon"
     }
   ],
-<<<<<<< HEAD
-  "start_url": ".",
-=======
   "start_url": "./index.html",
->>>>>>> react-template/master
   "display": "standalone",
   "theme_color": "#000000",
   "background_color": "#ffffff"

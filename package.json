@@ -9,7 +9,7 @@
     "build": "webpack",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint ./app.js",
-    "client": "npm start --prefix client-suspended",
+    "client": "npm start --prefix client",
     "server": "nodemon app.js",
     "dev": "concurrently \"npm run server\" \"npm run client\""
   },
