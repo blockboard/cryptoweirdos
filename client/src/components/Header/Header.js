@@ -21,6 +21,7 @@ const useStyles = makeStyles(styles);
 export default function Header(props) {
   const classes = useStyles();
   const [mobileOpen, setMobileOpen] = React.useState(false);
+
   React.useEffect(() => {
     if (props.changeColorOnScroll) {
       window.addEventListener("scroll", headerColorChange);
@@ -31,9 +32,11 @@ export default function Header(props) {
       }
     };
   });
+
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
+
   const headerColorChange = () => {
     const { color, changeColorOnScroll } = props;
     const windowsScrollTop = window.pageYOffset;
@@ -53,18 +56,25 @@ export default function Header(props) {
         .classList.remove(classes[changeColorOnScroll.color]);
     }
   };
+
   const { color, rightLinks, leftLinks, brand, fixed, absolute } = props;
+
   const appBarClasses = classNames({
     [classes.appBar]: true,
     [classes[color]]: color,
     [classes.absolute]: absolute,
     [classes.fixed]: fixed
   });
+
   const brandComponent = <Button className={classes.title}>{brand}</Button>;
+
   return (
     <AppBar className={appBarClasses}>
+
       <Toolbar className={classes.container}>
+
         {leftLinks !== undefined ? brandComponent : null}
+
         <div className={classes.flex}>
           {leftLinks !== undefined ? (
             <Hidden smDown implementation="css">
@@ -74,9 +84,11 @@ export default function Header(props) {
             brandComponent
           )}
         </div>
+
         <Hidden smDown implementation="css">
           {rightLinks}
         </Hidden>
+
         <Hidden mdUp>
           <IconButton
             color="inherit"
@@ -86,8 +98,11 @@ export default function Header(props) {
             <Menu />
           </IconButton>
         </Hidden>
+
       </Toolbar>
+
       <Hidden mdUp implementation="js">
+
         <Drawer
           variant="temporary"
           anchor={"right"}
@@ -97,12 +112,16 @@ export default function Header(props) {
           }}
           onClose={handleDrawerToggle}
         >
+
           <div className={classes.appResponsive}>
             {leftLinks}
             {rightLinks}
           </div>
+
         </Drawer>
+
       </Hidden>
+
     </AppBar>
   );
 }
