@@ -1,0 +1,64 @@
+import { container, title } from "assets/jss/material-kit-react.js";
+import { red } from '@material-ui/core/colors';
+
+import imagesStyles from "assets/jss/material-kit-react/imagesStyles.js";
+
+const latestFacesStyle = {
+    root: {
+        maxWidth: 345,
+        position: "relative"
+    },
+    section: {
+        padding: "70px 0",
+        textAlign: "center"
+    },
+    container,
+    space50: {
+        height: "50px",
+        display: "block"
+    },
+    title: {
+        ...title,
+        marginTop: "30px",
+        minHeight: "32px",
+        textDecoration: "none"
+    },
+    typo: {
+        paddingLeft: "25%",
+        marginBottom: "40px",
+        position: "relative",
+        width: "100%"
+    },
+    note: {
+        fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+        bottom: "10px",
+        color: "#c0c1c2",
+        display: "block",
+        fontWeight: "400",
+        fontSize: "13px",
+        lineHeight: "13px",
+        left: "0",
+        marginLeft: "20px",
+        position: "absolute",
+        width: "260px"
+    },
+    media: {
+        height: 320,
+    },
+    mediaContent:{
+        height: 50,
+    },
+    loveIcon: {
+        position: "absolute",
+        right: 5
+    },
+    marginLeft: {
+        marginLeft: "auto !important"
+    },
+    avatar: {
+        backgroundColor: red[500],
+    },
+    ...imagesStyles
+};
+
+export default latestFacesStyle;

@@ -70,11 +70,8 @@ export default function Header(props) {
 
   return (
     <AppBar className={appBarClasses}>
-
       <Toolbar className={classes.container}>
-
         {leftLinks !== undefined ? brandComponent : null}
-
         <div className={classes.flex}>
           {leftLinks !== undefined ? (
             <Hidden smDown implementation="css">
@@ -84,11 +81,9 @@ export default function Header(props) {
             brandComponent
           )}
         </div>
-
         <Hidden smDown implementation="css">
           {rightLinks}
         </Hidden>
-
         <Hidden mdUp>
           <IconButton
             color="inherit"
@@ -98,11 +93,8 @@ export default function Header(props) {
             <Menu />
           </IconButton>
         </Hidden>
-
       </Toolbar>
-
       <Hidden mdUp implementation="js">
-
         <Drawer
           variant="temporary"
           anchor={"right"}
@@ -112,16 +104,12 @@ export default function Header(props) {
           }}
           onClose={handleDrawerToggle}
         >
-
           <div className={classes.appResponsive}>
             {leftLinks}
             {rightLinks}
           </div>
-
         </Drawer>
-
       </Hidden>
-
     </AppBar>
   );
 }

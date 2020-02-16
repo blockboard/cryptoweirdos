@@ -4,8 +4,6 @@ import classNames from "classnames";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 
-// @material-ui/icons
-
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
@@ -16,9 +14,8 @@ import CardFooter from "components/Card/CardFooter.js";
 
 import styles from "assets/jss/material-kit-react/views/landingPageSections/teamStyle.js";
 
-import team1 from "assets/img/faces/avatar.jpg";
-import team2 from "assets/img/faces/christian.jpg";
-import team3 from "assets/img/faces/kendall.jpg";
+import team1 from "assets/img/faces/s+avatar.jpg";
+import team2 from "assets/img/faces/i+avatar.jpg";
 
 const useStyles = makeStyles(styles);
 
@@ -34,15 +31,15 @@ export default function TeamSection() {
       <h2 className={classes.title}>Here is our team</h2>
       <div>
         <GridContainer>
-          <GridItem xs={12} sm={12} md={4}>
+          <GridItem xs={14} sm={14} md={6}>
             <Card plain>
               <GridItem xs={12} sm={12} md={6} className={classes.itemGrid}>
                 <img src={team1} alt="..." className={imageClasses} />
               </GridItem>
               <h4 className={classes.cardTitle}>
-                Gigi Hadid
+                S+ Albert
                 <br />
-                <small className={classes.smallTitle}>Model</small>
+                <small className={classes.smallTitle}>Architect</small>
               </h4>
               <CardBody>
                 <p className={classes.description}>
@@ -54,38 +51,33 @@ export default function TeamSection() {
               </CardBody>
               <CardFooter className={classes.justifyCenter}>
                 <Button
-                  justIcon
+                  href="https://twitter.com/shadyalbert"
+                  target="_blank"
                   color="transparent"
                   className={classes.margin5}
                 >
                   <i className={classes.socials + " fab fa-twitter"} />
                 </Button>
                 <Button
-                  justIcon
-                  color="transparent"
-                  className={classes.margin5}
+                    href="https://www.linkedin.com/in/shadymichael/"
+                    target='_blank'
+                    color="transparent"
+                    className={classes.margin5}
                 >
-                  <i className={classes.socials + " fab fa-instagram"} />
-                </Button>
-                <Button
-                  justIcon
-                  color="transparent"
-                  className={classes.margin5}
-                >
-                  <i className={classes.socials + " fab fa-facebook"} />
+                  <i className={classes.socials + " fab fa-linkedin"} />
                 </Button>
               </CardFooter>
             </Card>
           </GridItem>
-          <GridItem xs={12} sm={12} md={4}>
+          <GridItem xs={14} sm={14} md={6}>
             <Card plain>
               <GridItem xs={12} sm={12} md={6} className={classes.itemGrid}>
                 <img src={team2} alt="..." className={imageClasses} />
               </GridItem>
               <h4 className={classes.cardTitle}>
-                Christian Louboutin
+                Iskander Andrews
                 <br />
-                <small className={classes.smallTitle}>Designer</small>
+                <small className={classes.smallTitle}>Software Engineer</small>
               </h4>
               <CardBody>
                 <p className={classes.description}>
@@ -97,14 +89,16 @@ export default function TeamSection() {
               </CardBody>
               <CardFooter className={classes.justifyCenter}>
                 <Button
-                  justIcon
+                  href="https://twitter.com/IskanderAndrews"
+                  target="_blank"
                   color="transparent"
                   className={classes.margin5}
                 >
                   <i className={classes.socials + " fab fa-twitter"} />
                 </Button>
                 <Button
-                  justIcon
+                  href="https://www.linkedin.com/in/iskander-andrews-99638313a/"
+                  target="_blank"
                   color="transparent"
                   className={classes.margin5}
                 >
@@ -113,7 +107,7 @@ export default function TeamSection() {
               </CardFooter>
             </Card>
           </GridItem>
-          <GridItem xs={12} sm={12} md={4}>
+          {/*<GridItem xs={12} sm={12} md={4}>
             <Card plain>
               <GridItem xs={12} sm={12} md={6} className={classes.itemGrid}>
                 <img src={team3} alt="..." className={imageClasses} />
@@ -155,7 +149,7 @@ export default function TeamSection() {
                 </Button>
               </CardFooter>
             </Card>
-          </GridItem>
+          </GridItem>*/}
         </GridContainer>
       </div>
     </div>
