@@ -14,6 +14,8 @@ import GridItem from "components/Grid/GridItem.js";
 import Button from "components/CustomButtons/Button.js";
 import HeaderLinks from "components/Header/HeaderLinks.js";
 import Parallax from "components/Parallax/Parallax.js";
+import MainHeader from "../../components/MainComponents/MainHeader";
+import MainContainer from "../../components/MainComponents/MainContainer";
 
 import styles from "assets/jss/material-kit-react/views/landingPage.js";
 
@@ -31,23 +33,11 @@ const useStyles = makeStyles(styles);
 
 export default function LandingPage(props) {
   const classes = useStyles();
-  const { ...rest } = props;
   return (
     <div>
-      <Header
-        color="transparent"
-        routes={dashboardRoutes}
-        brand="CRYPTOFACES"
-        rightLinks={<HeaderLinks />}
-        fixed
-        changeColorOnScroll={{
-          height: 100,
-          color: "white"
-        }}
-        {...rest}
-      />
-      <Parallax filter image={image1}>
-        <div className={classes.container}>
+        <MainHeader />
+        <Parallax filter image={image1}>
+            <div className={classes.container}>
           <GridContainer>
             <GridItem xs={12} sm={12} md={6}>
               <h1 className={classes.title}>A Little About CryptoFaces</h1>
@@ -68,15 +58,13 @@ export default function LandingPage(props) {
             </GridItem>
           </GridContainer>
         </div>
-      </Parallax>
-      <div className={classNames(classes.main, classes.mainRaised)}>
-        <div className={classes.container}>
-          <LatestFaces />
-          <ProductSection />
-          <TeamSection />
-          <WorkSection />
-        </div>
-      </div>
+        </Parallax>
+        <MainContainer>
+            <LatestFaces />
+            <ProductSection />
+            <TeamSection />
+            <WorkSection />
+        </MainContainer>
       <Footer />
     </div>
   );

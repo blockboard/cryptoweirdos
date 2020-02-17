@@ -4,10 +4,6 @@ import { red } from '@material-ui/core/colors';
 import imagesStyles from "assets/jss/material-kit-react/imagesStyles.js";
 
 const latestFacesStyle = {
-    root: {
-        maxWidth: 345,
-        position: "relative"
-    },
     section: {
         padding: "70px 0",
         textAlign: "center"
@@ -42,21 +38,8 @@ const latestFacesStyle = {
         position: "absolute",
         width: "260px"
     },
-    media: {
-        height: 320,
-    },
-    mediaContent:{
-        height: 50,
-    },
-    loveIcon: {
-        position: "absolute",
-        right: 5
-    },
     marginLeft: {
         marginLeft: "auto !important"
-    },
-    avatar: {
-        backgroundColor: red[500],
     },
     ...imagesStyles
 };
