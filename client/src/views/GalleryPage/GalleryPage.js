@@ -15,14 +15,12 @@ import GridItem from "components/Grid/GridItem.js";
 import NavPills from "components/NavPills/NavPills.js";
 import Parallax from "components/Parallax/Parallax.js";
 import MainHeader from "../../components/MainComponents/MainHeader";
-
-
-import image from "assets/img/faces/cf3.jpeg";
 import MainContainer from "../../components/MainComponents/MainContainer";
 import ImageCard from "../../components/ImageCard/ImageCard";
 import PaginationControlled from "../../components/PaginationControlled/PaginationControlled";
 
 // Images
+import background from "assets/img/faces/cf3.jpeg";
 import image1 from "assets/img/faces/cf1.jpeg";
 import image2 from "assets/img/faces/cf2.jpeg";
 import image3 from "assets/img/faces/cf3.jpeg";
@@ -30,6 +28,7 @@ import image4 from "assets/img/faces/cf4.jpeg";
 
 import team1 from "assets/img/faces/s+avatar.jpg";
 
+// Styles
 import styles from "assets/jss/material-kit-react/views/galleryPage.js";
 
 const useStyles = makeStyles(styles);
@@ -45,7 +44,7 @@ export default function GalleryPage(props) {
     return (
         <div>
             <MainHeader/>
-            <Parallax small filter image={image} />
+            <Parallax small filter image={background} />
             <MainContainer>
                 <div className={classes.section}>
                     <GridContainer justify="center" spacing={2}>

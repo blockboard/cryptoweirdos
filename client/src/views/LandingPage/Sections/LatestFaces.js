@@ -15,7 +15,14 @@ import image1 from "assets/img/faces/cf1.jpeg";
 import image2 from "assets/img/faces/cf2.jpeg";
 import image3 from "assets/img/faces/cf3.jpeg";
 import image4 from "assets/img/faces/cf4.jpeg";
-import team1 from "assets/img/faces/s+avatar.jpg";
+import image5 from "assets/img/faces/cf5.jpeg";
+import image6 from "assets/img/faces/cf6.jpeg";
+import image7 from "assets/img/faces/cf7.jpeg";
+import image8 from "assets/img/faces/cf8.jpeg";
+
+
+import team1 from "assets/img/s+.jpeg";
+import team2 from "assets/img/faces/i+avatar.jpg";
 
 // Style
 import styles from "assets/jss/material-kit-react/views/landingPageSections/latestFacesStyles.js";
@@ -29,7 +36,7 @@ export default function LatestFaces(props) {
             <div className={classes.section}>
                 <GridContainer justify="center">
                     <GridItem xs={12} sm={12} md={8}>
-                        <h2 className={classes.title}>Latest Cryptofaces</h2>
+                        <h2 className={classes.title}>Latest CryptoFaces</h2>
                     </GridItem>
                 </GridContainer>
             </div>
@@ -49,8 +56,8 @@ export default function LatestFaces(props) {
                         <ImageCard
                             faceImage={image2}
                             faceName="Rob"
-                            ownerImage={team1}
-                            ownerName="Albert"
+                            ownerImage={team2}
+                            ownerName="Alex"
                             faceDate="September 14, 2020"
                             imagePrice="0.1"
                         />
@@ -59,8 +66,8 @@ export default function LatestFaces(props) {
                         <ImageCard
                             faceImage={image3}
                             faceName="Lizard"
-                            ownerImage={team1}
-                            ownerName="Albert"
+                            ownerImage={team2}
+                            ownerName="Alex"
                             faceDate="September 14, 2020"
                             imagePrice="0.6"
                         />
@@ -71,6 +78,46 @@ export default function LatestFaces(props) {
                             faceName="Lizard"
                             ownerImage={team1}
                             ownerName="Albert"
+                            faceDate="September 14, 2020"
+                            imagePrice="0.5"
+                        />
+                    </GridItem>
+                    <GridItem xs={12} sm={6} md={3} lg={3} xl={3}>
+                        <ImageCard
+                            faceImage={image5}
+                            faceName="Lizard"
+                            ownerImage={team2}
+                            ownerName="Alex"
+                            faceDate="September 14, 2020"
+                            imagePrice="0.5"
+                        />
+                    </GridItem>
+                    <GridItem xs={12} sm={6} md={3} lg={3} xl={3}>
+                        <ImageCard
+                            faceImage={image6}
+                            faceName="Lizard"
+                            ownerImage={team1}
+                            ownerName="Albert"
+                            faceDate="September 14, 2020"
+                            imagePrice="0.5"
+                        />
+                    </GridItem>
+                    <GridItem xs={12} sm={6} md={3} lg={3} xl={3}>
+                        <ImageCard
+                            faceImage={image7}
+                            faceName="Lizard"
+                            ownerImage={team1}
+                            ownerName="Albert"
+                            faceDate="September 14, 2020"
+                            imagePrice="0.5"
+                        />
+                    </GridItem>
+                    <GridItem xs={12} sm={6} md={3} lg={3} xl={3}>
+                        <ImageCard
+                            faceImage={image8}
+                            faceName="Lizard"
+                            ownerImage={team2}
+                            ownerName="Alex"
                             faceDate="September 14, 2020"
                             imagePrice="0.5"
                         />

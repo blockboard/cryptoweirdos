@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 // nodejs library to set properties for components
 import PropTypes from "prop-types";
 // nodejs library that concatenates classes
@@ -15,6 +15,9 @@ const useStyles = makeStyles(styles);
 
 export default function CustomInput(props) {
   const classes = useStyles();
+
+  const [inputData, setInputData] = useState('null');
+
   const {
     formControlProps,
     labelText,
@@ -24,7 +27,8 @@ export default function CustomInput(props) {
     error,
     white,
     inputRootCustomClasses,
-    success
+    success,
+    callbackFromParent
   } = props;
 
   const labelClasses = classNames({
@@ -72,6 +76,10 @@ export default function CustomInput(props) {
           underline: underlineClasses
         }}
         id={id}
+        onChange={(event, value) => {
+          setInputData(event.target.value);
+          callbackFromParent(inputData);
+        }}
         {...inputProps}
       />
     </FormControl>

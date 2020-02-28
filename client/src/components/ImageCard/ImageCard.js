@@ -1,21 +1,27 @@
 import React from "react";
+
 // nodejs library that concatenates classes
 import classNames from "classnames";
+
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
-
+import Card from "@material-ui/core/Card";
+import CardHeader from "@material-ui/core/CardHeader";
+import CardActions from "@material-ui/core/CardActions";
 import CardActionArea from "@material-ui/core/CardActionArea";
 import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
-import CardHeader from "@material-ui/core/CardHeader";
 import Avatar from "@material-ui/core/Avatar";
-import CardActions from "@material-ui/core/CardActions";
 import IconButton from "@material-ui/core/IconButton";
-import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
-import Card from "@material-ui/core/Card";
 
-import styles from "../../assets/jss/material-kit-react/components/imageCardStyle";
+// @material-ui/icons
+import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
+
+//Core components
+
+// Styles
+import styles from "assets/jss/material-kit-react/components/imageCardStyle";
 
 const useStyles = makeStyles(styles);
 

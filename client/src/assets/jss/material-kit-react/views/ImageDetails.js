@@ -2,11 +2,39 @@ import { container, title } from "assets/jss/material-kit-react.js";
 
 import imagesStyle from "assets/jss/material-kit-react/imagesStyles.js";
 
-const gallaryPageStyle = {
+const imageDetailsPageStyle = {
     container,
     section: {
         padding: "70px 0",
         textAlign: "left"
+    },
+    root: {
+        maxWidth: 600,
+        position: "relative"
+    },
+    media: {
+        height: 600,
+        width: 600
+    },
+    btn: {
+        backgroundColor: "transparent",
+        color: "black",
+        position: "relative",
+        //padding: "14px 200px",
+        width: "100%",
+        fontWeight: "400",
+        fontSize: "12px",
+        textTransform: "uppercase",
+        border: "2px solid #555555",
+        //borderRadius: "px",
+        lineHeight: "20px",
+        textDecoration: "none",
+        margin: "0px",
+        display: "inline-flex",
+        "&:hover,&:focus": {
+            color: "black",
+            background: "rgba(200, 200, 200, 0.2)"
+        },
     },
     profile: {
         textAlign: "center",
@@ -63,4 +91,4 @@ const gallaryPageStyle = {
     }
 };
 
-export default gallaryPageStyle;
+export default imageDetailsPageStyle;

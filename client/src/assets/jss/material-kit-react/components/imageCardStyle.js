@@ -6,7 +6,8 @@ import imagesStyles from "assets/jss/material-kit-react/imagesStyles.js";
 const imageCardStyle = {
     root: {
         maxWidth: 345,
-        position: "relative"
+        position: "center",
+        textAlign: "center"
     },
     media: {
         height: 320,

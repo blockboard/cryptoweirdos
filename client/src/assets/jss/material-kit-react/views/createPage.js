@@ -2,11 +2,21 @@ import { container, title } from "assets/jss/material-kit-react.js";
 
 import imagesStyle from "assets/jss/material-kit-react/imagesStyles.js";
 
-const gallaryPageStyle = {
+const createPageStyle = {
     container,
+    root: {
+        maxWidth: 345,
+        position: "relative"
+    },
+    media: {
+        height: 320,
+    },
+    mediaContent:{
+        height: 50,
+    },
     section: {
         padding: "70px 0",
-        textAlign: "left"
+        textAlign: "center"
     },
     profile: {
         textAlign: "center",
@@ -63,4 +73,4 @@ const gallaryPageStyle = {
     }
 };
 
-export default gallaryPageStyle;
+export default createPageStyle;

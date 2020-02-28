@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, Component } from "react";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import InputAdornment from "@material-ui/core/InputAdornment";
@@ -22,25 +22,92 @@ import CustomInput from "components/CustomInput/CustomInput.js";
 import styles from "assets/jss/material-kit-react/views/loginPage.js";
 
 import image from "assets/img/bg7.jpg";
+import MainHeader from "../../../components/MainComponents/MainHeader";
 
 const useStyles = makeStyles(styles);
 
-export default function LoginPage(props) {
-  const [cardAnimaton, setCardAnimation] = React.useState("cardHidden");
+/*class LoginPage extends Component {
+    state = {
+        signupForm: {
+            name: {
+                value: '',
+                valid: false,
+                touched: false,
+                validators: [required]
+            },
+            email: {
+                value: '',
+                valid: false,
+                touched: false,
+                validators: [required, email]
+            },
+            password: {
+                value: '',
+                valid: false,
+                touched: false,
+                validators: [required, length({ min: 5 })]
+            },
+            formIsValid: false
+        }
+    };
+}*/
+
+
+export default function SignUpPage(props) {
+  const [cardAnimaton, setCardAnimation] = useState("cardHidden");
+  const [username, setUsername] = useState("null");
+  const [email, setEmail] = useState("null");
+  const [password, setPassword] = useState("null");
+
   setTimeout(function() {
     setCardAnimation("");
   }, 700);
+
   const classes = useStyles();
   const { ...rest } = props;
+
+  const signupHandler = (event, authData) => {
+      // TODO: solve auto detection issue
+    console.log(
+       `Username: ${username} \n
+        Email: ${email} \n
+        Password: ${password}`
+    );
+    event.preventDefault();
+    fetch('http://localhost:5000/auth/signin', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+          username: username,
+          email: email,
+          password: password
+      })
+    })
+        .then(res => {
+          if (res.status === 422) {
+            throw new Error(
+              "Validation failed. Make sure the email address isn't used yet!"
+            );
+          }
+          if (res.status !== 200 && res.status !== 201) {
+            console.log('Error!');
+            throw new Error('Creating a user failed!');
+          }
+          return res.json();
+        })
+        .then(resData => {
+          console.log(resData);
+        })
+        .catch(err => {
+          console.log(err);
+        })
+  };
+
   return (
     <div>
-      <Header
-        absolute
-        color="transparent"
-        brand="Material Kit React"
-        rightLinks={<HeaderLinks />}
-        {...rest}
-      />
+      <MainHeader/>
       <div
         className={classes.pageHeader}
         style={{
@@ -55,7 +122,7 @@ export default function LoginPage(props) {
               <Card className={classes[cardAnimaton]}>
                 <form className={classes.form}>
                   <CardHeader color="primary" className={classes.cardHeader}>
-                    <h4>Login</h4>
+                    <h4>Sign Up</h4>
                     <div className={classes.socialLine}>
                       <Button
                         justIcon
@@ -89,8 +156,8 @@ export default function LoginPage(props) {
                   <p className={classes.divider}>Or Be Classical</p>
                   <CardBody>
                     <CustomInput
-                      labelText="First Name..."
-                      id="first"
+                      labelText="Username"
+                      id="username"
                       formControlProps={{
                         fullWidth: true
                       }}
@@ -102,6 +169,9 @@ export default function LoginPage(props) {
                           </InputAdornment>
                         )
                       }}
+                      callbackFromParent={(username) => {
+                          setUsername(username);
+                      }}
                     />
                     <CustomInput
                       labelText="Email..."
@@ -112,15 +182,18 @@ export default function LoginPage(props) {
                       inputProps={{
                         type: "email",
                         endAdornment: (
-                          <InputAdornment position="end">
+                          <InputAdornment makeStylesposition="end">
                             <Email className={classes.inputIconsColor} />
                           </InputAdornment>
                         )
                       }}
+                      callbackFromParent={(email) => {
+                          setEmail(email);
+                      }}
                     />
                     <CustomInput
                       labelText="Password"
-                      id="pass"
+                      id="password"
                       formControlProps={{
                         fullWidth: true
                       }}
@@ -135,10 +208,17 @@ export default function LoginPage(props) {
                         ),
                         autoComplete: "off"
                       }}
+                      callbackFromParent={(password) => {
+                          setPassword(password);
+                      }}
                     />
                   </CardBody>
                   <CardFooter className={classes.cardFooter}>
-                    <Button simple color="primary" size="lg">
+                    <Button
+                        simple
+                        color="primary"
+                        size="lg"
+                        onClick={signupHandler}>
                       Get started
                     </Button>
                   </CardFooter>

@@ -1,5 +1,7 @@
 /*eslint-disable*/
 import React from "react";
+
+
 import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
 // react components for routing our app without refresh
@@ -24,6 +26,11 @@ const useStyles = makeStyles(styles);
 
 export default function HeaderLinks(props) {
   const classes = useStyles();
+
+  const handleClick = () => {
+      const publicAddress = web3.eth.coinbase;
+  };
+
   return (
     <List className={classes.list}>
         <listItem className={classes.listItem}>
@@ -58,7 +65,17 @@ export default function HeaderLinks(props) {
 
         <listItem className={classes.listItem}>
             <Button
-                href={"/"}
+                href={"/create"}
+                color="transparent"
+                round
+                className={classes.navLink}>
+                Create
+            </Button>
+        </listItem>
+
+        <listItem className={classes.listItem}>
+            <Button
+                href={"/signin"}
                 color="transparent"
                 round
                 className={classes.signLink}>
