@@ -128,17 +128,27 @@ const headerLinksStyle = theme => ({
     fontSize: "20px !important",
     marginRight: "4px"
   },
-  dropdownLink: {
+  linkColor: {
     "&,&:hover,&:focus": {
       color: "inherit",
       textDecoration: "none",
       display: "block",
-      padding: "10px 20px"
     }
   },
   ...tooltip,
   marginRight5: {
     marginRight: "5px"
+  },
+  img: {
+    width: "50px",
+    height: "50px",
+    borderRadius: "60%"
+  },
+  imageDropdownButton: {
+    padding: "0px",
+    top: "4px",
+    borderRadius: "50%",
+    marginLeft: "5px"
   }
 });
 

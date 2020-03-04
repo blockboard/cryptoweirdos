@@ -10,13 +10,11 @@ import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import Card from "@material-ui/core/Card";
-import CardHeader from "@material-ui/core/CardHeader";
-import Avatar from "@material-ui/core/Avatar";
-import CardActions from "@material-ui/core/CardActions";
-import IconButton from "@material-ui/core/IconButton";
-import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
 
 // @material-ui/icons
+import Camera from "@material-ui/icons/Camera";
+import Palette from "@material-ui/icons/Palette";
+import Favorite from "@material-ui/icons/Favorite";
 
 // core components
 import Footer from "components/Footer/Footer.js";
@@ -40,6 +38,11 @@ import team1 from "assets/img/faces/s+avatar.jpg";
 
 // Styles
 import styles from "assets/jss/material-kit-react/views/createPage.js";
+import CardHeader from "@material-ui/core/CardHeader";
+import Avatar from "@material-ui/core/Avatar";
+import CardActions from "@material-ui/core/CardActions";
+import IconButton from "@material-ui/core/IconButton";
+import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
 
 const useStyles = makeStyles(styles);
 
@@ -99,3 +102,5 @@ export default function CreatePage(props) {
         </div>
     );
 }
+
+

@@ -68,7 +68,6 @@ const signupPageStyle = {
     fontSize: "20px"
   },
   divider: {
-    marginTop: "30px",
     marginBottom: "0px",
     textAlign: "center"
   },
@@ -78,13 +77,42 @@ const signupPageStyle = {
     borderRadius: "6px",
     justifyContent: "center !important"
   },
+  signLink: {
+    color: "inherit",
+    position: "relative",
+    padding: "0.9375rem",
+    fontWeight: "500",
+    fontSize: "13px",
+    width: "100%",
+    textTransform: "uppercase",
+    border: "2px solid #555555",
+    //borderRadius: "px",
+    lineHeight: "20px",
+    textDecoration: "none",
+    margin: "0px",
+    display: "inline-flex",
+    "&:hover,&:focus": {
+      color: "inherit",
+      background: "rgba(200, 200, 200, 0.2)"
+    },
+  },
   socialLine: {
     marginTop: "1rem",
     textAlign: "center",
     padding: "0"
   },
+  signInBtn:{
+    width: "100%",
+    fontSize: "13px",
+  },
   inputIconsColor: {
     color: "#495057"
+  },
+  imageIcon: {
+    height: '100%',
+  },
+  iconRoot: {
+    textAlign: 'center'
   }
 };
 

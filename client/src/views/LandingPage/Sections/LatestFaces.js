@@ -36,12 +36,13 @@ export default function LatestFaces(props) {
             <div className={classes.section}>
                 <GridContainer justify="center">
                     <GridItem xs={12} sm={12} md={8}>
-                        <h2 className={classes.title}>Latest CryptoFaces</h2>
+                        <h2 className={classes.title}>Crypto's many faces. Find your Weirdo. All art pieces are unique.
+                        </h2>
                     </GridItem>
                 </GridContainer>
             </div>
             <div className={classes.container}>
-                <GridContainer justify="center" spacing={2}>
+                <GridContainer justify="center" spacing={1}>
                     <GridItem xs={12} sm={6} md={3} lg={3} xl={3}>
                         <ImageCard
                             faceImage={image1}

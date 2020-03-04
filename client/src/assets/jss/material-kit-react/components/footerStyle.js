@@ -54,6 +54,19 @@ const footerStyle = {
     height: "18px",
     position: "relative",
     top: "3px"
-  }
+  },
+  linkColor: {
+    "&,&:hover,&:focus": {
+      color: "inherit",
+      padding: "0.9375rem",
+      fontWeight: "500",
+      fontSize: "12px",
+      textTransform: "uppercase",
+      borderRadius: "3px",
+      textDecoration: "none",
+      position: "relative",
+      display: "block"
+    }
+  },
 };
 export default footerStyle;

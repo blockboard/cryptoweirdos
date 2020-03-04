@@ -1,9 +1,15 @@
 /*eslint-disable*/
 import React from "react";
+
+// reactjs library
+import {Link} from "react-router-dom";
+
 // nodejs library to set properties for components
 import PropTypes from "prop-types";
+
 // nodejs library that concatenates classes
 import classNames from "classnames";
+
 // material-ui core components
 import { List, ListItem } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
@@ -50,13 +56,9 @@ export default function Footer(props) {
               </a>
             </ListItem>
             <ListItem className={classes.inlineBlock}>
-              <a
-                href="http://blog.creative-tim.com/?ref=mkr-footer"
-                className={classes.block}
-                target="_blank"
-              >
+              <Link to={"/blog"} className={classes.linkColor}>
                 Blog
-              </a>
+              </Link>
             </ListItem>
             <ListItem className={classes.inlineBlock}>
               <a

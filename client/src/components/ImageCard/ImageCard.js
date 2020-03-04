@@ -23,44 +23,48 @@ import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
 // Styles
 import styles from "assets/jss/material-kit-react/components/imageCardStyle";
 
+import {Link} from "react-router-dom";
+
 const useStyles = makeStyles(styles);
 
 export default function ImageCard(props) {
-    const classes = useStyles();
-    return (
-        <div>
-            <Card className={classes.root}>
-                <CardActionArea>
-                    <CardMedia
-                        className={classes.media}
-                        component="img"
-                        image={props.faceImage}
-                        title="Contemplative Reptile"
-                    />
-                    <CardContent className={classes.mediaContent}>
-                        <Typography gutterBottom variant="h5" component="h2">
-                            {props.faceName}
-                        </Typography>
-                    </CardContent>
-                </CardActionArea>
-                <CardHeader
-                    className={classes.mediaContent}
-                    avatar={
-                        <Avatar aria-label="recipe" className={classes.avatar}>
-                            <img src={props.ownerImage} alt="..."/>
-                        </Avatar>
-                    }
-                    title={props.ownerName}
-                    subheader={props.faceDate}
-                />
-                <CardActions>
-                    <h5>{props.imagePrice} ETH</h5>
-                    <IconButton aria-label="add to favorites" className={classes.loveIcon}>
-                        <FavoriteBorderIcon/>
-                        <h6>5</h6>
-                    </IconButton>
-                </CardActions>
-            </Card>
-        </div>
-    );
+  const classes = useStyles();
+  return (
+      <div>
+        <Card className={classes.root}>
+          <CardActionArea>
+            <CardMedia
+                className={classes.media}
+                component="img"
+                image={props.faceImage}
+                title="Contemplative Reptile"
+            />
+            <CardContent className={classes.mediaContent}>
+              <Typography gutterBottom variant="h5" component="h2">
+                {props.faceName}
+              </Typography>
+            </CardContent>
+          </CardActionArea>
+          <CardHeader
+              className={classes.mediaContent}
+              avatar={
+                <Link to={"/"} className={classes.linkColor}>
+                  <Avatar aria-label="recipe" className={classes.avatar}>
+                    <img className={classes.img} src={props.ownerImage} alt="..."/>
+                  </Avatar>
+                </Link>
+              }
+              title={props.ownerName}
+              subheader={props.faceDate}
+          />
+          <CardActions>
+            <h5>{props.imagePrice} ETH</h5>
+            <IconButton aria-label="add to favorites" className={classes.loveIcon}>
+              <FavoriteBorderIcon/>
+              <h6>5</h6>
+            </IconButton>
+          </CardActions>
+        </Card>
+      </div>
+  );
 }

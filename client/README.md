@@ -258,8 +258,8 @@ material-kit-react
         │       ├── ProductSection.js
         │       ├── TeamSection.js
         │       └── WorkSection.js
-        ├── LoginPage
-        │   └── LoginPage.js
+        ├── SignInPage
+        │   └── SignInPage.js
         └── ArtistPage
             └── ArtistPage.js
 ```
