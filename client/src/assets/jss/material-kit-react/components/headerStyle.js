@@ -39,6 +39,12 @@ const headerStyle = {
     position: "fixed",
     zIndex: "1100"
   },
+  hideOnScroll: {
+    display: "none"
+  },
+  showOnScroll: {
+    display: "show"
+  },
   container: {
     ...container,
     minHeight: "50px",

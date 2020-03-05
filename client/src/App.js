@@ -23,7 +23,7 @@ import "assets/scss/material-kit-react.scss?v=1.8.0";
 const hist = createBrowserHistory();
 
 export default function App(props) {
-  const [authTokens, setAuthTokens] = useState();
+  const [authTokens, setAuthTokens] = useState(null);
   const [currentPublicAddress, setCurrentPublicAddress] = useState(1);
 
   const setTokens = (data) => {
@@ -43,7 +43,7 @@ export default function App(props) {
             <Route exact path='/' component={LandingPage}/>
             <Route path="/signup" component={SignUpPage}/>
             <Route path="/signin" component={SignInPage}/>
-            <Route path="/token/:tokenId" component={ImageDetailsPage}/>
+            <Route path="/token/:tokenId" children={<ImageDetailsPage/>}/>
             <Route path="/gallery" component={GalleryPage}/>
             <Route path="/blog" component={BlogPage}/>
             <Route path="/account/artist" component={ArtistPage}/>

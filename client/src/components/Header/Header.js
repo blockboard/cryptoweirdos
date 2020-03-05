@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 
 // react components
 import { Link } from "react-router-dom";
@@ -30,18 +30,48 @@ const useStyles = makeStyles(styles);
 
 export default function Header(props) {
   const classes = useStyles();
+
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [prevScrollpos, setPrevScrollProp] = useState(window.pageXOffset);
+  const [visible, setVisible] = useState(true);
 
   React.useEffect(() => {
     if (props.changeColorOnScroll) {
       window.addEventListener("scroll", headerColorChange);
     }
+
+    /*if (props.hideOnScroll) {
+      window.addEventListener("scroll", handleScroll);
+    }*/
     return function cleanup() {
       if (props.changeColorOnScroll) {
         window.removeEventListener("scroll", headerColorChange);
       }
+
+      /*if (props.hideOnScroll) {
+        window.removeEventListener("scroll", handleScroll)
+      }*/
     };
   });
+
+  // Hide or show the menu.
+  /*const handleScroll = () => {
+    let prevScrollpos = window.pageYOffset;
+
+    window.onscroll = () => {
+      const currentScrollPos = window.pageYOffset;
+      if (prevScrollpos > currentScrollPos) {
+        document.body
+            .getElementsByTagName("header")[0]
+            .classList.add(classes[hideOnScroll]);
+      } else {
+        document.body
+            .getElementsByTagName("header")[0]
+            .classList.remove(classes[hideOnScroll])
+      }
+      prevScrollpos = currentScrollPos;
+    }
+  };*/
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -52,18 +82,18 @@ export default function Header(props) {
     const windowsScrollTop = window.pageYOffset;
     if (windowsScrollTop > changeColorOnScroll.height) {
       document.body
-        .getElementsByTagName("header")[0]
-        .classList.remove(classes[color]);
+          .getElementsByTagName("header")[0]
+          .classList.remove(classes[color]);
       document.body
-        .getElementsByTagName("header")[0]
-        .classList.add(classes[changeColorOnScroll.color]);
+          .getElementsByTagName("header")[0]
+          .classList.add(classes[changeColorOnScroll.color]);
     } else {
       document.body
-        .getElementsByTagName("header")[0]
-        .classList.add(classes[color]);
+          .getElementsByTagName("header")[0]
+          .classList.add(classes[color]);
       document.body
-        .getElementsByTagName("header")[0]
-        .classList.remove(classes[changeColorOnScroll.color]);
+          .getElementsByTagName("header")[0]
+          .classList.remove(classes[changeColorOnScroll.color]);
     }
   };
 
@@ -73,7 +103,9 @@ export default function Header(props) {
     [classes.appBar]: true,
     [classes[color]]: color,
     [classes.absolute]: absolute,
-    [classes.fixed]: fixed
+    [classes.fixed]: fixed,
+    /*[classes.hideOnScroll]: hideOnScroll,
+    [classes.showOnScroll]: hideOnScroll*/
   });
 
   const brandComponent = <Link to="/" className={classes.linkColor}>
@@ -86,48 +118,48 @@ export default function Header(props) {
   </Link>;
 
   return (
-    <AppBar className={appBarClasses}>
-      <Toolbar className={classes.container}>
-        {leftLinks !== undefined ? brandComponent : null}
-        <div className={classes.flex}>
-          {leftLinks !== undefined ? (
-            <Hidden smDown implementation="css">
-              {leftLinks}
-            </Hidden>
-          ) : (
-            brandComponent
-          )}
-        </div>
-        <Hidden smDown implementation="css">
-          {rightLinks}
-        </Hidden>
-        <Hidden mdUp>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerToggle}
-          >
-            <Menu />
-          </IconButton>
-        </Hidden>
-      </Toolbar>
-      <Hidden mdUp implementation="js">
-        <Drawer
-          variant="temporary"
-          anchor={"right"}
-          open={mobileOpen}
-          classes={{
-            paper: classes.drawerPaper
-          }}
-          onClose={handleDrawerToggle}
-        >
-          <div className={classes.appResponsive}>
-            {leftLinks}
-            {rightLinks}
+      <AppBar className={appBarClasses}>
+        <Toolbar className={classes.container}>
+          {leftLinks !== undefined ? brandComponent : null}
+          <div className={classes.flex}>
+            {leftLinks !== undefined ? (
+                <Hidden smDown implementation="css">
+                  {leftLinks}
+                </Hidden>
+            ) : (
+                brandComponent
+            )}
           </div>
-        </Drawer>
-      </Hidden>
-    </AppBar>
+          <Hidden smDown implementation="css">
+            {rightLinks}
+          </Hidden>
+          <Hidden mdUp>
+            <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                onClick={handleDrawerToggle}
+            >
+              <Menu />
+            </IconButton>
+          </Hidden>
+        </Toolbar>
+        <Hidden mdUp implementation="js">
+          <Drawer
+              variant="temporary"
+              anchor={"right"}
+              open={mobileOpen}
+              classes={{
+                paper: classes.drawerPaper
+              }}
+              onClose={handleDrawerToggle}
+          >
+            <div className={classes.appResponsive}>
+              {leftLinks}
+              {rightLinks}
+            </div>
+          </Drawer>
+        </Hidden>
+      </AppBar>
   );
 }
 

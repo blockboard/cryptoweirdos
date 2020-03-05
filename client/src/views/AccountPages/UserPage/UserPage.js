@@ -31,7 +31,7 @@ import work2 from "assets/img/examples/clem-onojeghuo.jpg";
 import work3 from "assets/img/examples/cynthia-del-rio.jpg";
 import work4 from "assets/img/examples/mariya-georgieva.jpg";
 import work5 from "assets/img/examples/clem-onojegaw.jpg";
-import profile from "assets/img/faces/christian.jpg";
+import profile from "assets/img/faces/s+.jpeg";
 
 // styles
 import styles from "assets/jss/material-kit-react/views/profilePage.js";

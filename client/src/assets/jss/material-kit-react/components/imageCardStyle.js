@@ -6,15 +6,18 @@ import imagesStyles from "assets/jss/material-kit-react/imagesStyles.js";
 const imageCardStyle = {
   root: {
     maxWidth: 450,
-    maxHeight: 450,
+    maxHeight: 550,
     position: "center",
     textAlign: "left"
   },
   media: {
     height: 320,
   },
-  mediaContent:{
-    height: 50,
+  mediaContent: {
+    height: 40,
+  },
+  headerContent: {
+    height: 55
   },
   loveIcon: {
     position: "absolute",
@@ -34,6 +37,10 @@ const imageCardStyle = {
     width: "40px",
     height: "40px",
     borderRadius: "60%"
+  },
+  cardImage: {
+    width: "300px",
+    height: "300px",
   },
   linkColor: {
     "&,&:hover,&:focus": {
