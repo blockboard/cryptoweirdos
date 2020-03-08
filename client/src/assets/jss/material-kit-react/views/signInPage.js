@@ -96,6 +96,13 @@ const signupPageStyle = {
       background: "rgba(200, 200, 200, 0.2)"
     },
   },
+  linkColor: {
+    "&,&:hover,&:focus": {
+      color: "inherit",
+      textDecoration: "none",
+      display: "block",
+    }
+  },
   socialLine: {
     marginTop: "1rem",
     textAlign: "center",

@@ -3,11 +3,12 @@ import React, {useEffect, useState} from "react";
 import classNames from "classnames";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
-import ImageCard from "../../../components/ImageCard/ImageCard";
+import ImageCard from "components/ImageCards/ImageCard";
 import Typography from '@material-ui/core/Typography';
 
 // Images
@@ -20,7 +21,7 @@ const useStyles = makeStyles(styles);
 export default function RandomSelection(props) {
   const classes = useStyles();
 
-  const [tokenCard, setTokenCard] = useState();
+  const [tokenCard, setTokenCard] = useState(null);
 
   let fourTokenIds = [];
 
@@ -34,9 +35,12 @@ export default function RandomSelection(props) {
     })
         .then(res => res.json())
         .then(resData => {
+          //setTokenCard
           let totalSupplyNum = resData.result;
+          console.log(`ResData`,resData);
+          console.log(`TotalSuply`, totalSupplyNum);
           while (!(fourTokenIds.length == 4)) {
-            let x = Math.floor(Math.random() * totalSupplyNum) + 1;
+            let x = Math.floor(Math.random() * parseInt(resData.result)) + 1;
             if (!fourTokenIds.includes(x)) {
               fourTokenIds.push(x);
             }
@@ -51,6 +55,8 @@ export default function RandomSelection(props) {
                     return (
                         <GridItem xs={12} sm={6} md={3} lg={3} xl={3}>
                           <ImageCard
+                              accountAddress={token.owner.address}
+                              tokenId={token.token_id}
                               faceImage={token.image_url}
                               faceName={token.name}
                               ownerImage={token.owner.profile_img_url}
@@ -80,7 +86,8 @@ export default function RandomSelection(props) {
         </div>
         <div className={classes.container}>
           <GridContainer justify="center" spacing={1}>
-            {tokenCard}
+            {(tokenCard === null) ?
+                <CircularProgress disableShrink /> : tokenCard}
           </GridContainer>
         </div>
       </>

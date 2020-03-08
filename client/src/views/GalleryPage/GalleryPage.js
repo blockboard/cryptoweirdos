@@ -5,6 +5,14 @@ import classNames from "classnames";
 
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Paper from '@material-ui/core/Paper';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import PropTypes from 'prop-types';
+import AppBar from '@material-ui/core/AppBar';
+import Typography from '@material-ui/core/Typography';
+import Box from '@material-ui/core/Box';
 
 // @material-ui/icons
 
@@ -15,13 +23,11 @@ import GridItem from "components/Grid/GridItem.js";
 import Parallax from "components/Parallax/Parallax.js";
 import MainHeader from "components/MainComponents/MainHeader";
 import MainContainer from "components/MainComponents/MainContainer";
-import ImageCard from "components/ImageCard/ImageCard";
+import ImageCard from "components/ImageCards/ImageCard";
 import PaginationControlled from "components/PaginationControlled/PaginationControlled";
 
 // Images
-import background from "assets/img/faces/cf3.jpeg";
-import image1 from "assets/img/faces/cf1.jpeg";
-import team1 from "assets/img/faces/s+avatar.jpg";
+import background from "assets/img/weirdos/0046.jpeg";
 
 // Styles
 import styles from "assets/jss/material-kit-react/views/galleryPage.js";
@@ -31,7 +37,7 @@ const useStyles = makeStyles(styles);
 export default function GalleryPage(props) {
   const classes = useStyles();
 
-  const [tokenCard, setTokenCard] = useState();
+  const [tokenCard, setTokenCard] = useState(null);
 
   const [totalSupply, setTotalSupply] = useState();
   const [lastVisit, setLastVisit] = useState(80);
@@ -39,6 +45,12 @@ export default function GalleryPage(props) {
   const [page, setPage] = useState(31);
   const [totalPages, setTotalPages] = useState(null);
   const [per, setPer] = useState(2);
+
+  const [value, setValue] = useState(0);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
 
   useEffect(() => {
     // Fetching TotalSupply
@@ -62,8 +74,9 @@ export default function GalleryPage(props) {
           for (let [key, value] of Object.entries(resData)) {
             setTokenCard(value.map(token => {
               return (
-                  <GridItem xs={12} sm={6} md={3} lg={3} xl={3}>
+                  <GridItem xs={12} sm={6} md={4} lg={4} xl={4}>
                     <ImageCard
+                        accountAddress={token.owner.address}
                         tokenId={token.token_id}
                         faceImage={token.image_url}
                         faceName={token.name}
@@ -92,9 +105,28 @@ export default function GalleryPage(props) {
         <Parallax small filter image={background} />
         <MainContainer>
           <div className={classes.section}>
-            <GridContainer justify="center" spacing={1}>
-              {tokenCard}
+            <GridContainer justify="center">
+              <Paper className={classes.root}>
+                <Tabs
+                    value={value}
+                    onChange={handleChange}
+                    indicatorColor="primary"
+                    textColor="primary"
+                    centered
+                >
+                  <Tab label="All"/>
+                  <Tab label="Childs"/>
+                  <Tab label="Males"/>
+                  <Tab label="Females"/>
+                  <Tab label="Glitched"/>
+                </Tabs>
+              </Paper>
             </GridContainer>
+            <br/>
+            <GridContainer justify="center" spacing={1}>
+              {(tokenCard === null) ?
+                  <CircularProgress disableShrink /> : tokenCard}
+            </GridContainer>}
           </div>
         </MainContainer>
         <Footer />

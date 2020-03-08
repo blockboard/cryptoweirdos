@@ -25,7 +25,7 @@ import NavPills from "components/NavPills/NavPills.js";
 import Parallax from "components/Parallax/Parallax.js";
 import MainHeader from "components/MainComponents/MainHeader";
 import MainContainer from "components/MainComponents/MainContainer";
-import ImageCard from "components/ImageCard/ImageCard";
+import ImageCard from "components/ImageCards/ImageCards";
 import PaginationControlled from "components/PaginationControlled/PaginationControlled";
 
 // Images

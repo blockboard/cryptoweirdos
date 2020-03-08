@@ -13,8 +13,22 @@ const imageDetailsPageStyle = {
         position: "relative"
     },
     media: {
+      "@media (min-width: 576px)": {
+        height: 350,
+        width: 350
+      },
+      "@media (min-width: 768px)": {
         height: 600,
         width: 600
+      },
+      "@media (min-width: 992px)": {
+        height: 600,
+        width: 600
+      },
+      "@media (min-width: 1200px)": {
+        height: 600,
+        width: 600
+      }
     },
     btn: {
         backgroundColor: "transparent",

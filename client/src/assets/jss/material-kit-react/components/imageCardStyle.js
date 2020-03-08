@@ -8,7 +8,8 @@ const imageCardStyle = {
     maxWidth: 450,
     maxHeight: 550,
     position: "center",
-    textAlign: "left"
+    textAlign: "left",
+    color: "#3C4858"
   },
   media: {
     height: 320,

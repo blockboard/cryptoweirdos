@@ -27,7 +27,6 @@ const transition = {
 const conatinerFluid = {
   paddingRight: "15px",
   paddingLeft: "15px",
-  paddingBottom: "20px",
   marginRight: "auto",
   marginLeft: "auto",
   width: "100%"
@@ -160,8 +159,8 @@ const title = {
   color: "#3C4858",
   margin: "1.75rem 0 0.875rem",
   textDecoration: "none",
-  fontWeight: "700",
-  fontFamily: `"Roboto Slab", "Times New Roman", serif`
+  fontWeight: "500",
+  fontFamily: `"Oswald", "Times New Roman", serif`
 };
 
 const cardTitle = {

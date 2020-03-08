@@ -35,25 +35,25 @@ export default function ImageCard(props) {
   return (
       <div>
         <Card className={classes.root}>
-          <CardActionArea>
-            <Link to={`/token/${props.tokenId}`}>
+
+            <a href={`/token/${props.tokenId}`} target="_blank">
               <StyledCardMedia
                   className={classes.media}
                   component="img"
                   image={props.faceImage}
                   title={props.faceName}
               />
-            </Link>
+            </a>
             <CardContent className={classes.mediaContent}>
               <Typography gutterBottom variant="h7" component="h7">
                 {props.faceName}
               </Typography>
             </CardContent>
-          </CardActionArea>
+
           <CardHeader
               className={classes.headerContent}
               avatar={
-                <Link to={"/"} className={classes.linkColor}>
+                <Link to={`/account/${props.accountAddress}`}>
                   <Avatar aria-label="recipe" className={classes.avatar}>
                     <img className={classes.img} src={props.ownerImage} alt="..."/>
                   </Avatar>

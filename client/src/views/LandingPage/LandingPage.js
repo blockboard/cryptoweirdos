@@ -15,45 +15,46 @@ import GridItem from "components/Grid/GridItem.js";
 import Parallax from "components/Parallax/Parallax.js";
 import MainHeader from "components/MainComponents/MainHeader";
 import MainContainer from "components/MainComponents/MainContainer";
+import Quote from "components/Typography/Quote";
 
 // styles
 import styles from "assets/jss/material-kit-react/views/landingPage.js";
 
 // Images
-import image1 from "assets/img/faces/cf4.jpeg";
+import image1 from "assets/img/weirdos/0058.jpeg";
 
 // Sections for this page
 import LatestFaces from "./Sections/LatestFaces";
 import MostViewed from "./Sections/MostViewed";
 import RandomSelection from "./Sections/RandomSelection";
-import Quote from "../../components/Typography/Quote";
+import {Link} from "react-router-dom";
 
 const useStyles = makeStyles(styles);
 
 export default function LandingPage(props) {
   const classes = useStyles();
   return (
-      <Fragment>
+      <>
         <MainHeader />
         <Parallax filter image={image1}>
           <div className={classes.container}>
-            <GridContainer>
+            <GridContainer justify="right">
               <GridItem xs={12} sm={12} md={6}>
-                <h1 className={classes.title}>CryptoWeirdos</h1>
+                <h1 className={classes.title}>CryptoWeirdos.</h1>
                 <br/>
                 <Quote
-                    text="Crypto's many faces. Find your Weirdo. All art pieces are unique."
+                    className={classes.title}
+                    text={<h5>Crypto's many faces. Find your Weirdo.</h5>}
                 />
               </GridItem>
             </GridContainer>
           </div>
         </Parallax>
         <MainContainer>
-          <RandomSelection/>
           <LatestFaces/>
           <MostViewed/>
         </MainContainer>
         <Footer />
-      </Fragment>
+      </>
   );
 }

@@ -28,18 +28,17 @@ import Footer from "../../components/Footer/Footer";
 import Button from "components/CustomButtons/Button.js";
 
 // Images
-import background from "assets/img/faces/cf6.jpeg";
-import image from "assets/img/faces/cf1.jpeg";
-import team1 from "assets/img/faces/s+avatar.jpg";
+import background from "assets/img/weirdos/0014.jpeg";
 
 // Styles
-import styles from "../../assets/jss/material-kit-react/views/ImageDetails";
+import styles from "assets/jss/material-kit-react/views/ImageDetails";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const useStyles = makeStyles(styles);
 
 export default function ImageDetailsPage(props) {
   const classes = useStyles();
-  const [tokenCard, setTokenCard] = useState();
+  const [tokenCard, setTokenCard] = useState(null);
 
   useEffect(() => {
     fetchTokenDataHandler();
@@ -55,57 +54,61 @@ export default function ImageDetailsPage(props) {
         .then(token => {
           console.log(token.collection.created_date);
           setTokenCard(
-              (<GridContainer justify="center" spacing={3}>
-                <GridItem lg={7}>
-                  <Card className={classes.root}>
-                    <CardMedia
-                        className={classes.media}
-                        image={token.image_url}
-                        title={token.tokenid}
-                    />
-                  </Card>
-                </GridItem>
-                <GridItem lg={5}>
-                  <Card className={classes.root}>
-                    <CardHeader
-                        avatar={
-                          <Avatar aria-label="recipe" className={classes.avatar}>
-                            <img src={token.owner.profile_img_url} alt="..."/>
-                          </Avatar>
-                        }
-                        title={(token.owner.user === null) ? token.owner.address : token.owner.user.username}
-                        subheader={(token.collection.created_date === null) ? "" : token.collection.created_date}
-                    />
-                    <CardContent>
-                      <Typography variant="body2" color="textSecondary" component="p">
-                        {token.description}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                  <Button
-                      className={classes.btn}
-                      round
-                      href={token.permalink}
-                  >
-                    View on OpenSea
-                  </Button>
-                </GridItem>
-              </GridContainer>)
+              (    <GridContainer justify="center">
+                    <GridItem xs={12} sm={12} md={6} lg={7} xl={7}>
+                      <Card className={classes.root}>
+                        <CardMedia
+                            className={classes.media}
+                            image={token.image_url}
+                            title={token.tokenid}
+                        />
+                      </Card>
+                    </GridItem>
+                    <GridItem lg={5}>
+                      <Card className={classes.root}>
+                        <CardHeader
+                            avatar={
+                              <Avatar aria-label="recipe" className={classes.avatar}>
+                                <img src={token.owner.profile_img_url} alt="..."/>
+                              </Avatar>
+                            }
+                            title={(token.owner.user === null) ? token.owner.address : token.owner.user.username}
+                            subheader={(token.collection.created_date === null) ? "" : token.collection.created_date}
+                        />
+                        <CardContent>
+                          <Typography variant="body2" color="textSecondary" component="p">
+                            {token.description}
+                          </Typography>
+                        </CardContent>
+                      </Card>
+                      <Button
+                          className={classes.btn}
+                          round
+                          href={token.permalink}
+                      >
+                        View on OpenSea
+                      </Button>
+                    </GridItem>
+                  </GridContainer>
+              )
           )
         })
         .catch(err => console.log(err));
   };
 
   return (
-      <div>
+      <>
         <MainHeader/>
         <Parallax small filter image={background}/>
         <MainContainer>
           <div className={classes.section}>
-            {tokenCard}
+            <GridContainer justify="center">
+              {(tokenCard === null) ?
+                  <CircularProgress disableShrink /> : tokenCard}
+            </GridContainer>
           </div>
         </MainContainer>
         <Footer/>
-      </div>
+      </>
   );
 }

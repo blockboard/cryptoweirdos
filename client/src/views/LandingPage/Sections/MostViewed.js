@@ -7,7 +7,7 @@ import {makeStyles, withStyles} from "@material-ui/core/styles";
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
-import ImageCard from "../../../components/ImageCard/ImageCard";
+import ImageCard from "../../../components/ImageCards/ImageCard";
 import Typography from '@material-ui/core/Typography';
 
 // Images
@@ -27,6 +27,7 @@ import team2 from "assets/img/faces/i+avatar.jpg";
 // Style
 import styles from "assets/jss/material-kit-react/views/landingPageSections/latestFacesStyles.js";
 import CardMedia from "@material-ui/core/CardMedia";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const useStyles = makeStyles(styles);
 
@@ -34,14 +35,15 @@ const useStyles = makeStyles(styles);
 
 export default function MostViewed(props) {
   const classes = useStyles();
-  const [tokenCard, setTokenCard] = useState();
+
+  const [tokenCard, setTokenCard] = useState(null);
 
   useEffect(() => {
     fetchMostViewedHandler();
   }, []);
 
   const fetchMostViewedHandler = async () => {
-    fetch('https://api.opensea.io/api/v1/assets?asset_contract_address=0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661&order_by=visitor_count&limit=4', {
+    fetch('https://api.opensea.io/api/v1/assets?asset_contract_address=0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661&order_by=visitor_count&limit=8', {
       method: 'GET'
     })
         .then(res => res.json())
@@ -49,8 +51,10 @@ export default function MostViewed(props) {
           for (let [key, value] of Object.entries(resData)) {
             setTokenCard(value.map(token => {
               return (
-                  <GridItem xs={12} sm={6} md={3} lg={3} xl={3}>
+                  <GridItem xs={12} sm={6} md={4} lg={4} xl={4}>
                     <ImageCard
+                        accountAddress={token.owner.address}
+                        tokenId={token.token_id}
                         faceImage={token.image_url}
                         faceName={token.name}
                         ownerImage={token.owner.profile_img_url}
@@ -78,7 +82,8 @@ export default function MostViewed(props) {
         </div>
         <div className={classes.container}>
           <GridContainer justify="center" spacing={1}>
-              {tokenCard}
+            {(tokenCard === null) ?
+                <CircularProgress disableShrink /> : tokenCard}
           </GridContainer>
         </div>
       </>

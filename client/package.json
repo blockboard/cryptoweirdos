@@ -1,7 +1,8 @@
 {
-  "name": "material-kit-react",
+  "homepage": "http://cryptoweirdos.github.io/",
+  "name": "crypto-weirdos",
   "version": "1.8.0",
-  "description": "Material Kit React. Coded by Creative Tim",
+  "description": "ERC-721 tokens",
   "private": true,
   "main": "dist/index.js",
   "dependencies": {
@@ -17,6 +18,7 @@
     "classnames": "2.2.6",
     "dotenv": "^8.2.0",
     "dotenv-expand": "^5.1.0",
+    "gh-pages": "^2.2.0",
     "history": "4.9.0",
     "jsonwebtoken": "^8.5.1",
     "moment": "2.24.0",
@@ -48,6 +50,8 @@
     "typescript": "3.5.3"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build && gulp licenses",
     "test": "react-scripts test --env=jsdom",
@@ -68,6 +72,5 @@
       "not op_mini all"
     ],
     "development": []
-  },
-  "type": "module"
+  }
 }

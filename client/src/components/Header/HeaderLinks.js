@@ -23,6 +23,8 @@ import { useAuth } from "context/auth";
 
 // styles
 import styles from "assets/jss/material-kit-react/components/headerLinksStyle.js";
+import Icon from "@material-ui/core/Icon";
+import MetaMaskIcon from "assets/img/svgs/metamask.svg";
 
 const useStyles = makeStyles(styles);
 
@@ -68,6 +70,17 @@ export default function HeaderLinks(props) {
         </listItem>
 
         {/*<listItem className={classes.listItem}>
+          <Link to="/blog" className={classes.linkColor}>
+            <Button
+                color="transparent"
+                round
+                className={classes.navLink}>
+              Blog
+            </Button>
+          </Link>
+        </listItem>*/}
+
+        {/*<listItem className={classes.listItem}>
             <Button
                 href={"/create"}
                 color="transparent"
@@ -81,10 +94,14 @@ export default function HeaderLinks(props) {
             <listItem className={classes.listItem}>
               <Link to="/signin" className={classes.linkColor}>
                 <Button
-                    color="transparent"
+                    className={classes.signLink}
                     round
-                    className={classes.signLink}>
-                  Sign In
+                    color="transparent"
+                    size="lg">
+                  Sign In |
+                  <Icon classes={{root: classes.iconRoot}}>
+                    <img className={classes.imageIcon} src={MetaMaskIcon}/>
+                  </Icon>
                 </Button>
               </Link>
             </listItem> : ( currentPublicAddress === 1 ) ?

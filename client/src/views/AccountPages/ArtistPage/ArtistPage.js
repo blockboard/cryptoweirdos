@@ -176,7 +176,7 @@ export default function ArtistPage(props) {
                                       )
                                     },
                                     {
-                                      tabButton: "Activity",
+                                      tabButton: "ActivityPage",
                                       tabIcon: LocalActivityIcon,
                                       tabContent: (
                                           <GridContainer justify="center">
