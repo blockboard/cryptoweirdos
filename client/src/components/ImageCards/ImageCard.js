@@ -15,6 +15,8 @@ import Typography from "@material-ui/core/Typography";
 import Avatar from "@material-ui/core/Avatar";
 
 // @material-ui/icons
+import FavoriteIcon from '@material-ui/icons/Favorite';
+
 
 //Core components
 
@@ -62,13 +64,11 @@ export default function ImageCard(props) {
               title={props.ownerName}
               subheader={props.faceDate}
           />
-          {/*<CardActions>
             <h5>{props.imagePrice} ETH</h5>
             <IconButton aria-label="add to favorites" className={classes.loveIcon}>
               <FavoriteBorderIcon/>
               <h6>5</h6>
             </IconButton>
-          </CardActions>*/}
         </Card>
       </div>
   );

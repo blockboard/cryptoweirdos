@@ -39,7 +39,7 @@ export default function HeaderLinks(props) {
           <Link to="/gallery" className={classes.linkColor}>
             <Button
                 color="transparent"
-                round
+                round={true}
                 className={classes.navLink}>
               Gallery
             </Button>
@@ -50,7 +50,7 @@ export default function HeaderLinks(props) {
           <Link to="/activity" className={classes.linkColor}>
             <Button
                 color="transparent"
-                round
+                round={true}
                 className={classes.navLink}>
               Activity
             </Button>
@@ -62,7 +62,7 @@ export default function HeaderLinks(props) {
             <Button
                 href={"/"}
                 color="transparent"
-                round
+                round={true}
                 className={classes.navLink}>
               Offers
             </Button>
@@ -73,7 +73,7 @@ export default function HeaderLinks(props) {
           <Link to="/blog" className={classes.linkColor}>
             <Button
                 color="transparent"
-                round
+                round={true}
                 className={classes.navLink}>
               Blog
             </Button>
@@ -84,7 +84,7 @@ export default function HeaderLinks(props) {
             <Button
                 href={"/create"}
                 color="transparent"
-                round
+                round={true}
                 className={classes.navLink}>
                 Create
             </Button>
@@ -95,7 +95,7 @@ export default function HeaderLinks(props) {
               <Link to="/signin" className={classes.linkColor}>
                 <Button
                     className={classes.signLink}
-                    round
+                    round={true}
                     color="transparent"
                     size="lg">
                   Sign In |
