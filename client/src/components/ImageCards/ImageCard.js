@@ -15,8 +15,8 @@ import Typography from "@material-ui/core/Typography";
 import Avatar from "@material-ui/core/Avatar";
 
 // @material-ui/icons
-import FavoriteIcon from '@material-ui/icons/Favorite';
-
+import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
+import IconButton from '@material-ui/core/IconButton';
 
 //Core components
 
@@ -52,7 +52,7 @@ export default function ImageCard(props) {
               </Typography>
             </CardContent>
 
-          <CardHeader
+          {/*<CardHeader
               className={classes.headerContent}
               avatar={
                 <Link to={`/account/${props.accountAddress}`}>
@@ -63,12 +63,12 @@ export default function ImageCard(props) {
               }
               title={props.ownerName}
               subheader={props.faceDate}
-          />
-            <h5>{props.imagePrice} ETH</h5>
+          />*/}
+            {/*<h5>{props.imagePrice} ETH</h5>
             <IconButton aria-label="add to favorites" className={classes.loveIcon}>
               <FavoriteBorderIcon/>
               <h6>5</h6>
-            </IconButton>
+            </IconButton>*/}
         </Card>
       </div>
   );
