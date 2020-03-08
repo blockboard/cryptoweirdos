@@ -78,11 +78,11 @@ export default function ActivityImgCard(props) {
                   <CardHeader
                       className={classes.headerContent}
                       avatar={
-                        <Link href={`/account/${props.accountAddress}`}>
+                        <Linki href={`/account/${props.accountAddress}`}>
                           <Avatar aria-label="recipe" className={classes.avatar}>
                             <img className={classes.img} src={props.ownerImage} alt="..."/>
                           </Avatar>
-                        </Link>
+                        </Linki>
                       }
                       title={props.ownerName}
                       subheader={props.faceDate}
