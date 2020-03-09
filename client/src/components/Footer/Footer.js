@@ -35,6 +35,28 @@ export default function Footer(props) {
   return (
     <footer className={footerClasses}>
       <div className={classes.container}>
+        <div className={classes.left}>
+          <List className={classes.list}>
+            <ListItem className={classes.inlineBlock}>
+              <a
+                  href="https://opensea.io/assets/crypto-weirdos"
+                  className={classes.block}
+                  target="_blank"
+              >
+                OpenSea
+              </a>
+            </ListItem>
+            <ListItem className={classes.inlineBlock}>
+              <a
+                  href="https://discord.gg/v3znbr"
+                  className={classes.block}
+                  target="_blank"
+              >
+                Discord
+              </a>
+            </ListItem>
+          </List>
+        </div>
         <div className={classes.right}>
           &copy; {1900 + new Date().getYear()}, made with{" "}
           <Favorite className={classes.icon} /> by{" "}

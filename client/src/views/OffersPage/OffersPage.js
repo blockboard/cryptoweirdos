@@ -18,11 +18,12 @@ import GridItem from "components/Grid/GridItem.js";
 import Parallax from "components/Parallax/Parallax.js";
 import MainHeader from "components/MainComponents/MainHeader";
 import MainContainer from "components/MainComponents/MainContainer";
-import ActivityImgCard from "components/ImageCards/ActivityImgCard/ActivityImgCard";
+import ActivityImgCard from "components/ImageCards/OfferImgCard/OfferImgCard";
 // Images
 import background from "assets/img/weirdos/0011.jpeg";
 // Styles
 import styles from "assets/jss/material-kit-react/views/activityPage.js";
+import OfferImgCard from "../../components/ImageCards/OfferImgCard/OfferImgCard";
 
 // @material-ui/icons
 
@@ -100,7 +101,7 @@ export default function OffersPage(props) {
               }
               return (
                   <GridItem xs={12} sm={6} md={12} lg={12} xl={12}>
-                    <ActivityImgCard
+                    <OfferImgCard
                         key={token.id}
                         accountAddress={token.asset.owner.address}
                         tokenId={token.asset.token_id}
@@ -124,7 +125,7 @@ export default function OffersPage(props) {
 
                 return(<>
                   <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
-                    <ActivityImgCard
+                    <OfferImgCard
                         accountAddress={resData.asset_events[i].asset.owner.address}
                         tokenId={resData.asset_events[i].asset.token_id}
                         faceImage={resData.asset_events[i].asset.image_url}

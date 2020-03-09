@@ -36,7 +36,7 @@ export default function LandingPage(props) {
   return (
       <>
         <MainHeader />
-        <Parallax filter image={image1}>
+        <Parallax small filter image={image1}>
           <div className={classes.container}>
             <GridContainer justify="right">
               <GridItem xs={12} sm={12} md={6}>

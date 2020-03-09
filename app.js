@@ -35,8 +35,8 @@ app.use('/artist', artistRoutes);
 
 mongoose
     .connect(
-        'mongodb+srv://alex:S65sDNlkaXzlTCDa@cf-r3ep6.mongodb.net/test?retryWrites=true&w=majority',
-        { useNewUrlParser: true }
+        `mongodb://alex:S65sDNlkaXzlTCDa@cf-shard-00-00-r3ep6.mongodb.net:27017,cf-shard-00-01-r3ep6.mongodb.net:27017,cf-shard-00-02-r3ep6.mongodb.net:27017/test?ssl=true&replicaSet=cf-shard-0&authSource=admin&retryWrites=true&w=majority`,
+        { useNewUrlParser: true, useUnifiedTopology: true}
     )
     .then(result => {
         app.listen(5000);

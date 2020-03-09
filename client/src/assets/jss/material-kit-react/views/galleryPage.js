@@ -57,6 +57,10 @@ const gallaryPageStyle = {
         fontSize: "20px",
         color: "#999"
     },
+    img:{
+      height: "350px",
+        width: "370px"
+    },
     navWrapper: {
         margin: "20px auto 50px auto",
         textAlign: "center"

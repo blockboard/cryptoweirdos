@@ -194,7 +194,7 @@ export default function UserPage(props) {
                                     tabIcon: LocalActivityIcon,
                                     tabContent: (
                                         <GridContainer justify="center">
-                                          <h1 className={classes.title}>In development... :)</h1>
+                                          <h1 className={classes.title}>In development...</h1>
                                         </GridContainer>
                                     )
                                   },
@@ -203,7 +203,7 @@ export default function UserPage(props) {
                                     tabIcon: Favorite,
                                     tabContent: (
                                         <GridContainer justify="center">
-                                          <h1 className={classes.title}>In development... :)</h1>
+                                          <h1 className={classes.title}>In development...</h1>
                                         </GridContainer>
                                     )
                                   }

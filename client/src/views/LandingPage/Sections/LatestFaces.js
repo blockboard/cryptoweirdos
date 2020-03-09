@@ -15,6 +15,7 @@ import Button from "components/CustomButtons/Button.js";
 
 // Style
 import styles from "assets/jss/material-kit-react/views/landingPageSections/latestFacesStyles.js";
+import LandingImgCard from "../../../components/ImageCards/LandingImgCard/LandingImgCard";
 
 const useStyles = makeStyles(styles);
 
@@ -27,7 +28,7 @@ export default function LatestFaces(props) {
   }, []);
 
   const fetchLatestedBornHandler = async () => {
-    fetch('https://api.opensea.io/api/v1/assets/?asset_contract_address=0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661&order_by=last_born&limit=8', {
+    fetch('https://api.opensea.io/api/v1/assets/?asset_contract_address=0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661&order_by=last_born&limit=6', {
           method: 'GET'
     })
         .then(res => res.json())
@@ -36,7 +37,7 @@ export default function LatestFaces(props) {
             setTokenCard(value.map(token => {
               return (
                   <GridItem xs={12} sm={6} md={4} lg={4} xl={4}>
-                    <ImageCard
+                    <LandingImgCard
                         accountAddress={token.owner.address}
                         tokenId={token.token_id}
                         faceImage={token.image_url}

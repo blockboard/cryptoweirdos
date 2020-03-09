@@ -92,18 +92,18 @@ export default function HeaderLinks(props) {
 
         { (authTokens === null) ?
             <listItem className={classes.listItem}>
-              <Link to="/signin" className={classes.linkColor}>
+             {/* <Link to="/signin" className={classes.linkColor}>
                 <Button
                     className={classes.signLink}
                     round
                     color="transparent"
                     size="lg">
                   Sign In |
-                  <Icon classes={{root: classes.iconRoot}}>
-                    <img className={classes.imageIcon} src={MetaMaskIcon}/>
-                  </Icon>
+                    <Icon classes={{root: classes.iconRoot}}>
+                         <img className={classes.icon} src={MetaMaskIcon}/>
+                    </Icon>
                 </Button>
-              </Link>
+              </Link>*/}
             </listItem> : ( currentPublicAddress === 1 ) ?
             <ListItem className={classes.listItem}>
               <CustomDropdown

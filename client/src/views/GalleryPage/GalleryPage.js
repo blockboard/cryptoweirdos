@@ -13,6 +13,7 @@ import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
+import SwipeableViews from 'react-swipeable-views';
 
 // @material-ui/icons
 
@@ -24,13 +25,25 @@ import Parallax from "components/Parallax/Parallax.js";
 import MainHeader from "components/MainComponents/MainHeader";
 import MainContainer from "components/MainComponents/MainContainer";
 import ImageCard from "components/ImageCards/ImageCard";
+import TabPanel from "components/TabPanal/TabPanal";
 import PaginationControlled from "components/PaginationControlled/PaginationControlled";
 
 // Images
 import background from "assets/img/weirdos/0046.jpeg";
+import image1 from "assets/img/weirdos/01.png"
+import image2 from "assets/img/weirdos/02.png"
+import image3 from "assets/img/weirdos/03.png"
+import image4 from "assets/img/weirdos/04.png"
+import image5 from "assets/img/weirdos/05.png"
+import image6 from "assets/img/weirdos/06.png"
+import image7 from "assets/img/weirdos/07.png"
+import image8 from "assets/img/weirdos/08.png"
+
+
 
 // Styles
 import styles from "assets/jss/material-kit-react/views/galleryPage.js";
+import LandingImgCard from "../../components/ImageCards/LandingImgCard/LandingImgCard";
 
 const useStyles = makeStyles(styles);
 
@@ -48,7 +61,7 @@ export default function GalleryPage(props) {
 
   const [value, setValue] = useState(0);
 
-  const handleChange = (event, newValue) => {
+  const handleChangeIndex = (event, newValue) => {
     setValue(newValue);
   };
 
@@ -109,24 +122,61 @@ export default function GalleryPage(props) {
               <Paper className={classes.root}>
                 <Tabs
                     value={value}
-                    onChange={handleChange}
+                    onChange={handleChangeIndex}
                     indicatorColor="primary"
                     textColor="primary"
                     centered
                 >
                   <Tab label="All"/>
-                  <Tab label="Childs"/>
-                  <Tab label="Males"/>
-                  <Tab label="Females"/>
-                  <Tab label="Glitched"/>
+                  <Tab label="First Generation"/>
+                  <Tab label="Second Generation"/>
                 </Tabs>
+                <SwipeableViews
+                    //axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
+                    index={value}
+                    onChangeIndex={handleChangeIndex}
+                >
+                  <TabPanel value={value} index={0}>
+                    <GridContainer justify="center" spacing={1}>
+                      {(tokenCard === null) ?
+                          <CircularProgress disableShrink /> : tokenCard}
+                    </GridContainer>
+                  </TabPanel>
+                  <TabPanel value={value} index={1} >
+                    <GridContainer justify="center" spacing={1}>
+                      {(tokenCard === null) ?
+                          <CircularProgress disableShrink /> : tokenCard}
+                    </GridContainer>
+                  </TabPanel>
+                  <TabPanel value={value} index={2}>
+                    <GridContainer justify="center" spacing={1}>
+                      <GridItem xs={12} sm={6} md={4} lg={4} xl={4}>
+                        <img className={classes.img} src={image1}/>
+                      </GridItem>
+                      <GridItem xs={12} sm={6} md={4} lg={4} xl={4}>
+                        <img className={classes.img} src={image2}/>
+                      </GridItem>
+                      <GridItem xs={12} sm={6} md={4} lg={4} xl={4}>
+                        <img className={classes.img} src={image3}/>
+                      </GridItem>
+                      <GridItem xs={12} sm={6} md={4} lg={4} xl={4}>
+                        <img className={classes.img} src={image6}/>
+                      </GridItem>
+                      <GridItem xs={12} sm={6} md={4} lg={4} xl={4}>
+                        <img className={classes.img} src={image5}/>
+                      </GridItem>
+                      <GridItem xs={12} sm={6} md={4} lg={4} xl={4}>
+                        <img className={classes.img} src={image8}/>
+                      </GridItem>
+
+                      <GridContainer justify="center">
+                        <h1 className={classes.title}>In development...</h1>
+                      </GridContainer>
+                    </GridContainer>
+                  </TabPanel>
+                </SwipeableViews>
               </Paper>
             </GridContainer>
-            <br/>
-            <GridContainer justify="center" spacing={1}>
-              {(tokenCard === null) ?
-                  <CircularProgress disableShrink /> : tokenCard}
-            </GridContainer>}
           </div>
         </MainContainer>
         <Footer />

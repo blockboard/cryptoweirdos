@@ -32,12 +32,12 @@ const StyledCardMedia = withStyles({
   }
 })(CardMedia);
 
-export default function ActivityImgCard(props) {
+export default function OfferImgCard(props) {
   const classes = useStyles();
 
   return (
       <>
-        <GridContainer justify="center" spacing="1">
+        <GridContainer justify="center" spacing="3">
           <GridItem xs={12} sm={12} md={3} lg={3} xl={3}>
               <Link to={`/token/${props.tokenId}`}>
                 <StyledCardMedia
@@ -58,7 +58,7 @@ export default function ActivityImgCard(props) {
                     </Typography>
                   </GridItem>
                   <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
-                    <h6>Sold</h6>
+                    <h6>Offer</h6>
                   </GridItem>
                   <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
                     <h5>{props.imagePrice} ETH</h5>
@@ -71,30 +71,7 @@ export default function ActivityImgCard(props) {
             <div className={classes.root}>
               <GridContainer>
                 <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
-                  <h6>From: </h6>
-                </GridItem>
-                <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
-                  <CardHeader
-                      className={classes.headerContent}
-                      avatar={
-                        <Link href={`/account/${props.accountAddress}`}>
-                          <Avatar aria-label="recipe" className={classes.avatar}>
-                            <img className={classes.img} src={props.sellerImage} alt="..."/>
-                          </Avatar>
-                        </Link>
-                      }
-                      title={props.sellerName}
-                      subheader={props.faceDate}
-                  />
-                </GridItem>
-              </GridContainer>
-            </div>
-          </GridItem>
-          <GridItem xs={12} sm={12} md={3} lg={3} xl={3}>
-            <div className={classes.root}>
-              <GridContainer>
-                <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
-                  <h6>To: </h6>
+                  <h6>Owned By: </h6>
                 </GridItem>
                 <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
                   <CardHeader
@@ -113,7 +90,7 @@ export default function ActivityImgCard(props) {
               </GridContainer>
             </div>
           </GridItem>
-          <GridItem xs={12} sm={12} md={1} lg={1} xl={1}>
+          <GridItem xs={12} sm={12} md={4} lg={4} xl={4}>
             <div className={classes.root}>
               <GridContainer>
                 <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
