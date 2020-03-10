@@ -1,34 +1,26 @@
 /*eslint-disable*/
 import React from "react";
-
 // react components
-import { Link } from "react-router-dom";
-
+import { Link, withRouter } from "react-router-dom";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-
 // @material-ui/icons
-
 // core components
 import Button from "components/CustomButtons/Button.js";
 import CustomDropdown from "components/CustomDropdown/CustomDropdown.js";
-
 // images
 import artistProfileImage from "assets/img/faces/s+.jpeg";
 import accountProfileImage from "assets/img/faces/i+avatar.jpg";
 
 import { useAuth } from "context/auth";
-
 // styles
 import styles from "assets/jss/material-kit-react/components/headerLinksStyle.js";
-import Icon from "@material-ui/core/Icon";
-import MetaMaskIcon from "assets/img/svgs/metamask.svg";
 
 const useStyles = makeStyles(styles);
 
-export default function HeaderLinks(props) {
+function HeaderLinks(props) {
   const classes = useStyles();
 
   const { authTokens, currentPublicAddress } = useAuth();
@@ -37,35 +29,51 @@ export default function HeaderLinks(props) {
       <List className={classes.list}>
         <listItem className={classes.listItem}>
           <Link to="/gallery" className={classes.linkColor}>
-            <Button
-                color="transparent"
-                round
-                className={classes.navLink}>
+            {(props.location.pathname === "/gallery") ? <Button
+              color="transparent"
+              round
+              className={classes.selectedNavLink}>
               Gallery
-            </Button>
+            </Button> : <Button
+              color="transparent"
+              round
+              className={classes.navLink}>
+              Gallery
+            </Button>}
           </Link>
         </listItem>
 
         <listItem className={classes.listItem}>
           <Link to="/activity" className={classes.linkColor}>
-            <Button
-                color="transparent"
-                round
-                className={classes.navLink}>
+            {(props.location.pathname === "/activity") ? <Button
+              color="transparent"
+              round
+              className={classes.selectedNavLink}>
               Activity
-            </Button>
+            </Button> :
+            <Button
+              color="transparent"
+              round
+              className={classes.navLink}>
+              Activity
+            </Button>}
           </Link>
         </listItem>
 
         <listItem className={classes.listItem}>
           <Link to="/offers" className={classes.linkColor}>
-            <Button
-                href={"/"}
+            {(props.location.pathname === "/offers") ? <Button
+                color="transparent"
+                round
+                className={classes.selectedNavLink}>
+                Sales
+              </Button> :
+              <Button
                 color="transparent"
                 round
                 className={classes.navLink}>
-              Offers
-            </Button>
+                Sales
+              </Button>}
           </Link>
         </listItem>
 
@@ -80,15 +88,22 @@ export default function HeaderLinks(props) {
           </Link>
         </listItem>*/}
 
-        {/*<listItem className={classes.listItem}>
-            <Button
-                href={"/create"}
+        <listItem className={classes.listItem}>
+          <Link to="/create" className={classes.linkColor}>
+            {(props.location.pathname === "/create") ? <Button
+                color="transparent"
+                round
+                className={classes.selectedNavLink}>
+                create
+              </Button> :
+              <Button
                 color="transparent"
                 round
                 className={classes.navLink}>
                 Create
-            </Button>
-        </listItem>*/}
+              </Button>}
+          </Link>
+        </listItem>
 
         { (authTokens === null) ?
             <listItem className={classes.listItem}>
@@ -159,3 +174,5 @@ export default function HeaderLinks(props) {
       </List>
   );
 }
+
+export default withRouter(HeaderLinks)

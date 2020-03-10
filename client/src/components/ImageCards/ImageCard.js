@@ -19,7 +19,8 @@ import Avatar from "@material-ui/core/Avatar";
 //Core components
 
 // Styles
-import styles from "assets/jss/material-kit-react/components/imageCardStyle";
+import styles from "assets/jss/material-kit-react/components/imageCards/imageCardStyle";
+
 import {Link, Redirect} from "react-router-dom";
 
 const useStyles = makeStyles(styles);
@@ -33,43 +34,45 @@ const StyledCardMedia = withStyles({
 export default function ImageCard(props) {
   const classes = useStyles();
   return (
-      <div>
-        <Card className={classes.root}>
+    <div>
+      <Card className={classes.root}>
 
-            <a href={`/token/${props.tokenId}`} target="_blank">
-              <StyledCardMedia
-                  className={classes.media}
-                  component="img"
-                  image={props.faceImage}
-                  title={props.faceName}
-              />
-            </a>
-            <CardContent className={classes.mediaContent}>
-              <Typography gutterBottom variant="h7" component="h7">
-                {props.faceName}
-              </Typography>
-            </CardContent>
+        <a href={`/token/${props.tokenId}`}>
+          <Link to={`/token/${props.tokenId}`}>
+            <StyledCardMedia
+              className={classes.media}
+              component="img"
+              image={props.faceImage}
+              title={props.faceName}
+            />
+          </Link>
+        </a>
+        <CardContent className={classes.mediaContent}>
+          <Typography gutterBottom variant="h7" component="h7">
+            {props.faceName}
+          </Typography>
+        </CardContent>
 
-          <CardHeader
-              className={classes.headerContent}
-              avatar={
-                <Link to={`/account/${props.accountAddress}`}>
-                  <Avatar aria-label="recipe" className={classes.avatar}>
-                    <img className={classes.img} src={props.ownerImage} alt="..."/>
-                  </Avatar>
-                </Link>
-              }
-              title={props.ownerName}
-              subheader={props.faceDate}
-          />
-          {/*<CardActions>
+        <CardHeader
+          className={classes.headerContent}
+          avatar={
+            <Link to={`/account/${props.accountAddress}`}>
+              <Avatar aria-label="recipe" className={classes.avatar}>
+                <img className={classes.img} src={props.ownerImage} alt="..."/>
+              </Avatar>
+            </Link>
+          }
+          title={props.ownerName}
+          subheader={props.faceDate}
+        />
+        {/*<CardActions>
             <h5>{props.imagePrice} ETH</h5>
             <IconButton aria-label="add to favorites" className={classes.loveIcon}>
               <FavoriteBorderIcon/>
               <h6>5</h6>
             </IconButton>
           </CardActions>*/}
-        </Card>
-      </div>
+      </Card>
+    </div>
   );
 }

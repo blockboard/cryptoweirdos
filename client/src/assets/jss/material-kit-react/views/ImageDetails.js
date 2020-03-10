@@ -9,21 +9,22 @@ const imageDetailsPageStyle = {
         textAlign: "left"
     },
     root: {
-        maxWidth: 600,
+        maxWidth: 550,
+        maxHeight: 550,
         position: "relative"
     },
     media: {
       "@media (min-width: 576px)": {
-        height: 350,
-        width: 350
+        height: 250,
+        width: 250
       },
       "@media (min-width: 768px)": {
-        height: 600,
-        width: 600
+        height: 500,
+        width: 500
       },
       "@media (min-width: 992px)": {
-        height: 600,
-        width: 600
+        height: 500,
+        width: 500
       },
       "@media (min-width: 1200px)": {
         height: 600,
@@ -86,7 +87,11 @@ const imageDetailsPageStyle = {
         position: "relative",
         marginTop: "30px",
         minHeight: "32px",
-        textDecoration: "none"
+        textDecoration: "none",
+        color: "#999"
+    },
+    ownerName: {
+        color: "black"
     },
     socials: {
         marginTop: "0",
@@ -102,7 +107,16 @@ const imageDetailsPageStyle = {
     navWrapper: {
         margin: "20px auto 50px auto",
         textAlign: "center"
-    }
+    },
+    tokenName: {
+        ...title,
+        display: "inline-block",
+        position: "relative",
+        marginTop: "30px",
+        minHeight: "32px",
+        color: "black",
+        textDecoration: "none"
+    },
 };
 
 export default imageDetailsPageStyle;

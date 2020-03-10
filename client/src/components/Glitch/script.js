@@ -59,6 +59,7 @@ function init(){
 	initFileDrop($('html'));
 }
 
+////////////////////////////////////////
 function imageReady(){
 	width = img.width;
 	height = img.height;
@@ -87,7 +88,7 @@ function imageReady(){
 function reload(){
 	counter = 0;
 	startTime = Date.now();
-	
+
 	ctx.drawImage(img, 0, 0, width, height);
 	bitmapData = ctx.getImageData(0, 0, width, height);
 
@@ -102,7 +103,9 @@ function save(){
 	openInNewTab(c.toDataURL("image/png"))
 }
 
-	function updateThreshold(){
+
+/////////////////////////////////////////
+function updateThreshold(){
 	//threshold = document.getElementById("thresholdSlider").value;
 	threshold = parseInt(document.getElementById("thresholdSlider").value);
 	document.getElementById("thresholdReadout").innerHTML = threshold;
@@ -123,6 +126,8 @@ function updateVerticalIncrement(){
 	document.getElementById("verticalReadout").innerHTML = verticalIncrement;
 }
 
+
+////////////////////////////////////////////////////
 function updateRGB(){
 	redMagnitude = parseFloat(document.getElementById("redSlider").value);
 	document.getElementById("redReadout").innerHTML = redMagnitude;
@@ -188,6 +193,7 @@ function updateAlgorithm(v){
 	//alert(algorithm);
 }
 
+///////////////////////////////////////////////////
 function showElement(element){
 	var el = document.getElementById(element);
 	el.style.display = "inline-block";
@@ -320,7 +326,7 @@ function iterateHardSort(){
 			}
 
 		}
-		
+
 	}
 
 }
@@ -357,7 +363,7 @@ function iterateRedChannelSort(){
 			}
 
 		}
-		
+
 	}
 
 }
@@ -394,7 +400,7 @@ function iterateGreenChannelSort(){
 			}
 
 		}
-		
+
 	}
 
 }
@@ -431,7 +437,7 @@ function iterateBlueChannelSort(){
 			}
 
 		}
-		
+
 	}
 
 }
@@ -623,63 +629,63 @@ function grayscale(rgba){
 
 //UI handlers
 function printValue(sliderID, spanbox) {
-    var x = document.getElementById(spanbox);
-    var y = document.getElementById(sliderID);
-    x.value = y.value;
+	var x = document.getElementById(spanbox);
+	var y = document.getElementById(sliderID);
+	x.value = y.value;
 }
 function slideValue(sliderID, spanbox){
-    var x = document.getElementById(spanbox);
-    var y = document.getElementById(sliderID);
-    y.value = parseInt(x.value);
+	var x = document.getElementById(spanbox);
+	var y = document.getElementById(sliderID);
+	y.value = parseInt(x.value);
 }
 
 //window.onload = function() { printValue('slide1', 'rangeValue1'); }
 
 //keypress handler
 document.onkeypress = function(evt) {
-    evt = evt || window.event;
-    var charCode = evt.keyCode || evt.which;
-    var charStr = String.fromCharCode(charCode);
+	evt = evt || window.event;
+	var charCode = evt.keyCode || evt.which;
+	var charStr = String.fromCharCode(charCode);
 
-    //save image into a new tab
-    if( charStr == 's'){
-    	openInNewTab(c.toDataURL("image/png"));
-    }
+	//save image into a new tab
+	if( charStr == 's'){
+		openInNewTab(c.toDataURL("image/png"));
+	}
 
-    //reload image, but keep the settings
-    if( charStr == 'r'){
-    	reload();
-    }
+	//reload image, but keep the settings
+	if( charStr == 'r'){
+		reload();
+	}
 };
 
 function openInNewTab(url) {
-  var win = window.open(url, '_blank');
-  win.focus();
+	var win = window.open(url, '_blank');
+	win.focus();
 }
 
 // Dropping occured
 function fileDropped (e) {
-e.originalEvent.stopPropagation();
+	e.originalEvent.stopPropagation();
 	e.originalEvent.preventDefault();
 
-var files = e.originalEvent.dataTransfer.files; // FileList object
-if (!(files && files.length)) {
+	var files = e.originalEvent.dataTransfer.files; // FileList object
+	if (!(files && files.length)) {
 		return;
-}
+	}
 
-var reader = new FileReader();
-reader.onload = function (e) {
+	var reader = new FileReader();
+	reader.onload = function (e) {
 		src = e.target.result;
 		img.src = src;
 		reload();
-};
-reader.readAsDataURL(files[0]);
+	};
+	reader.readAsDataURL(files[0]);
 }
 
 // Prepare to allow droppings
 function initFileDrop ($dropZone) {
-$dropZone
-  .bind('dragover', false)
-  .bind('dragenter', false)
-  .bind('drop', fileDropped);
+	$dropZone
+		.bind('dragover', false)
+		.bind('dragenter', false)
+		.bind('drop', fileDropped);
 }

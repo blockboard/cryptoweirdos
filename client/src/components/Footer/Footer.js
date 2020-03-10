@@ -48,7 +48,7 @@ export default function Footer(props) {
             </ListItem>
             <ListItem className={classes.inlineBlock}>
               <a
-                  href="https://discord.gg/v3znbr"
+                  href="https://discordapp.com/invite/TstVfTU"
                   className={classes.block}
                   target="_blank"
               >
@@ -59,8 +59,14 @@ export default function Footer(props) {
         </div>
         <div className={classes.right}>
           &copy; {1900 + new Date().getYear()}, made with{" "}
-          <Favorite className={classes.icon} /> by{" "}
+          <Favorite className={classes.icon}/> by {" "}
+          <a
+            href="https://github.com/blockboard"
+            className={aClasses}
+            target="_blank"
+          >
             Blockboard
+          </a>
         </div>
       </div>
     </footer>

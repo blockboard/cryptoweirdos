@@ -19,7 +19,7 @@ import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
 import Button from "components/CustomButtons/Button.js";
 // Styles
-import styles from "assets/jss/material-kit-react/components/imageCardStyle";
+import styles from "assets/jss/material-kit-react/components/imageCards/salesCardStyle";
 import {Link, Redirect} from "react-router-dom";
 import Web3 from "web3";
 
@@ -32,7 +32,7 @@ const StyledCardMedia = withStyles({
   }
 })(CardMedia);
 
-export default function OfferImgCard(props) {
+export default function SalesImgCard(props) {
   const classes = useStyles();
 
   return (
@@ -71,17 +71,16 @@ export default function OfferImgCard(props) {
             <div className={classes.root}>
               <GridContainer>
                 <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
-                  <h6>Owned By: </h6>
                 </GridItem>
                 <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
                   <CardHeader
                       className={classes.headerContent}
                       avatar={
-                        <Link href={`/account/${props.accountAddress}`}>
+                        <a href={`/account/${props.accountAddress}`}>
                           <Avatar aria-label="recipe" className={classes.avatar}>
                             <img className={classes.img} src={props.ownerImage} alt="..."/>
                           </Avatar>
-                        </Link>
+                        </a>
                       }
                       title={props.ownerName}
                       subheader={props.faceDate}

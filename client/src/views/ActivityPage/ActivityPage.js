@@ -22,7 +22,7 @@ import ActivityImgCard from "components/ImageCards/ActivityImgCard/ActivityImgCa
 import background from "assets/img/faces/cf3.jpeg";
 // Styles
 import styles from "assets/jss/material-kit-react/views/activityPage.js";
-import OfferImgCard from "../../components/ImageCards/OfferImgCard/OfferImgCard";
+import SalesImgCard from "../../components/ImageCards/SalesImgCard/SalesImgCard";
 
 // @material-ui/icons
 
@@ -116,9 +116,11 @@ export default function ActivityPage(props) {
                           faceName={token.asset.name}
                           ownerImage={token.asset.owner.profile_img_url}
                           ownerName={(token.asset.owner.user === null) ? token.asset.owner.address : token.asset.owner.user.username}
+                          ownerAddress={token.asset.owner.address}
                           sellerImage={token.seller.profile_img_url}
                           sellerName={(token.seller.user === null) ? token.seller.address : token.seller.user.username}
-                          faceDate={(token.asset.collection.created_date === null) ? "" : token.asset.collection.created_date}
+                          sellerAddress={token.seller.address}
+                          faceDate={""}
                           openSeaLink={token.asset.permalink}
                           imagePrice={web3.utils.fromWei(token.total_price, 'ether')}
                       />

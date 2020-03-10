@@ -17,10 +17,11 @@ import ArtistPage from "./views/AccountPages/ArtistPage/ArtistPage";
 import UserPage from "./views/AccountPages/UserPage/UserPage";
 import NotFoundPage from "./views/NotFoundPage/NotFoundPage";
 import BlogPage from "./views/BlogPage/BlogPage";
-import OffersPage from "./views/OffersPage/OffersPage";
+import SalesPage from "./views/SalesPage/SalesPage";
 import ActivityPage from "./views/ActivityPage/ActivityPage";
 
 import "assets/scss/material-kit-react.scss?v=1.8.0";
+import CreatePage from "./views/CreatePage/CreatePage";
 
 const hist = createBrowserHistory();
 
@@ -47,7 +48,8 @@ export default function App(props) {
             <Route path="/signin" component={SignInPage}/>
             <Route path="/gallery" component={GalleryPage}/>
             <Route path="/activity" component={ActivityPage}/>
-            <Route path="/offers" component={OffersPage}/>
+            <Route path="/offers" component={SalesPage}/>
+            <Route path="/create" component={CreatePage}/>
             <Route path="/account/:accountAddress" children={<UserPage/>}/>
             <Route path="/token/:tokenId" children={<ImageDetailsPage/>}/>
             <Route component={NotFoundPage}/>

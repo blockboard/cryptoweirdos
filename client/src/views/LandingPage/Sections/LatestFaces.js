@@ -15,7 +15,7 @@ import Button from "components/CustomButtons/Button.js";
 
 // Style
 import styles from "assets/jss/material-kit-react/views/landingPageSections/latestFacesStyles.js";
-import LandingImgCard from "../../../components/ImageCards/LandingImgCard/LandingImgCard";
+import LandingImgCard from "components/ImageCards/LandingImgCard/LandingImgCard";
 
 const useStyles = makeStyles(styles);
 

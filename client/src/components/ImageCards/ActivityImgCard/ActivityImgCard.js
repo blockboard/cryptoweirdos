@@ -1,9 +1,7 @@
 import React from "react";
-
 // nodejs library that concatenates classes
 import classNames from "classnames";
 import { withStyles } from '@material-ui/core/styles';
-
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
@@ -19,8 +17,10 @@ import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
 import Button from "components/CustomButtons/Button.js";
 // Styles
-import styles from "assets/jss/material-kit-react/components/imageCardStyle";
+import styles from "assets/jss/material-kit-react/components/imageCards/activityCardStyle";
+
 import {Link, Redirect} from "react-router-dom";
+
 import Web3 from "web3";
 
 const useStyles = makeStyles(styles);
@@ -39,14 +39,14 @@ export default function ActivityImgCard(props) {
       <>
         <GridContainer justify="center" spacing="1">
           <GridItem xs={12} sm={12} md={3} lg={3} xl={3}>
-              <Link to={`/token/${props.tokenId}`}>
+              <a href={`/token/${props.tokenId}`}>
                 <StyledCardMedia
                     className={classes.media}
                     component="img"
                     image={props.faceImage}
                     title={props.faceName}
                 />
-              </Link>
+              </a>
           </GridItem>
           <GridItem xs={12} sm={12} md={2} lg={2} xl={2}>
             <div className={classes.root}>
@@ -77,11 +77,11 @@ export default function ActivityImgCard(props) {
                   <CardHeader
                       className={classes.headerContent}
                       avatar={
-                        <Link href={`/account/${props.accountAddress}`}>
+                        <a href={`/account/${props.sellerAddress}`}>
                           <Avatar aria-label="recipe" className={classes.avatar}>
                             <img className={classes.img} src={props.sellerImage} alt="..."/>
                           </Avatar>
-                        </Link>
+                        </a>
                       }
                       title={props.sellerName}
                       subheader={props.faceDate}
@@ -100,11 +100,11 @@ export default function ActivityImgCard(props) {
                   <CardHeader
                       className={classes.headerContent}
                       avatar={
-                        <Link href={`/account/${props.accountAddress}`}>
+                        <a href={`/account/${props.ownerAddress}`}>
                           <Avatar aria-label="recipe" className={classes.avatar}>
                             <img className={classes.img} src={props.ownerImage} alt="..."/>
                           </Avatar>
-                        </Link>
+                        </a>
                       }
                       title={props.ownerName}
                       subheader={props.faceDate}

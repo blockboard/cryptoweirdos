@@ -95,7 +95,7 @@ export default function GalleryPage(props) {
                         faceName={token.name}
                         ownerImage={token.owner.profile_img_url}
                         ownerName={ (token.owner.user === null) ? token.owner.address : token.owner.user.username}
-                        faceDate={(token.collection.created_date === null) ? "" : token.collection.created_date}
+                        faceDate={""}
                         imagePrice="0.1"
                         // TODO: image price
                         // TODO: Handle image date
@@ -118,8 +118,8 @@ export default function GalleryPage(props) {
         <Parallax small filter image={background} />
         <MainContainer>
           <div className={classes.section}>
-            <GridContainer justify="center">
-              <Paper className={classes.root}>
+            <GridContainer justify="center" spacing="1">
+              {/*<Paper className={classes.root}>
                 <Tabs
                     value={value}
                     onChange={handleChangeIndex}
@@ -168,14 +168,15 @@ export default function GalleryPage(props) {
                       <GridItem xs={12} sm={6} md={4} lg={4} xl={4}>
                         <img className={classes.img} src={image8}/>
                       </GridItem>
-
                       <GridContainer justify="center">
                         <h1 className={classes.title}>In development...</h1>
                       </GridContainer>
                     </GridContainer>
                   </TabPanel>
                 </SwipeableViews>
-              </Paper>
+              </Paper>*/}
+              {(tokenCard === null) ?
+                <CircularProgress disableShrink /> : tokenCard}
             </GridContainer>
           </div>
         </MainContainer>
