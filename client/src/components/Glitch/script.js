@@ -214,6 +214,7 @@ function updateComparator(v){
 	comparator = v;
 }
 
+//////////////////////////////////////////////////////////
 function start(){
 	iterate();
 

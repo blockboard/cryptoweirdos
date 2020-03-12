@@ -3,7 +3,7 @@ import { container, title } from "assets/jss/material-kit-react.js";
 import imagesStyle from "assets/jss/material-kit-react/imagesStyles.js";
 
 const createPageStyle = {
-    container,
+    //container,
     root: {
         maxWidth: 345,
         position: "relative"
@@ -15,7 +15,9 @@ const createPageStyle = {
         height: 50,
     },
     section: {
-        padding: "70px 0",
+        padding: "80px 0",
+        width: "100%",
+        height: "100%",
         textAlign: "center"
     },
     profile: {
@@ -37,7 +39,7 @@ const createPageStyle = {
         marginTop: "-80px"
     },
     ...imagesStyle,
-    main: {
+    /*main: {
         background: "#FFFFFF",
         position: "relative",
         zIndex: "3"
@@ -47,7 +49,7 @@ const createPageStyle = {
         borderRadius: "6px",
         boxShadow:
             "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2)"
-    },
+    },*/
     title: {
         ...title,
         display: "inline-block",
@@ -70,6 +72,39 @@ const createPageStyle = {
     navWrapper: {
         margin: "20px auto 50px auto",
         textAlign: "center"
+    },
+    container: {
+        zIndex: "12",
+        color: "#FFFFFF",
+        paddingRight: "5px",
+        paddingLeft: "5px",
+        paddingBottom: "15px",
+        marginRight: "auto",
+        marginLeft: "auto",
+        width: "100%",
+        "@media (min-width: 576px)": {
+            maxWidth: "540px"
+        },
+        "@media (min-width: 768px)": {
+            maxWidth: "720px"
+        },
+        "@media (min-width: 992px)": {
+            maxWidth: "960px"
+        },
+        "@media (min-width: 1200px)": {
+            maxWidth: "1140px"
+        }
+    },
+    main: {
+        background: "#FFFFFF",
+        position: "relative",
+        zIndex: "3"
+    },
+    mainRaised: {
+        //margin: " 5px 0px",
+        //borderRadius: "6px",
+        //boxShadow:
+        //  "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2)"
     }
 };
 

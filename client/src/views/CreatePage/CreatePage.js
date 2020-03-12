@@ -20,11 +20,15 @@ import MainHeader from "components/MainComponents/MainHeader";
 import MainContainer from "components/MainComponents/MainContainer";
 import OfferImgCard from "components/ImageCards/SalesImgCard/SalesImgCard";
 import Glitch from "components/Glitch/Glitch";
+import Header from "components/Header/Header.js";
+import HeaderLinks from "components/Header/HeaderLinks.js";
 import ActivityImgCard from "components/ImageCards/SalesImgCard/SalesImgCard";
 // Images
 import background from "assets/img/weirdos/0011.jpeg";
+import image1 from "assets/img/weirdos/0058.jpeg";
 // Styles
-import styles from "assets/jss/material-kit-react/views/activityPage.js";
+import styles from "assets/jss/material-kit-react/views/createPage.js";
+import classNames from "classnames";
 
 
 // @material-ui/icons
@@ -63,9 +67,11 @@ function a11yProps(index) {
   };
 }
 
+const dashboardRoutes = ["/"];
 
 export default function CreatePage(props) {
   const classes = useStyles();
+  const { ...rest } = props;
 
   const [tokenCard, setTokenCard] = useState(null);
 
@@ -154,13 +160,28 @@ export default function CreatePage(props) {
   };*/
   return (
       <>
-        <MainHeader/>
-        <Parallax small filter image={background} />
-        <MainContainer>
-          <div className={classes.section}>
-            <Glitch/>
+        <Header
+          color="default"
+          routes={dashboardRoutes}
+          brand="CRYPTOWEIRDOS"
+          rightLinks={<HeaderLinks/>}
+          fixed
+          changeColorOnScroll={{
+            height: 0,
+            color: "white"
+          }}
+          {...rest}
+        />
+
+        <div className={classNames(classes.main, classes.mainRaised)}>
+          <div className={classes.container}>
+            <div className={classes.section}>
+              <Glitch
+                faceImage={image1}
+              />
+            </div>
           </div>
-        </MainContainer>
+        </div>
         <Footer/>
       </>
   );
