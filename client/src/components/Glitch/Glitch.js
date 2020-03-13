@@ -40,7 +40,7 @@ export default function Glitch(props) {
   };
 
   // algorithms
-  const [algorithm, setAlgorithm] = useState(1);
+  const [algorithm, setAlgorithm] = useState(0);
 
   // variables states
   const [horizontalIncrement, setHorizontalIncrement] = useState(0);
@@ -77,9 +77,8 @@ export default function Glitch(props) {
     console.log(`1. I'm in useEffect`);
     canvas = canvasRef.current;
     ctx = canvas.getContext("2d");
-
-    return  window.onload = init();
-  }, []);
+    window.load = init();
+  }, [algorithm, horizontalIncrement, verticalIncrement, threshold, magnitude, comparator]);
 
   function init() {
     console.log(`3. I'm in init()`);
@@ -148,7 +147,7 @@ export default function Glitch(props) {
       default:
         console.log("Error: no algorithm selected", `\n Algorithm ${algorithm}`);
     }
-  };
+  }
 
   // algorithms
   function iterateAlphaBlended () {
@@ -207,7 +206,7 @@ export default function Glitch(props) {
       }
 
     }
-  };
+  }
 
   // tools
   function blend(v1, v2, weight) {
@@ -218,14 +217,14 @@ export default function Glitch(props) {
       output[i] = rgba1[i] * weight + rgba2[i] * (1 - weight);
     }
     return convert8to32(output);
-  };
+  }
 
   function convert32to8(rgba) {
     let red 	= 	rgba >>> 0	& 0xFF;
     let green 	= 	rgba >>> 8	& 0xFF;
     let blue 	= 	rgba >>> 16	& 0xFF;
     return [red, green, blue, 255];
-  };
+  }
 
   function convert8to32(rgba) {
     let output;
@@ -235,19 +234,19 @@ export default function Glitch(props) {
       (rgba[1] 	<< 8) |		//g
       (rgba[0]	<< 0);		//r
     return output;
-  };
+  }
 
   function setPixel(x, y, rgba) {
     data[y * width + x] = rgba;
-  };
+  }
 
   function getPixel(x, y) {
     return data[y * width + x];
-  };
+  }
 
   // comparators
   function brightness(rgba) {
-   //console.log(`8. I'm in brightness()`);
+    //console.log(`8. I'm in brightness()`);
     //gets brightness of pixel
     let red = 	rgba >>> 16	& 0xFF;
     let green = rgba >>> 8	& 0xFF;
@@ -274,7 +273,7 @@ export default function Glitch(props) {
     }
 
     return hue*100;
-  };
+  }
 
   function saturation(rgba) {
     let red = 	rgba >>> 16	& 0xFF;
@@ -293,7 +292,7 @@ export default function Glitch(props) {
     }
 
     return saturation*750;
-  };
+  }
 
   function color(rgba) {
     let red = 	rgba >>> 16	& 0xFF;
@@ -322,7 +321,7 @@ export default function Glitch(props) {
     }
 
     return hue*saturation*750;
-  };
+  }
 
   // helpers
   function compare(rgba) {
@@ -344,12 +343,14 @@ export default function Glitch(props) {
         //alert("Error: no comparator selected");
         return;
     }
-  };
+  }
 
   // actions
   function reload() {
     counter = 0;
     startTime = Date.now();
+
+    console.log(`In reload ${ctx}`);
 
     ctx.drawImage(img, 0, 0, width, height);
     bitmapData = ctx.getImageData(0, 0, width, height);
@@ -359,11 +360,10 @@ export default function Glitch(props) {
     buf8 = new Uint8ClampedArray(buf);
     data = new Uint32Array(buf);
     buf8.set(bitmapData.data);
-  };
-
+  }
   function save() {
     openInNewTab(canvas.toDataURL("image/png"))
-  };
+  }
 
   function openInNewTab(url) {
     let win = window.open(url, '_blank');
@@ -415,55 +415,54 @@ export default function Glitch(props) {
             <GridItem xs={12} sm={12} md={4} lg={4} xl={4}>
               <FormControl component="fieldset">
                 <FormLabel component="legend">Variables:</FormLabel>
-                  <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
-                    Horizontal Increment: {horizontalIncrement}
-                    <Slider
-                      track={false}
-                      defaultValue={0}
-                      aria-labelledby="discrete-slider"
-                      valueLabelDisplay="auto"
-                      step={1}
-                      marks
-                      min={-3}
-                      max={3}
-                      onChangeCommitted={(event, value) => {
-                        setHorizontalIncrement(event.target.value);
-                      }}
-                    />
-                  </Typography>
-
-                  <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
-                    Vertical Increment: {verticalIncrement}
-                    <Slider
-                      track={false}
-                      defaultValue={0}
-                      aria-labelledby="discrete-slider"
-                      valueLabelDisplay="auto"
-                      step={1}
-                      marks
-                      min={-3}
-                      max={3}
-                      onChangeCommitted={(event, value) => {
-                        setVerticalIncrement(event.target.value);
-                      }}
-                    />
-                  </Typography>
-
-                  <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
-                    Threshold: {threshold}
-                    <Slider
-                      defaultValue={30}
-                      aria-labelledby="discrete-slider"
-                      valueLabelDisplay="auto"
-                      step={1}
-                      marks
-                      min={1}
-                      max={200}
-                      onChangeCommitted={(event, value) => {
-                        setThreshold(event.target.value);
-                      }}
-                    />
-                  </Typography>
+                <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
+                  Horizontal Increment: {horizontalIncrement}
+                  <Slider
+                    track={false}
+                    defaultValue={0}
+                    aria-labelledby="discrete-slider"
+                    valueLabelDisplay="auto"
+                    step={1}
+                    marks
+                    min={-3}
+                    max={3}
+                    onChangeCommitted={(event, value) => {
+                      setHorizontalIncrement(value);
+                    }}
+                  />
+                </Typography>
+                <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
+                  Vertical Increment: {verticalIncrement}
+                  <Slider
+                    track={false}
+                    defaultValue={0}
+                    aria-labelledby="discrete-slider"
+                    valueLabelDisplay="auto"
+                    step={1}
+                    marks
+                    min={-3}
+                    max={3}
+                    onChangeCommitted={(event, value) => {
+                      setVerticalIncrement(value);
+                    }}
+                  />
+                </Typography>
+                <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
+                  Threshold: {threshold}
+                  <Slider
+                    defaultValue={30}
+                    aria-labelledby="discrete-slider"
+                    valueLabelDisplay="auto"
+                    step={1}
+                    marks
+                    min={1}
+                    max={200}
+                    onChangeCommitted={(event, value) => {
+                      setThreshold(value);
+                    }}
+                  />
+                </Typography>
+                {(algorithm ==- 0) ?
                   <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
                     Magnitude: {magnitude}
                     <Slider
@@ -475,10 +474,11 @@ export default function Glitch(props) {
                       min={0}
                       max={1}
                       onChangeCommitted={(event, value) => {
-                        setMagnitude(event.target.value);
+                        setMagnitude(value);
+                        console.log(magnitude);
                       }}
                     />
-                  </Typography>
+                  </Typography> : ""}
               </FormControl>
             </GridItem>
             <GridItem xs={12} sm={12} md={4} lg={4} xl={4}>
@@ -553,7 +553,7 @@ export default function Glitch(props) {
               round
               color="transparent"
               size="lg"
-              onClick={reload}>
+              onClick={() => reload()}>
               Reload
             </Button>
           </GridItem>
@@ -564,7 +564,7 @@ export default function Glitch(props) {
               color="primary"
               size="lg"
               onClick={save}>
-              Save
+              Capture
             </Button>
           </GridItem>
         </GridContainer>
