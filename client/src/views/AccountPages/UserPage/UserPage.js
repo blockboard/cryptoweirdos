@@ -1,8 +1,6 @@
 import React, {Fragment, useEffect, useState} from "react";
-
 // nodejs library that concatenates classes
 import classNames from "classnames";
-
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -11,12 +9,10 @@ import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-
 // @material-ui/icons
 import CollectionsIcon from '@material-ui/icons/Collections';
 import LocalActivityIcon from '@material-ui/icons/LocalActivity';
 import Favorite from "@material-ui/icons/Favorite";
-
 // core components
 import Footer from "components/Footer/Footer.js";
 import MainContainer from "components/MainComponents/MainContainer";
@@ -25,10 +21,8 @@ import GridItem from "components/Grid/GridItem.js";
 import NavPills from "components/NavPills/NavPills.js";
 import Parallax from "components/Parallax/Parallax.js";
 import MainHeader from "components/MainComponents/MainHeader";
-
 // images
 import image7 from "assets/img/weirdos/0011.jpeg";
-
 // styles
 import styles from "assets/jss/material-kit-react/views/profilePage.js";
 import ImageCard from "../../../components/ImageCards/ImageCard";

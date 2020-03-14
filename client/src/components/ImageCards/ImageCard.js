@@ -1,9 +1,7 @@
 import React from "react";
-
 // nodejs library that concatenates classes
 import classNames from "classnames";
 import { withStyles } from '@material-ui/core/styles';
-
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
@@ -13,11 +11,8 @@ import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import Avatar from "@material-ui/core/Avatar";
-
 // @material-ui/icons
-
 //Core components
-
 // Styles
 import styles from "assets/jss/material-kit-react/components/imageCards/imageCardStyle";
 
@@ -34,7 +29,7 @@ const StyledCardMedia = withStyles({
 export default function ImageCard(props) {
   const classes = useStyles();
   return (
-    <div>
+    <>
       <Card className={classes.root}>
 
         <a href={`/token/${props.tokenId}`}>
@@ -73,6 +68,6 @@ export default function ImageCard(props) {
             </IconButton>
           </CardActions>*/}
       </Card>
-    </div>
+    </>
   );
 }

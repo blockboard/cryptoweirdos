@@ -9,14 +9,29 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import CardMedia from "@material-ui/core/CardMedia";
+import LibraryBooks from "@material-ui/icons/LibraryBooks";
+import Dialog from "@material-ui/core/Dialog";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
+import IconButton from "@material-ui/core/IconButton";
+import Close from "@material-ui/icons/Close";
+import Slide from "@material-ui/core/Slide";
 //core-components
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import Button from "components/CustomButtons/Button.js";
+import GlitchesImgCard from "components/ImageCards/GlitchesImgCard/GlitchesImgCard";
 //styles
 import styles from "assets/jss/material-kit-react/components/glitches";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import Card from "@material-ui/core/Card";
 
 const useStyles = makeStyles(styles);
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="down" ref={ref} {...props} />;
+});
 
 const StyledCardMedia = withStyles({
   media: {
@@ -39,17 +54,22 @@ export default function Glitch(props) {
     showComponent(event.target.value);
   };
 
+  const [currentImg, setCurrentImg] = useState(props.faceImage);
+
   // algorithms
-  const [algorithm, setAlgorithm] = useState(0);
+  const [algorithm, setAlgorithm] = useState(null);
 
   // variables states
   const [horizontalIncrement, setHorizontalIncrement] = useState(0);
   const [verticalIncrement, setVerticalIncrement] = useState(-1);
-  const [threshold, setThreshold] = useState(30);
-  const [magnitude, setMagnitude] = useState(0.5);
+  const [threshold, setThreshold] = useState(10);
+  const [magnitude, setMagnitude] = useState(0.2);
 
   // comparator states
-  const [comparator, setComparator] = useState(0);
+  const [comparator, setComparator] = useState(null);
+
+  const [classicModal, setClassicModal] = useState(false);
+  const [tokenCard, setTokenCard] = useState(null);
 
   // default selection
   //let comparator = COMP_BRIGHTNESS;
@@ -74,24 +94,21 @@ export default function Glitch(props) {
   let data;
 
   useEffect(() => {
-    console.log(`1. I'm in useEffect`);
     canvas = canvasRef.current;
     ctx = canvas.getContext("2d");
     window.load = init();
-  }, [algorithm, horizontalIncrement, verticalIncrement, threshold, magnitude, comparator]);
+  }, [algorithm, horizontalIncrement, verticalIncrement, threshold, magnitude, comparator, currentImg]);
 
   function init() {
-    console.log(`3. I'm in init()`);
     img = new Image();
-    img.src = props.faceImage;
-    img.onload = imageReady;
     img.crossOrigin = "Anonymous";
+    img.src = currentImg;
+    img.onload = imageReady;
     counter = 0;
     startTime = Date.now();
   }
 
   function imageReady() {
-    console.log(`4. I'm in imageReady()`);
     width = img.width;
     height = img.height;
 
@@ -117,7 +134,6 @@ export default function Glitch(props) {
   }
 
   function start() {
-    //console.log(`5. I'm in start()`);
     iterate();
 
     //drawing functions
@@ -136,7 +152,9 @@ export default function Glitch(props) {
   }
 
   function iterate() {
-    //console.log(`6. I'm in iterate()`);
+    if (algorithm === null)
+      return 0;
+
     switch(algorithm){
       case 0:
         iterateAlphaBlended();
@@ -144,14 +162,11 @@ export default function Glitch(props) {
       case 1:
         iterateHardSort();
         break;
-      default:
-        console.log("Error: no algorithm selected", `\n Algorithm ${algorithm}`);
     }
   }
 
   // algorithms
   function iterateAlphaBlended () {
-    //console.log(`7. I'm in iterateAlpha()`);
     let curPix;
     let nexPix;
 
@@ -162,7 +177,7 @@ export default function Glitch(props) {
         //compare using compare() function
         if(compare(curPix) > compare(nexPix) + threshold){
           //blend pixels and set
-          var blendedValue = blend(curPix, nexPix, magnitude);
+          let blendedValue = blend(curPix, nexPix, magnitude);
           setPixel(x + horizontalIncrement, y + verticalIncrement, blendedValue);
           setPixel(x, y, blendedValue);
         }
@@ -171,8 +186,6 @@ export default function Glitch(props) {
   }
 
   function iterateHardSort (){
-    console.log("In Hard");
-
     let curPix;
     let nexPix;
     let startY = 0;
@@ -310,7 +323,7 @@ export default function Glitch(props) {
       saturation = (max - min) / (2.0 - max - min);
     }
 
-    var hue = 0;
+    let hue = 0;
 
     if(max == red){
       hue = (green - blue) / (max - min);
@@ -325,7 +338,9 @@ export default function Glitch(props) {
 
   // helpers
   function compare(rgba) {
-    //console.log(`9. I'm in compare()`);
+    if (comparator === null)
+      return 0;
+
     switch(comparator){
       case 0:
         return brightness(rgba);
@@ -366,9 +381,43 @@ export default function Glitch(props) {
   }
 
   function openInNewTab(url) {
+    console.log(`URL = ${url}`);
     let win = window.open(url, '_blank');
     win.focus();
   }
+
+  const selectImgHandler = (token) => {
+    setCurrentImg(token.image_url);
+  };
+
+  const fetchAccountCollectionsHandler = () => {
+    fetch(`https://api.opensea.io/api/v1/assets?owner=0x7cef4b8a78b2b64749efa91094512ac2f65a0b1f&asset_contract_address=0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661&limit=100`, {
+      method: 'GET'
+    })
+      .then(res => res.json())
+      .then(resData => {
+        for (let [key, value] of Object.entries(resData)) {
+          setTokenCard(value.map(token => {
+            return (
+              <GridItem xs={12} sm={12} md={4} lg={4} xl={4}>
+                <Card className={classes.root}>
+                  <StyledCardMedia
+                    className={classes.imgMedia}
+                    component="img"
+                    image={token.image_url}
+                    title={token.name}
+                    onClick={() => {
+                      setCurrentImg(token.image_url);
+                      setClassicModal(false);
+                      console.log(token.image_url);
+                    }}
+                  />
+                </Card>
+              </GridItem>)
+          }))
+        }
+      })
+  };
 
   return (
     <>
@@ -388,7 +437,6 @@ export default function Glitch(props) {
                         name="algorithm"
                         checked={algorithm === 0}
                         onChange={() => setAlgorithm(0)}
-                        //checked={showMagnitudeComponent}
                       />
                     }
                     label="Alpha Blended"
@@ -403,7 +451,6 @@ export default function Glitch(props) {
                         name="algorithm"
                         checked={algorithm === 1}
                         onChange={() => setAlgorithm(1)}
-                        //checked={!showMagnitudeComponent}
                       />
                     }
                     label="Hard Sort"
@@ -414,86 +461,25 @@ export default function Glitch(props) {
             </GridItem>
             <GridItem xs={12} sm={12} md={4} lg={4} xl={4}>
               <FormControl component="fieldset">
-                <FormLabel component="legend">Variables:</FormLabel>
-                <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
-                  Horizontal Increment: {horizontalIncrement}
-                  <Slider
-                    track={false}
-                    defaultValue={0}
-                    aria-labelledby="discrete-slider"
-                    valueLabelDisplay="auto"
-                    step={1}
-                    marks
-                    min={-3}
-                    max={3}
-                    onChangeCommitted={(event, value) => {
-                      setHorizontalIncrement(value);
-                    }}
-                  />
-                </Typography>
-                <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
-                  Vertical Increment: {verticalIncrement}
-                  <Slider
-                    track={false}
-                    defaultValue={0}
-                    aria-labelledby="discrete-slider"
-                    valueLabelDisplay="auto"
-                    step={1}
-                    marks
-                    min={-3}
-                    max={3}
-                    onChangeCommitted={(event, value) => {
-                      setVerticalIncrement(value);
-                    }}
-                  />
-                </Typography>
-                <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
-                  Threshold: {threshold}
-                  <Slider
-                    defaultValue={30}
-                    aria-labelledby="discrete-slider"
-                    valueLabelDisplay="auto"
-                    step={1}
-                    marks
-                    min={1}
-                    max={200}
-                    onChangeCommitted={(event, value) => {
-                      setThreshold(value);
-                    }}
-                  />
-                </Typography>
-                {(algorithm ==- 0) ?
-                  <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
-                    Magnitude: {magnitude}
-                    <Slider
-                      defaultValue={0.5}
-                      aria-labelledby="discrete-slider"
-                      valueLabelDisplay="auto"
-                      step={0.01}
-                      marks
-                      min={0}
-                      max={1}
-                      onChangeCommitted={(event, value) => {
-                        setMagnitude(value);
-                        console.log(magnitude);
-                      }}
-                    />
-                  </Typography> : ""}
-              </FormControl>
-            </GridItem>
-            <GridItem xs={12} sm={12} md={4} lg={4} xl={4}>
-              <FormControl component="fieldset">
                 <FormLabel component="legend">Comparator:</FormLabel>
                 <RadioGroup aria-label="gender" name="position">
                   <FormControlLabel
                     value="brightness"
                     control={
-                      <Radio
-                        color="primary"
-                        name="comparator"
-                        checked={comparator === 0}
-                        onChange={() => setComparator(0)}
-                      />
+                      (algorithm === null) ?
+                        <Radio
+                          disabled
+                          color="primary"
+                          name="comparator"
+                          checked={comparator === 0}
+                          onChange={() => setComparator(0)}
+                        /> :
+                        <Radio
+                          color="primary"
+                          name="comparator"
+                          checked={comparator === 0}
+                          onChange={() => setComparator(0)}
+                        />
                     }
                     label="Brightness"
                     labelPlacement="end"
@@ -501,12 +487,20 @@ export default function Glitch(props) {
                   <FormControlLabel
                     value="hue"
                     control={
-                      <Radio
-                        color="primary"
-                        name="comparator"
-                        checked={comparator === 1}
-                        onChange={() => setComparator(1)}
-                      />
+                      (algorithm === null) ?
+                        <Radio
+                          disabled
+                          color="primary"
+                          name="comparator"
+                          checked={comparator === 1}
+                          onChange={() => setComparator(1)}
+                        /> :
+                        <Radio
+                          color="primary"
+                          name="comparator"
+                          checked={comparator === 1}
+                          onChange={() => setComparator(1)}
+                        />
                     }
                     label="Hue"
                     labelPlacement="end"
@@ -514,12 +508,20 @@ export default function Glitch(props) {
                   <FormControlLabel
                     value="saturation"
                     control={
-                      <Radio
-                        color="primary"
-                        name="comparator"
-                        checked={comparator === 2}
-                        onChange={() => setComparator(2)}
-                      />
+                      (algorithm === null) ?
+                        <Radio
+                          disabled
+                          color="primary"
+                          name="comparator"
+                          checked={comparator === 2}
+                          onChange={() => setComparator(2)}
+                        /> :
+                        <Radio
+                          color="primary"
+                          name="comparator"
+                          checked={comparator === 2}
+                          onChange={() => setComparator(2)}
+                        />
                     }
                     label="Saturation"
                     labelPlacement="end"
@@ -527,17 +529,163 @@ export default function Glitch(props) {
                   <FormControlLabel
                     value="color"
                     control={
-                      <Radio
-                        color="primary"
-                        name="comparator"
-                        checked={comparator === 3}
-                        onChange={() => setComparator(3)}
-                      />
+                      (algorithm === null) ?
+                        <Radio
+                          disabled
+                          color="primary"
+                          name="comparator"
+                          checked={comparator === 3}
+                          onChange={() => setComparator(3)}
+                        /> :
+                        <Radio
+                          color="primary"
+                          name="comparator"
+                          checked={comparator === 3}
+                          onChange={() => setComparator(3)}
+                        />
                     }
                     label="Color"
                     labelPlacement="end"
                   />
                 </RadioGroup>
+              </FormControl>
+            </GridItem>
+            <GridItem xs={12} sm={12} md={4} lg={4} xl={4}>
+              <FormControl component="fieldset">
+                <FormLabel component="legend">Variables:</FormLabel>
+                  {(comparator === null) ?
+                    <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
+                      Horizontal Increment:
+                    <Slider
+                      disabled
+                      track={false}
+                      defaultValue={horizontalIncrement}
+                      aria-labelledby="discrete-slider"
+                      valueLabelDisplay="auto"
+                      step={1}
+                      min={-3}
+                      max={3}
+                      onChangeCommitted={(event, value) => {
+                        setHorizontalIncrement(value);
+                      }}
+                    />
+                    </Typography> :
+                    <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
+                      Horizontal Increment: {horizontalIncrement}
+                    <Slider
+                      track={false}
+                      valueLabelDisplay="auto"
+                      defaultValue={horizontalIncrement}
+                      aria-labelledby="discrete-slider"
+                      step={1}
+                      marks
+                      min={-3}
+                      max={3}
+                      onChangeCommitted={(event, value) => {
+                        setHorizontalIncrement(value);
+                      }}
+                    />
+                    </Typography>}
+
+                {(comparator === null) ?
+                  <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
+                    Vertical Increment:
+                    <Slider
+                      disabled
+                      track={false}
+                      defaultValue={verticalIncrement}
+                      aria-labelledby="discrete-slider"
+                      valueLabelDisplay="auto"
+                      step={1}
+                      marks
+                      min={-3}
+                      max={3}
+                      onChangeCommitted={(event, value) => {
+                        setVerticalIncrement(value);
+                      }}
+                    />
+                  </Typography> :
+                  <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
+                    Vertical Increment: {verticalIncrement}
+                    <Slider
+                      track={false}
+                      valueLabelDisplay="auto"
+                      defaultValue={verticalIncrement}
+                      aria-labelledby="discrete-slider"
+                      step={1}
+                      marks
+                      min={-3}
+                      max={3}
+                      onChangeCommitted={(event, value) => {
+                        setVerticalIncrement(value);
+                      }}
+                    />
+                  </Typography>}
+
+                {(comparator === null) ?
+                  <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
+                    Threshold:
+                    <Slider
+                      disabled
+                      defaultValue={threshold}
+                      aria-labelledby="discrete-slider"
+                      valueLabelDisplay="auto"
+                      step={1}
+                      min={1}
+                      max={200}
+                      onChangeCommitted={(event, value) => {
+                        setThreshold(value);
+                      }}
+                    />
+                  </Typography> :
+                  <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
+                    Threshold: {threshold}
+                    <Slider
+                      defaultValue={threshold}
+                      aria-labelledby="discrete-slider"
+                      valueLabelDisplay="auto"
+                      step={1}
+                      min={1}
+                      max={200}
+                      onChangeCommitted={(event, value) => {
+                        setThreshold(value);
+                      }}
+                    />
+                  </Typography> }
+
+                {(algorithm === 0) ?
+                  (comparator === null) ?
+                    <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
+                      Magnitude:
+                      <Slider
+                        disabled
+                        defaultValue={magnitude}
+                        aria-labelledby="discrete-slider"
+                        valueLabelDisplay="auto"
+                        step={0.01}
+                        min={0}
+                        max={1}
+                        onChangeCommitted={(event, value) => {
+                          setMagnitude(value);
+                          console.log(magnitude);
+                        }}
+                      />
+                    </Typography> :
+                    <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
+                      Magnitude: {magnitude}
+                      <Slider
+                        defaultValue={magnitude}
+                        aria-labelledby="discrete-slider"
+                        valueLabelDisplay="auto"
+                        step={0.01}
+                        min={0}
+                        max={1}
+                        onChangeCommitted={(event, value) => {
+                          setMagnitude(value);
+                          console.log(magnitude);
+                        }}
+                      />
+                    </Typography> : ""}
               </FormControl>
             </GridItem>
           </GridItem>
@@ -548,24 +696,105 @@ export default function Glitch(props) {
         </GridContainer>
         <GridContainer justify="center" spacing="1">
           <GridItem xs={12} sm={12} md={6} lg={6} xl={6}>
-            <Button
-              className={classes.signLink}
-              round
-              color="transparent"
-              size="lg"
-              onClick={() => reload()}>
-              Reload
-            </Button>
+            {(comparator === null) ?
+              <Button
+                disabled
+                className={classes.signLink}
+                round
+                color="transparent"
+                size="lg"
+                onClick={() => reload()}>
+                Reload
+              </Button> :
+              <Button
+                className={classes.signLink}
+                round
+                color="transparent"
+                size="lg"
+                onClick={() => reload()}>
+                Reload
+              </Button>}
           </GridItem>
           <GridItem xs={12} sm={12} md={6} lg={6} xl={6}>
+            {(comparator === null) ?
+              <Button
+                disabled
+                className={classes.signInBtn}
+                round
+                color="primary"
+                size="lg"
+                onClick={save}>
+                Capture
+              </Button> :
+              <Button
+                className={classes.signInBtn}
+                round
+                color="primary"
+                size="lg"
+                onClick={save}>
+                Capture
+              </Button>}
+          </GridItem>
+        </GridContainer>
+        <GridContainer justify="center" spacing="1">
+          <GridItem xs={12} sm={12} md={6} lg={6} xl={6}>
             <Button
+              color="primary"
               className={classes.signInBtn}
               round
-              color="primary"
               size="lg"
-              onClick={save}>
-              Capture
+              onClick={() => {setClassicModal(true); fetchAccountCollectionsHandler();}}
+            >
+              <LibraryBooks className={classes.icon} />
+              Select Your Weirdo
             </Button>
+            <Dialog
+              classes={{
+                root: classes.center,
+                paper: classes.modal
+              }}
+              open={classicModal}
+              TransitionComponent={Transition}
+              keepMounted
+              onClose={() => setClassicModal(false)}
+              aria-labelledby="classic-modal-slide-title"
+              aria-describedby="classic-modal-slide-description"
+            >
+              <DialogTitle
+                id="classic-modal-slide-title"
+                disableTypography
+                className={classes.modalHeader}
+              >
+                <IconButton
+                  className={classes.modalCloseButton}
+                  key="close"
+                  aria-label="Close"
+                  color="inherit"
+                  onClick={() => setClassicModal(false)}
+                >
+                  <Close className={classes.modalClose} />
+                </IconButton>
+                <h4 className={classes.modalTitle}>Your Weirdos</h4>
+              </DialogTitle>
+              <DialogContent
+                id="classic-modal-slide-description"
+                className={classes.modalBody}
+              >
+                <GridContainer justify="center" spacing={1}>
+                  {(tokenCard === null) ?
+                    <CircularProgress disableShrink /> : tokenCard}
+                </GridContainer>
+              </DialogContent>
+              <DialogActions className={classes.modalFooter}>
+                <Button
+                  onClick={() => setClassicModal(false)}
+                  color="danger"
+                  simple
+                >
+                  Close
+                </Button>
+              </DialogActions>
+            </Dialog>
           </GridItem>
         </GridContainer>
       </div>

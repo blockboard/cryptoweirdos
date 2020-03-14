@@ -7,6 +7,7 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
+import { withStyles } from '@material-ui/core/styles';
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
@@ -18,14 +19,22 @@ import Menu from "@material-ui/icons/Menu";
 // core components
 // styles
 import styles from "assets/jss/material-kit-react/components/headerStyle.js";
+import CardMedia from "@material-ui/core/CardMedia";
+import {Paper} from "@material-ui/core";
 
 const useStyles = makeStyles(styles);
 
+const useAnotherStyles = makeStyles({
+  elevation4: {}
+}, { name: 'MuiPaper'});
+
 function Header(props) {
   const classes = useStyles();
+  const specialPaper = useAnotherStyles();
 
   const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [prevScrollpos, setPrevScrollProp] = useState(window.pageXOffset);
+  const [prevScroll, setPrevScroll] = useState();
+  const [currentScroll, setCurrentScroll] = useState();
   const [visible, setVisible] = useState(true);
 
   React.useEffect(() => {
@@ -36,6 +45,9 @@ function Header(props) {
     /*if (props.hideOnScroll) {
       window.addEventListener("scroll", handleScroll);
     }*/
+
+    //handleScroll();
+
     return function cleanup() {
       if (props.changeColorOnScroll) {
         window.removeEventListener("scroll", headerColorChange);
@@ -45,24 +57,26 @@ function Header(props) {
         window.removeEventListener("scroll", handleScroll)
       }*/
     };
-  });
+  }, []);
 
   // Hide or show the menu.
   /*const handleScroll = () => {
-    let prevScrollpos = window.pageYOffset;
+    setPrevScroll(window.pageYOffset);
 
+    console.log(`Prev, ${prevScroll}`);
     window.onscroll = () => {
-      const currentScrollPos = window.pageYOffset;
-      if (prevScrollpos > currentScrollPos) {
+      console.log(`current , ${currentScroll}`);
+      setCurrentScroll(window.pageYOffset);
+      if (prevScroll > currentScroll) {
         document.body
             .getElementsByTagName("header")[0]
-            .classList.add(classes[hideOnScroll]);
+            .classList.add(classes.hideOnScroll);
       } else {
         document.body
             .getElementsByTagName("header")[0]
-            .classList.remove(classes[hideOnScroll])
+            .classList.remove(classes.hideOnScroll)
       }
-      prevScrollpos = currentScrollPos;
+      //prevScroll = currentScroll;
     }
   };*/
 
@@ -90,14 +104,14 @@ function Header(props) {
     }
   };
 
-  const { color, rightLinks, leftLinks, brand, fixed, absolute } = props;
+  const { color, rightLinks, leftLinks, brand, fixed, hideOnScroll, absolute } = props;
 
   const appBarClasses = classNames({
     [classes.appBar]: true,
     [classes[color]]: color,
     [classes.absolute]: absolute,
     [classes.fixed]: fixed,
-    /*[classes.hideOnScroll]: hideOnScroll,
+   /* [classes.hideOnScroll]: hideOnScroll,
     [classes.showOnScroll]: hideOnScroll*/
   });
 

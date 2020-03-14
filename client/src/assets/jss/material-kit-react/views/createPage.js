@@ -100,6 +100,15 @@ const createPageStyle = {
         position: "relative",
         zIndex: "3"
     },
+    artBreederTitle: {
+        ...title,
+        display: "inline-block",
+        position: "relative",
+        marginTop: "30px",
+        minHeight: "32px",
+        color: "#999999",
+        textDecoration: "none"
+    },
     mainRaised: {
         //margin: " 5px 0px",
         //borderRadius: "6px",

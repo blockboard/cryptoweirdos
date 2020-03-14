@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-
 // react libraries
 import {BrowserRouter as Router, Link, Route, Switch} from "react-router-dom";
 import {createBrowserHistory} from "history";
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 
 import { AuthContext } from "./context/auth";
 import PrivateRoute from './PrivateRoute';
@@ -39,7 +40,20 @@ export default function App(props) {
     setCurrentPublicAddress(data);
   };
 
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+
+  const theme = React.useMemo(
+    () =>
+      createMuiTheme({
+        palette: {
+          type: prefersDarkMode ? 'dark' : 'light',
+        },
+      }),
+    [prefersDarkMode],
+  );
+
   return (
+   // <ThemeProvider theme={theme}>
       <AuthContext.Provider value={{ authTokens, setAuthTokens: setTokens, currentPublicAddress, setCurrentPublicAddress: setPublicAddress }}>
         <Router history={hist}>
           <Switch>
@@ -56,5 +70,6 @@ export default function App(props) {
           </Switch>
         </Router>
       </AuthContext.Provider>
+   // </ThemeProvider>
   );
 }

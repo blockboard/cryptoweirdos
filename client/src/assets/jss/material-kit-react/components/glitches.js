@@ -8,6 +8,9 @@ const glitchStyle = {
     padding: "70px 0",
     textAlign: "left"
   },
+  imgMedia: {
+    height: 320,
+  },
   img: {
     width: "30px",
     height: "30px",

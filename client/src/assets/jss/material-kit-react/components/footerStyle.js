@@ -31,7 +31,7 @@ const footerStyle = {
   a: {
     color: primaryColor,
     textDecoration: "none",
-    backgroundColor: "transparent"
+    backgroundColor: "z"
   },
   footerWhiteFont: {
     "&,&:hover,&:focus": {

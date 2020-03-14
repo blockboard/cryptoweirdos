@@ -10,7 +10,6 @@ import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import CircularProgress from '@material-ui/core/CircularProgress';
-
 // core components
 import Footer from "components/Footer/Footer.js";
 import GridContainer from "components/Grid/GridContainer.js";
@@ -28,11 +27,9 @@ import background from "assets/img/weirdos/0011.jpeg";
 import image1 from "assets/img/weirdos/0058.jpeg";
 // Styles
 import styles from "assets/jss/material-kit-react/views/createPage.js";
+
 import classNames from "classnames";
-
-
 // @material-ui/icons
-
 const useStyles = makeStyles(styles);
 
 // TODO: Fixed Tabs
@@ -176,6 +173,9 @@ export default function CreatePage(props) {
         <div className={classNames(classes.main, classes.mainRaised)}>
           <div className={classes.container}>
             <div className={classes.section}>
+              <GridContainer justify="center">
+                <h5 className={classes.artBreederTitle}>Glitch and treat your weirdo.</h5>
+              </GridContainer>
               <Glitch
                 faceImage={image1}
               />
