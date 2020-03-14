@@ -33,10 +33,12 @@ app.use((req, res, next) => {
 
 app.use('/artist', artistRoutes);
 
+// TODO: Environment variables on server
+
 mongoose
     .connect(
-        `mongodb://alex:S65sDNlkaXzlTCDa@cf-shard-00-00-r3ep6.mongodb.net:27017,cf-shard-00-01-r3ep6.mongodb.net:27017,cf-shard-00-02-r3ep6.mongodb.net:27017/test?ssl=true&replicaSet=cf-shard-0&authSource=admin&retryWrites=true&w=majority`,
-        { useNewUrlParser: true, useUnifiedTopology: true}
+      `mongodb://alex:vQpd9OTJeRpzGla3@cf-shard-00-00-r3ep6.mongodb.net:27017,cf-shard-00-01-r3ep6.mongodb.net:27017,cf-shard-00-02-r3ep6.mongodb.net:27017/test?ssl=true&replicaSet=cf-shard-0&authSource=admin&retryWrites=true&w=majority`,
+      { useNewUrlParser: true, useUnifiedTopology: true}
     )
     .then(result => {
         app.listen(5000);

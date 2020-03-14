@@ -1,5 +1,5 @@
 /*eslint-disable*/
-import React from "react";
+import React, {useState} from "react";
 // react components
 import { Link, withRouter } from "react-router-dom";
 // @material-ui/core components
@@ -30,8 +30,11 @@ function HeaderLinks(props) {
 
   const { authTokens, currentPublicAddress } = useAuth();
 
+  const [publicAddress, setPublicAddress] = useState();
+
+
   const signInMetaMaskHandler = (publicAddress) => {
-    console.log(publicAddress);
+    console.log(`${process.env.REACT_APP_BACKEND_API}/accounts`);
     fetch(`${process.env.REACT_APP_BACKEND_API}/accounts`, {
       body: JSON.stringify({ publicAddress }),
       headers: {
@@ -124,6 +127,8 @@ function HeaderLinks(props) {
         />
         </>
      )*/
+
+     // TODO: output warning msg when not having metamask
       console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
     }
   };
