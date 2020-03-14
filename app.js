@@ -5,17 +5,13 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require('path');
 
-// Routes
-const artistRoutes = require('./routes/artist');
-
-// Controllers
-
-// Utils
-//const mongoConnect = require('./util/dbConnection');
-
 // Constants
 const app = express();
 
+// Routes
+const authRoutes = require('./routes/auth');
+const accountsRoutes = require('./routes/accounts');
+const artistRoutes = require('./routes/artist');
 
 //app.use(bodyParser.urlencoded()); // x-www-form-urlencoded <form>
 app.use(bodyParser.json()); // application/json
@@ -31,14 +27,31 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use('/artist', artistRoutes);
+// Routes
+/*app.use('/api', (route) => {
+});*/
 
-// TODO: Environment variables on server
+app.use('/api/accounts',accountsRoutes);
+app.use('/api/artist', artistRoutes);
+app.use('/api/auth', authRoutes);
 
+app.use((error, req, res, next) => {
+    console.log(error);
+
+    const status = error.statusCode || 500;
+    const message = error.message;
+    const data = error.data;
+
+    res.status(status)
+        .json({ message: message, data: data })
+});
+
+//const url = `mongodb://admin:1o0ydxALuKk5Ll4u@cf-shard-00-00-r3ep6.mongodb.net:27017,cf-shard-00-01-r3ep6.mongodb.net:27017,cf-shard-00-02-r3ep6.mongodb.net:27017/test?ssl=true&replicaSet=cf-shard-0&authSource=admin&retryWrites=true&w=majority`;
+
+// Connection to db and start server
 mongoose
     .connect(
-      `mongodb://alex:vQpd9OTJeRpzGla3@cf-shard-00-00-r3ep6.mongodb.net:27017,cf-shard-00-01-r3ep6.mongodb.net:27017,cf-shard-00-02-r3ep6.mongodb.net:27017/test?ssl=true&replicaSet=cf-shard-0&authSource=admin&retryWrites=true&w=majority`,
-      { useNewUrlParser: true, useUnifiedTopology: true}
+      `mongodb+srv://admin:P1MHMf6mrnjuA1hr@cf-r3ep6.mongodb.net/test?retryWrites=true&w=majority`
     )
     .then(result => {
         app.listen(5000);
