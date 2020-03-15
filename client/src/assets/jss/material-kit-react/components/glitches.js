@@ -161,6 +161,15 @@ const glitchStyle = {
       backgroundColor: '#106ba3',
     },
   },
+  artBreederTitle: {
+    ...title,
+    display: "inline-block",
+    position: "relative",
+    marginTop: "30px",
+    minHeight: "32px",
+    color: "#999999",
+    textDecoration: "none"
+  },
   signLink: {
     color: "black",
     position: "relative",

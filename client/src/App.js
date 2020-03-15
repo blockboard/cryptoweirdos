@@ -28,7 +28,7 @@ const hist = createBrowserHistory();
 
 export default function App(props) {
   const [authTokens, setAuthTokens] = useState(null);
-  const [currentPublicAddress, setCurrentPublicAddress] = useState(1);
+  const [accountAddress, setAccountAddress] = useState(null);
 
   const setTokens = (data) => {
     localStorage.setItem("Tokens", JSON.stringify(data));
@@ -37,7 +37,7 @@ export default function App(props) {
 
   const setPublicAddress = (data) => {
     localStorage.setItem("Public Address", JSON.stringify(data));
-    setCurrentPublicAddress(data);
+    setAccountAddress(data);
   };
 
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
@@ -54,7 +54,12 @@ export default function App(props) {
 
   return (
    // <ThemeProvider theme={theme}>
-      <AuthContext.Provider value={{ authTokens, setAuthTokens: setTokens, currentPublicAddress, setCurrentPublicAddress: setPublicAddress }}>
+      <AuthContext.Provider value={{
+        authTokens,
+        setAuthTokens: setTokens,
+        accountAddress,
+        setAccountAddress: setPublicAddress
+      }}>
         <Router history={hist}>
           <Switch>
             <Route exact path='/' component={LandingPage}/>
@@ -64,8 +69,8 @@ export default function App(props) {
             <Route path="/activity" component={ActivityPage}/>
             <Route path="/offers" component={SalesPage}/>
             <Route path="/create" component={CreatePage}/>
-            <Route path="/account/:accountAddress" children={<UserPage/>}/>
-            <Route path="/token/:tokenId" children={<ImageDetailsPage/>}/>
+            <Route path={`/account/:publicAddress`} component={UserPage}/>
+            <Route path="/token/:tokenId" component={ImageDetailsPage}/>
             <Route component={NotFoundPage}/>
           </Switch>
         </Router>

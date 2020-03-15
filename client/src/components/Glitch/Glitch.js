@@ -424,6 +424,7 @@ export default function Glitch(props) {
       <div className={classes.section}>
         <GridContainer justify="center" spacing="1">
           <GridItem xs={12} sm={12} md={7} lg={7} xl={6}>
+            <h5 className={classes.artBreederTitle}>Select the algorithm and comparator: </h5>
             <GridItem xs={12} sm={12} md={4} lg={4} xl={4}>
               <FormControl component="fieldset">
                 <FormLabel component="legend">Algorithms:</FormLabel>

@@ -55,8 +55,10 @@ mongoose
     )
     .then(result => {
         app.listen(5000);
+        console.log('##################################');
         console.log('MongoDB Connected...');
         console.log('Server Connected...');
+        console.log('##################################');
     })
     .catch(err =>{
         console.log(err)

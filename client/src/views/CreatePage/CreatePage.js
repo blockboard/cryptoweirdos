@@ -174,7 +174,7 @@ export default function CreatePage(props) {
           <div className={classes.container}>
             <div className={classes.section}>
               <GridContainer justify="center">
-                <h5 className={classes.artBreederTitle}>Glitch and treat your weirdo.</h5>
+                <h5 className={classes.artBreederTitle}>Glitch and trade your weirdo.</h5>
               </GridContainer>
               <Glitch
                 faceImage={image1}
