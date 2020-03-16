@@ -1535,7 +1535,7 @@ library Strings {
     }
 }
 
-// File: contracts/CryptoFaces.sol
+// File: contracts/CryptoWeirdos.sol
 
 pragma solidity 0.5.12;
 

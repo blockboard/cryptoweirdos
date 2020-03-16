@@ -2,7 +2,7 @@ const bnChai = require('bn-chai');
 
 const etherToWei = require('./helper/etherToWei');
 
-const CryptoFaces = artifacts.require("./contracts/CryptoFaces.sol");
+const CryptoFaces = artifacts.require("./contracts/CryptoWeirdos.sol");
 
 require('chai')
     .use(require("chai-as-promised"))
