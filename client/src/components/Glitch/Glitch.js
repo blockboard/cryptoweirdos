@@ -1,5 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import {makeStyles, withStyles} from "@material-ui/core/styles";
+import Web3 from "web3";
 //@material-ui/core
 import Typography from '@material-ui/core/Typography';
 import Slider from '@material-ui/core/Slider';
@@ -21,11 +22,14 @@ import Slide from "@material-ui/core/Slide";
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import Button from "components/CustomButtons/Button.js";
+import Danger from "components/Typography/Danger.js";
+import { useAuth } from "context/auth";
 import GlitchesImgCard from "components/ImageCards/GlitchesImgCard/GlitchesImgCard";
 //styles
 import styles from "assets/jss/material-kit-react/components/glitches";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Card from "@material-ui/core/Card";
+import {Link, Redirect} from "react-router-dom";
 
 const useStyles = makeStyles(styles);
 
@@ -40,9 +44,28 @@ const StyledCardMedia = withStyles({
 })(CardMedia);
 
 export default function Glitch(props) {
+  let img = props.faceImage;
+
+  let canvasRef = useRef(null);
+  let canvas, ctx;
+
+  let width, height;
+
+  let bitmapData, animation;
+
+  let counter, startTime;
+
+  let buf, buf8, data;
+
+  let web3;
+
+  let captured;
+
   const classes = useStyles();
 
   const [showMagnitudeComponent, setShowMagnitudeComponent] = useState(true);
+
+  const { authTokens, setAuthTokens, accountAddress, setAccountAddress, capturedImage, setCapturedImage } = useAuth();
 
   const showComponent = type => {
     const shouldShowBrokenComponent = type === "alpha-blended";
@@ -55,6 +78,7 @@ export default function Glitch(props) {
   };
 
   const [currentImg, setCurrentImg] = useState(props.faceImage);
+  const [captureImg, setCaptureImg] = useState();
 
   // algorithms
   const [algorithm, setAlgorithm] = useState(null);
@@ -73,25 +97,6 @@ export default function Glitch(props) {
 
   // default selection
   //let comparator = COMP_BRIGHTNESS;
-
-  let img = props.faceImage;
-
-  let canvasRef = useRef(null);
-  let canvas;
-  let ctx;
-
-  let width;
-  let height;
-
-  let bitmapData;
-  let animation;
-
-  let counter;
-  let startTime;
-
-  let buf;
-  let buf8;
-  let data;
 
   useEffect(() => {
     canvas = canvasRef.current;
@@ -377,7 +382,7 @@ export default function Glitch(props) {
     buf8.set(bitmapData.data);
   }
   function save() {
-    openInNewTab(canvas.toDataURL("image/png"))
+    setCapturedImage(canvas.toDataURL("image/png"));
   }
 
   function openInNewTab(url) {
@@ -390,31 +395,139 @@ export default function Glitch(props) {
     setCurrentImg(token.image_url);
   };
 
+  const signInMetaMaskHandler = (publicAddress) => {
+    console.log(`${process.env.REACT_APP_BACKEND_API}/accounts`);
+    fetch(`${process.env.REACT_APP_BACKEND_API}/accounts`, {
+      body: JSON.stringify({ publicAddress }),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      method: 'POST'
+    })
+      .then(res => {
+        // TODO: validate Ethereum Address
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Creating a user failed!');
+        }
+        return res.json();
+      })
+      .then(account => {
+        console.log('ACCOUNT:',account);
+      })
+      .catch(err => {
+        console.log('ERROR', err);
+      });
+  };
+
+  const signMessageHandler = async (publicAddress, nonce) => {
+    const signature = await web3.eth.personal.sign(
+      `I am signing my one-time nonce: ${nonce}`,
+      publicAddress,
+      // MetaMask will ignore the password argument here
+    );
+    await authenticateHandler(publicAddress, signature);
+  };
+
+  const authenticateHandler = (publicAddress, signature) => {
+    console.log(`publicAddress: ${publicAddress}, \n signature: ${signature}`);
+
+    fetch(`${process.env.REACT_APP_BACKEND_API}/auth/signin`, {
+      body: JSON.stringify({ publicAddress, signature }),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      method: 'POST'
+    })
+      .then(res => res.json())
+      .then(resData => {
+        console.log(`Tokens: ${resData.token}`);
+        setAuthTokens(resData.token);
+        setAccountAddress(resData.publicAddress);
+      })
+      .catch(err => console.log('authenticateHandlerError: ', err));
+  };
+
+  const checkHandler = async (event) => {
+    if (window.ethereum) {
+      try {
+        web3 = new Web3(window.ethereum);
+        await window.ethereum.enable();
+
+        const publicAddress = await web3.eth.getCoinbase();
+
+        fetch(`${process.env.REACT_APP_BACKEND_API}/accounts/${publicAddress}`, {
+          method: 'GET'
+        })
+          .then(res => {
+            if (res.status === 404) {
+              signInMetaMaskHandler(publicAddress);
+            }
+            return res.json();
+          })
+          .then(account => {
+            signMessageHandler(account.account.publicAddress, account.account.nonce);
+          })
+          .catch(err => {
+            console.log('checkHandlerError: ', err);
+          })
+
+      } catch (error) {
+        // User denied account access...
+        console.log(error);
+      }
+    } else if (window.web3) {
+      web3 = new Web3(window.web3.currentProvider);
+    } else {
+      // TODO: output warning msg when not having metamask
+      console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
+    }
+  };
+
   const fetchAccountCollectionsHandler = () => {
-    fetch(`https://api.opensea.io/api/v1/assets?owner=0x7cef4b8a78b2b64749efa91094512ac2f65a0b1f&asset_contract_address=0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661&limit=100`, {
+    fetch(`https://api.opensea.io/api/v1/assets?owner=${accountAddress}&asset_contract_address=0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661&limit=100`, {
       method: 'GET'
     })
       .then(res => res.json())
       .then(resData => {
-        for (let [key, value] of Object.entries(resData)) {
-          setTokenCard(value.map(token => {
-            return (
-              <GridItem xs={12} sm={12} md={4} lg={4} xl={4}>
-                <Card className={classes.root}>
-                  <StyledCardMedia
-                    className={classes.imgMedia}
-                    component="img"
-                    image={token.image_url}
-                    title={token.name}
-                    onClick={() => {
-                      setCurrentImg(token.image_url);
-                      setClassicModal(false);
-                      console.log(token.image_url);
-                    }}
-                  />
-                </Card>
-              </GridItem>)
-          }))
+
+        if (resData.assets[0] === undefined  || resData.assets.length == 0) {
+          setTokenCard(
+            <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
+              <Danger>
+                No Collections, go and pick your Weirdo.
+              </Danger>
+              <Link to="/gallery" className={classes.linkColor}>
+                <Button
+                  simple
+                  color="facebook"
+                  size="lg">
+                  View All
+                </Button>
+              </Link>
+            </GridItem>
+          )
+        } else {
+          for (let [key, value] of Object.entries(resData)) {
+            setTokenCard(value.map(token => {
+
+              return (
+                <GridItem xs={12} sm={12} md={4} lg={4} xl={4}>
+                  <Card className={classes.root}>
+                    <StyledCardMedia
+                      className={classes.imgMedia}
+                      component="img"
+                      image={token.image_url}
+                      title={token.name}
+                      onClick={() => {
+                        setCurrentImg(token.image_url);
+                        setClassicModal(false);
+                        console.log(token.image_url);
+                      }}
+                    />
+                  </Card>
+                </GridItem>)
+            }))
+          }
         }
       })
   };
@@ -723,18 +836,22 @@ export default function Glitch(props) {
                 className={classes.signInBtn}
                 round
                 color="primary"
-                size="lg"
-                onClick={save}>
+                size="lg">
                 Capture
               </Button> :
-              <Button
-                className={classes.signInBtn}
-                round
-                color="primary"
-                size="lg"
-                onClick={save}>
-                Capture
-              </Button>}
+              <Link
+                to="/mint"
+                className={classes.linkColor}
+              >
+                <Button
+                  className={classes.signInBtn}
+                  round
+                  color="primary"
+                  size="lg"
+                  onClick={() => save()}>
+                  Capture
+                </Button>
+              </Link>}
           </GridItem>
         </GridContainer>
         <GridContainer justify="center" spacing="1">
@@ -744,7 +861,15 @@ export default function Glitch(props) {
               className={classes.signInBtn}
               round
               size="lg"
-              onClick={() => {setClassicModal(true); fetchAccountCollectionsHandler();}}
+              onClick={() => {
+                setClassicModal(true);
+
+                if (authTokens === null) {
+                  checkHandler();
+                }
+                fetchAccountCollectionsHandler();
+              }
+              }
             >
               <LibraryBooks className={classes.icon} />
               Select Your Weirdo

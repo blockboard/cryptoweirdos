@@ -83,7 +83,7 @@ function HeaderLinks(props) {
 
   const signMessageHandler = async (publicAddress, nonce) => {
     const signature = await web3.eth.personal.sign(
-      `I am signing my one-time nonce: ${nonce}`,
+      `Your Signature for CryptoWeirdos: \n I am signing my one-time nonce: ${nonce}`,
       publicAddress,
       // MetaMask will ignore the password argument here
     );

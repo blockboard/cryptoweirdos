@@ -32,10 +32,7 @@
   },
   "homepage": "https://github.com/blockboard/crypto-faces#readme",
   "devDependencies": {
-<<<<<<< HEAD
-=======
     "@openzeppelin/contracts": "^2.4.0",
->>>>>>> dev-contracts
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-eslint": "^10.0.3",
@@ -46,11 +43,8 @@
     "babel-register": "^6.26.0",
     "bn-chai": "^1.0.1",
     "chai": "^4.2.0",
-<<<<<<< HEAD
     "concurrently": "^5.0.2",
-=======
     "chai-as-promised": "^7.1.1",
->>>>>>> dev-contracts
     "css-loader": "^3.4.0",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.0.0",
@@ -66,11 +60,8 @@
     "style-loader": "^1.1.2",
     "truffle": "^5.1.6",
     "truffle-contract": "^4.0.31",
-<<<<<<< HEAD
-=======
     "truffle-flattener": "^1.4.2",
     "web3": "^1.2.4",
->>>>>>> dev-contracts
     "webpack": "^4.41.5",
     "webpack-dev-server": "^3.10.1",
     "webpack-node-externals": "^1.7.2"
@@ -78,6 +69,7 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
+    "date-fns": "^2.11.0",
     "eth-sig-util": "^2.5.2",
     "ethereumjs-tx": "^2.1.2",
     "express": "^4.17.1",
@@ -85,17 +77,11 @@
     "ipfs-api": "^26.1.2",
     "ipfs-http-client": "^41.0.1",
     "jquery": "^3.4.1",
-<<<<<<< HEAD
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^3.5.2",
     "mongoose": "^5.8.9",
     "nodemon": "^2.0.2",
+    "truffle-hdwallet-provider": "^1.0.17",
     "web3": "^1.2.5-rc.0"
-  },
-  "description": ""
-=======
-    "nodemon": "^2.0.2",
-    "truffle-hdwallet-provider": "^1.0.17"
   }
->>>>>>> dev-contracts
 }

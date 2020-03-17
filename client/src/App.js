@@ -23,12 +23,14 @@ import ActivityPage from "./views/ActivityPage/ActivityPage";
 
 import "assets/scss/material-kit-react.scss?v=1.8.0";
 import CreatePage from "./views/CreatePage/CreatePage";
+import MintPage from "./views/MintPage/MintPage";
 
 const hist = createBrowserHistory();
 
 export default function App(props) {
   const [authTokens, setAuthTokens] = useState(null);
   const [accountAddress, setAccountAddress] = useState(null);
+  const [capturedImage, setCapturedImage] = useState(null);
 
   const setTokens = (data) => {
     localStorage.setItem("Tokens", JSON.stringify(data));
@@ -38,6 +40,11 @@ export default function App(props) {
   const setPublicAddress = (data) => {
     localStorage.setItem("Public Address", JSON.stringify(data));
     setAccountAddress(data);
+  };
+
+  const setThisCapturedImage = (data) => {
+    localStorage.setItem("Public Address", JSON.stringify(data));
+    setCapturedImage(data);
   };
 
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
@@ -58,7 +65,9 @@ export default function App(props) {
         authTokens,
         setAuthTokens: setTokens,
         accountAddress,
-        setAccountAddress: setPublicAddress
+        setAccountAddress: setPublicAddress,
+        capturedImage,
+        setCapturedImage: setThisCapturedImage
       }}>
         <Router history={hist}>
           <Switch>
@@ -69,6 +78,7 @@ export default function App(props) {
             <Route path="/activity" component={ActivityPage}/>
             <Route path="/offers" component={SalesPage}/>
             <Route path="/create" component={CreatePage}/>
+            <PrivateRoute path="/mint" component={MintPage}/>
             <Route path={`/account/:publicAddress`} component={UserPage}/>
             <Route path="/token/:tokenId" component={ImageDetailsPage}/>
             <Route component={NotFoundPage}/>

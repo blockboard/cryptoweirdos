@@ -16,6 +16,13 @@ const glitchStyle = {
     height: "30px",
     borderRadius: "50%"
   },
+  linkColor: {
+    "&,&:hover,&:focus": {
+      color: "inherit",
+      textDecoration: "none",
+      display: "block",
+    }
+  },
   root: {
     maxWidth: 550,
     maxHeight: 550,

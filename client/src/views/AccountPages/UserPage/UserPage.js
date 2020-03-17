@@ -22,7 +22,6 @@ import NavPills from "components/NavPills/NavPills.js";
 import Parallax from "components/Parallax/Parallax.js";
 import MainHeader from "components/MainComponents/MainHeader";
 import Danger from "components/Typography/Danger.js";
-
 // images
 import image7 from "assets/img/weirdos/0011.jpeg";
 import profileImg from "assets/img/faces/14.png";
