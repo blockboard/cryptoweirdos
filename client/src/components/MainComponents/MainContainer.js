@@ -4,7 +4,7 @@ import classNames from "classnames";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 
-import style from "../../assets/jss/material-kit-react/components/mainComponents/mainContainerStyle";
+import style from "assets/jss/material-kit-react/components/mainComponents/mainContainerStyle";
 
 const useStyle = makeStyles(style);
 

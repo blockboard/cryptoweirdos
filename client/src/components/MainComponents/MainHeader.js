@@ -19,6 +19,7 @@ export default function MainHeader(props) {
             brand="CRYPTOWEIRDOS"
             rightLinks={<HeaderLinks/>}
             fixed
+            hideOnScroll={true}
             changeColorOnScroll={{
               height: 100,
               color: "white"

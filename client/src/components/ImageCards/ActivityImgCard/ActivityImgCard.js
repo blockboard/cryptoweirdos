@@ -1,9 +1,7 @@
 import React from "react";
-
 // nodejs library that concatenates classes
 import classNames from "classnames";
 import { withStyles } from '@material-ui/core/styles';
-
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
@@ -19,15 +17,18 @@ import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
 import Button from "components/CustomButtons/Button.js";
 // Styles
-import styles from "assets/jss/material-kit-react/components/imageCardStyle";
+import styles from "assets/jss/material-kit-react/components/imageCards/activityCardStyle";
+
 import {Link, Redirect} from "react-router-dom";
+
 import Web3 from "web3";
 
 const useStyles = makeStyles(styles);
 
 const StyledCardMedia = withStyles({
   media: {
-    height: "400px",
+    height: "250px",
+    width: "250px"
   }
 })(CardMedia);
 
@@ -36,18 +37,16 @@ export default function ActivityImgCard(props) {
 
   return (
       <>
-        <GridContainer justify="center" spacing="3">
-          <GridItem xs={12} sm={12} md={4} lg={4} xl={4}>
-            <Card className={classes.root}>
-              <Link to={`/token/${props.tokenId}`}>
+        <GridContainer justify="center" spacing="1">
+          <GridItem xs={12} sm={12} md={3} lg={3} xl={3}>
+              <a href={`/token/${props.tokenId}`}>
                 <StyledCardMedia
                     className={classes.media}
                     component="img"
                     image={props.faceImage}
                     title={props.faceName}
                 />
-              </Link>
-            </Card>
+              </a>
           </GridItem>
           <GridItem xs={12} sm={12} md={2} lg={2} xl={2}>
             <div className={classes.root}>
@@ -59,7 +58,7 @@ export default function ActivityImgCard(props) {
                     </Typography>
                   </GridItem>
                   <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
-                    <h6>Offer</h6>
+                    <h6>Sold</h6>
                   </GridItem>
                   <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
                     <h5>{props.imagePrice} ETH</h5>
@@ -72,17 +71,40 @@ export default function ActivityImgCard(props) {
             <div className={classes.root}>
               <GridContainer>
                 <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
-                  <h6>Owned By: </h6>
+                  <h6>From: </h6>
                 </GridItem>
                 <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
                   <CardHeader
                       className={classes.headerContent}
                       avatar={
-                        <Link href={`/account/${props.accountAddress}`}>
+                        <a href={`/account/${props.sellerAddress}`}>
+                          <Avatar aria-label="recipe" className={classes.avatar}>
+                            <img className={classes.img} src={props.sellerImage} alt="..."/>
+                          </Avatar>
+                        </a>
+                      }
+                      title={props.sellerName}
+                      subheader={props.faceDate}
+                  />
+                </GridItem>
+              </GridContainer>
+            </div>
+          </GridItem>
+          <GridItem xs={12} sm={12} md={3} lg={3} xl={3}>
+            <div className={classes.root}>
+              <GridContainer>
+                <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
+                  <h6>To: </h6>
+                </GridItem>
+                <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
+                  <CardHeader
+                      className={classes.headerContent}
+                      avatar={
+                        <a href={`/account/${props.ownerAddress}`}>
                           <Avatar aria-label="recipe" className={classes.avatar}>
                             <img className={classes.img} src={props.ownerImage} alt="..."/>
                           </Avatar>
-                        </Link>
+                        </a>
                       }
                       title={props.ownerName}
                       subheader={props.faceDate}
@@ -91,7 +113,7 @@ export default function ActivityImgCard(props) {
               </GridContainer>
             </div>
           </GridItem>
-          <GridItem xs={12} sm={12} md={3} lg={3} xl={3}>
+          <GridItem xs={12} sm={12} md={1} lg={1} xl={1}>
             <div className={classes.root}>
               <GridContainer>
                 <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>

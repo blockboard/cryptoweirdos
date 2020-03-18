@@ -3,13 +3,11 @@ import React, {useEffect, useState} from "react";
 import classNames from "classnames";
 // @material-ui/core components
 import {makeStyles, withStyles} from "@material-ui/core/styles";
-
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
-import ImageCard from "../../../components/ImageCards/ImageCard";
+import ImageCard from "components/ImageCards/ImageCard";
 import Typography from '@material-ui/core/Typography';
-
 // Images
 import image1 from "assets/img/faces/cf1.jpeg";
 import image2 from "assets/img/faces/cf2.jpeg";
@@ -26,6 +24,7 @@ import team2 from "assets/img/faces/i+avatar.jpg";
 
 // Style
 import styles from "assets/jss/material-kit-react/views/landingPageSections/latestFacesStyles.js";
+
 import CardMedia from "@material-ui/core/CardMedia";
 import CircularProgress from "@material-ui/core/CircularProgress";
 

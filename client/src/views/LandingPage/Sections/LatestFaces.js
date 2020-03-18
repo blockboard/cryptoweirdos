@@ -5,16 +5,14 @@ import classNames from "classnames";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import CircularProgress from "@material-ui/core/CircularProgress";
-
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
 import ImageCard from "components/ImageCards/ImageCard";
 import Button from "components/CustomButtons/Button.js";
-
-
 // Style
 import styles from "assets/jss/material-kit-react/views/landingPageSections/latestFacesStyles.js";
+import LandingImgCard from "components/ImageCards/LandingImgCard/LandingImgCard";
 
 const useStyles = makeStyles(styles);
 
@@ -36,7 +34,7 @@ export default function LatestFaces(props) {
             setTokenCard(value.map(token => {
               return (
                   <GridItem xs={12} sm={6} md={4} lg={4} xl={4}>
-                    <ImageCard
+                    <LandingImgCard
                         accountAddress={token.owner.address}
                         tokenId={token.token_id}
                         faceImage={token.image_url}

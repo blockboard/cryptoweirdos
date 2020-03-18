@@ -1,8 +1,6 @@
 import React, {Fragment, useEffect, useState} from "react";
-
 // nodejs library that concatenates classes
 import classNames from "classnames";
-
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -11,12 +9,10 @@ import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-
 // @material-ui/icons
 import CollectionsIcon from '@material-ui/icons/Collections';
 import LocalActivityIcon from '@material-ui/icons/LocalActivity';
 import Favorite from "@material-ui/icons/Favorite";
-
 // core components
 import Footer from "components/Footer/Footer.js";
 import MainContainer from "components/MainComponents/MainContainer";
@@ -25,10 +21,10 @@ import GridItem from "components/Grid/GridItem.js";
 import NavPills from "components/NavPills/NavPills.js";
 import Parallax from "components/Parallax/Parallax.js";
 import MainHeader from "components/MainComponents/MainHeader";
-
+import Danger from "components/Typography/Danger.js";
 // images
 import image7 from "assets/img/weirdos/0011.jpeg";
-
+import profileImg from "assets/img/faces/avatar.jpg";
 // styles
 import styles from "assets/jss/material-kit-react/views/profilePage.js";
 import ImageCard from "../../../components/ImageCards/ImageCard";
@@ -80,7 +76,7 @@ export default function UserPage(props) {
 
   const [activeStep, setActiveStep] = React.useState(0);
 
-  let { accountAddress } = useParams();
+  let { publicAddress } = useParams();
 
   const steps = getSteps();
 
@@ -102,40 +98,61 @@ export default function UserPage(props) {
   }, []);
 
   const fetchAccountDataHandler = () => {
-    console.log(accountAddress);
-
-    fetch(`https://api.opensea.io/api/v1/accounts?address=${accountAddress}`, {
+    fetch(`https://api.opensea.io/api/v1/accounts?address=${publicAddress}`, {
       method: 'GET'
     })
         .then(res => res.json())
         .then(resData => {
           //let [key, value] = Object.entries(resData);
-          console.log(`ResData ${Object.entries(resData)} \n ${Object.entries(resData.accounts[0])}`);
           setAccountName(resData.accounts[0].user.username);
-          setAccountPic(resData.accounts[0].profile_img_url)
+          setAccountPic(resData.accounts[0].profile_img_url);
         })
-        .catch(err => console.log(err))
+        .catch(err => {
+          //setAccountName(publicAddress);
+          setAccountPic(profileImg);
+        })
   };
 
   const fetchAccountCollectionsHandler = () => {
-    fetch(`https://api.opensea.io/api/v1/assets?owner=${accountAddress}&asset_contract_address=0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661&limit=100`, {
+    fetch(`https://api.opensea.io/api/v1/assets?owner=${publicAddress}&asset_contract_address=0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661&limit=100`, {
       method: 'GET'
     })
         .then(res => res.json())
         .then(resData => {
-          for (let [key, value] of Object.entries(resData)) {
-            setTokenCard(value.map(token => {
-              return (
+          if (resData.assets[0] === undefined  || resData.assets.length == 0) {
+            setTokenCard(
+              <div>
+                <Danger>
+                  No Collections, go and pick your Weirdo.
+                </Danger>
+                <Link to="/gallery" className={classes.linkColor}>
+                  <Button
+                    simple
+                    color="facebook"
+                    size="lg">
+                    View All
+                  </Button>
+                </Link>
+              </div>
+            )
+          } else {
+            for (let [key, value] of Object.entries(resData)) {
+              setTokenCard(value.map(token => {
+                return (
                   <GridItem xs={12} sm={12} md={4} lg={4} xl={4}>
                     <ProfileImgCard
-                        tokenId={token.token_id}
-                        faceImage={token.image_url}
-                        faceName={token.name}
+                      tokenId={token.token_id}
+                      faceImage={token.image_url}
+                      faceName={token.name}
                     />
                   </GridItem>)
-            }))
+              }))
+            }
           }
         })
+      .catch( err => {
+        console.log(err);
+      })
   };
 
   const navImageClasses = classNames(classes.imgRounded, classes.imgGallery);
@@ -148,184 +165,31 @@ export default function UserPage(props) {
           <div className={classes.container}>
             <GridContainer justify="center">
               {(accountPic === null) ?
-                  <div><br/><CircularProgress disableShrink/></div>:
-              <GridItem xs={12} sm={12} md={6}>
-                    <div className={classes.profile}>
-                      <div>
-                        <img src={accountPic} alt="..." className={imageClasses} />
-                      </div>
-                      <div className={classes.name}>
-                        <h3 className={classes.title}>{(accountName === null) ? accountAddress : accountName}</h3>
-                        <br/>
-                        <h5 className={classes.title}>{(accountName === null) ? "" : accountAddress}</h5>
-                      </div>
+                <div>
+                  <br/>
+                  <CircularProgress disableShrink/>
+                </div> :
+                <GridItem xs={12} sm={12} md={6}>
+                  <div className={classes.profile}>
+                    <div>
+                      <img src={accountPic} alt="..." className={imageClasses} />
                     </div>
-              </GridItem>}
+                    <div className={classes.name}>
+                      <h3 className={classes.title}>{(accountName === null) ? publicAddress : accountName}</h3>
+                      <br/>
+                      <h5 className={classes.title}>{(accountName === null) ? " " : publicAddress}</h5>
+                    </div>
+                  </div>
+                </GridItem>}
             </GridContainer>
             <GridContainer justify="center">
               <GridItem xs={12} sm={12} md={12} lg={12} xl={12} className={classes.navWrapper}>
-                <NavPills
-                    color="rose"
-                    horizontal={{
-                      tabsGrid: { xs: 12, sm: 4, md: 2 },
-                      contentGrid: { xs: 12, sm: 8, md: 8 }
-                    }}
-                    tabs={[
-                      {
-                        tabButton: "Library",
-                        tabIcon: LocalLibraryIcon,
-                        tabContent: (
-                            <NavPills
-                                alignCenter
-                                color="primary"
-                                tabs={[
-                                  {
-                                    tabButton: "Collections",
-                                    tabIcon: CollectionsIcon,
-                                    tabContent: (
-                                        <GridContainer justify="center" spacing={1}>
-                                          {(tokenCard === null) ?
-                                              <CircularProgress disableShrink /> : tokenCard}
-                                        </GridContainer>
-                                    )
-                                  },
-                                  {
-                                    tabButton: "ActivityPage",
-                                    tabIcon: LocalActivityIcon,
-                                    tabContent: (
-                                        <GridContainer justify="center">
-                                          <h1 className={classes.title}>In development... :)</h1>
-                                        </GridContainer>
-                                    )
-                                  },
-                                  {
-                                    tabButton: "Favorite",
-                                    tabIcon: Favorite,
-                                    tabContent: (
-                                        <GridContainer justify="center">
-                                          <h1 className={classes.title}>In development... :)</h1>
-                                        </GridContainer>
-                                    )
-                                  }
-                                ]}
-                            />
-                        )
-                      },
-                      {
-                        tabButton: "Dashboard",
-                        tabIcon: Dashboard,
-                        tabContent: (
-                            <NavPills
-                                color="rose"
-                                horizontal={{
-                                  tabsGrid: { xs: 12, sm: 4, md: 2 },
-                                  contentGrid: { xs: 12, sm: 8, md: 10 }
-                                }}
-                                tabs={[
-                                  /*{
-                                    tabButton: "Mint",
-                                    tabIcon: AccountBalanceIcon,
-                                    tabContent: (
-                                        <NavPills
-                                            alignCenter
-                                            color="primary"
-                                            tabs={[
-                                              {
-                                                tabButton: "New",
-                                                tabIcon: AddCircleIcon,
-                                                tabContent: (
-                                                    <>
-                                                      <input
-                                                          accept="image/!*"
-                                                          className={classes.input}
-                                                          id="contained-button-file"
-                                                          multiple
-                                                          type="file"
-                                                      />
-                                                      <label htmlFor="contained-button-file">
-                                                        <Button variant="contained" color="primary" component="span">
-                                                          Upload
-                                                        </Button>
-                                                      </label>
-                                                    </>
-                                                )
-                                              },
-                                              {
-                                                tabButton: "Store",
-                                                tabIcon: StoreIcon,
-                                                tabContent: (
-                                                    <GridContainer justify="center">
-                                                    </GridContainer>
-                                                )
-                                              },
-                                            ]}
-                                        />
-                                    )
-                                  },*/
-                                  {
-                                    tabButton: "Tools",
-                                    tabIcon: BrushIcon,
-                                    tabContent: (
-                                        <NavPills
-                                            alignCenter
-                                            color="primary"
-                                            tabs={[
-                                              {
-                                                tabButton: "Glitcher",
-                                                tabIcon: Filter9PlusIcon,
-                                                tabContent: (
-                                                    <>
-                                                      <Stepper activeStep={activeStep} alternativeLabel>
-                                                        {steps.map(label => (
-                                                            <Step key={label}>
-                                                              <StepLabel>{label}</StepLabel>
-                                                            </Step>
-                                                        ))}
-                                                      </Stepper>
-                                                      <div>
-                                                        {activeStep === steps.length ? (
-                                                            <div>
-                                                              <Typography className={classes.instructions}>All steps completed</Typography>
-                                                              <Button onClick={handleReset}>Reset</Button>
-                                                            </div>
-                                                        ) : (
-                                                            <div>
-                                                              <Typography className={classes.instructions}>{getStepContent(activeStep)}</Typography>
-                                                              <div>
-                                                                <Button
-                                                                    disabled={activeStep === 0}
-                                                                    onClick={handleBack}
-                                                                    className={classes.backButton}
-                                                                >
-                                                                  Back
-                                                                </Button>
-                                                                <Button variant="contained" color="primary" onClick={handleNext}>
-                                                                  {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-                                                                </Button>
-                                                              </div>
-                                                            </div>
-                                                        )}
-                                                      </div>
-                                                    </>
-                                                ),
-                                              }
-                                            ]}
-                                        />
-                                    )
-                                  },
-                                  /*{
-                                    tabButton: "Uploads",
-                                    tabIcon: PublishIcon,
-                                    tabContent: (
-                                        <span></span>
-                                    )
-                                  }*/
-                                ]}
-                            />
-                        )
-                      },
-                    ]}
-                />
+                <GridContainer justify="center" spacing={1}>
+                  {
+                    (tokenCard === null) ?
+                    <CircularProgress disableShrink /> : tokenCard
+                  }
+                </GridContainer>
               </GridItem>
             </GridContainer>
           </div>

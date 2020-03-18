@@ -1,7 +1,9 @@
 import React, {useEffect, useState} from "react";
+import Web3 from "web3";
 // nodejs library that concatenates classes
 // @material-ui/core components
 import {makeStyles} from "@material-ui/core/styles";
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Paper from '@material-ui/core/Paper';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -20,6 +22,7 @@ import ActivityImgCard from "components/ImageCards/ActivityImgCard/ActivityImgCa
 import background from "assets/img/faces/cf3.jpeg";
 // Styles
 import styles from "assets/jss/material-kit-react/views/activityPage.js";
+import SalesImgCard from "../../components/ImageCards/SalesImgCard/SalesImgCard";
 
 // @material-ui/icons
 
@@ -61,7 +64,7 @@ function a11yProps(index) {
 export default function ActivityPage(props) {
   const classes = useStyles();
 
-  const [tokenCard, setTokenCard] = useState();
+  const [tokenCard, setTokenCard] = useState(null);
 
   const [totalSupply, setTotalSupply] = useState(null);
   const [lastVisit, setLastVisit] = useState(80);
@@ -71,6 +74,8 @@ export default function ActivityPage(props) {
   const [per, setPer] = useState(2);
 
   const [value, setValue] = useState(0);
+
+  const web3 = new Web3(window.ethereum);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -90,26 +95,34 @@ export default function ActivityPage(props) {
   }, []);
 
   const fetchLatestedBornHandler = async () => {
-    fetch(`https://api.opensea.io/api/v1/assets/?asset_contract_address=0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661&order_by=token_id&order_direction=desc&limit=100`, {
+    fetch(`https://api.opensea.io/api/v1/events?asset_contract_address=0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661&event_type=successful&only_opensea=true`, {
       method: 'GET'
     })
         .then(res => res.json())
         .then(resData => {
+          console.log(`Data: ${resData.asset_events.length}`);
+
           for (let [key, value] of Object.entries(resData)) {
             setTokenCard(value.map(token => {
+              if (token.asset === null) {
+                return 0;
+              }
               return (
                   <GridContainer justify="center" spacing={2}>
                     <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
                       <ActivityImgCard
-                          tokenId={token.token_id}
-                          faceImage={token.image_url}
-                          faceName={token.name}
-                          ownerImage={token.owner.profile_img_url}
-                          ownerName={ (token.owner.user === null) ? token.owner.address : token.owner.user.username}
-                          faceDate={(token.collection.created_date === null) ? "" : token.collection.created_date}
-                          imagePrice="0.1"
-                          // TODO: image price
-                          // TODO: Handle image date
+                          tokenId={token.asset.token_id}
+                          faceImage={token.asset.image_url}
+                          faceName={token.asset.name}
+                          ownerImage={token.asset.owner.profile_img_url}
+                          ownerName={(token.asset.owner.user === null) ? token.asset.owner.address : token.asset.owner.user.username}
+                          ownerAddress={token.asset.owner.address}
+                          sellerImage={token.seller.profile_img_url}
+                          sellerName={(token.seller.user === null) ? token.seller.address : token.seller.user.username}
+                          sellerAddress={token.seller.address}
+                          faceDate={""}
+                          openSeaLink={token.asset.permalink}
+                          imagePrice={web3.utils.fromWei(token.total_price, 'ether')}
                       />
                     </GridItem>
                   </GridContainer>)
@@ -129,25 +142,8 @@ export default function ActivityPage(props) {
         <Parallax small filter image={background} />
         <MainContainer>
           <div className={classes.section}>
-            <Paper className={classes.root}>
-              <Tabs
-                  value={value}
-                  onChange={handleChange}
-                  indicatorColor="primary"
-                  textColor="primary"
-                  centered
-              >
-                <Tab label="Creations"/>
-                <Tab label="Offers" />
-                <Tab label="Sales" />
-                <Tab label="Glitches" />
-                <Tab label="All" />
-              </Tabs>
-            </Paper>
-            {/*<GridContainer justify="center">
               {(tokenCard === null) ?
-                  <CircularProgress disableShrink /> : tokenCard}
-            </GridContainer>*/}
+                  <GridContainer justify="center"><br/><CircularProgress disableShrink/></GridContainer> : tokenCard}
           </div>
         </MainContainer>
         <Footer/>

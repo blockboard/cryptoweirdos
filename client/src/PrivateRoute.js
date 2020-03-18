@@ -6,15 +6,16 @@ export default  function PrivateRoute({ component: Component, ...rest }) {
   const { authTokens } = useAuth();
 
   return (
-      <Route
-          {...rest}
-          render={props =>
-              authTokens ? (
-                  <Component {...props} />
-              ) : (
-                  <Redirect to="/" />
-              )
-          }
-      />
+    <Route
+      {...rest}
+      render={props =>
+        (authTokens === null) ? (
+          <Redirect to="/" />
+
+        ) : (
+          <Component {...props} />
+        )
+      }
+    />
   );
 }

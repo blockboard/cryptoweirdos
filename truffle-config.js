@@ -18,11 +18,15 @@
  *
  */
 
-// const HDWalletProvider = require('truffle-hdwallet-provider');
-// const infuraKey = "fj4jll3k.....";
-//
-// const fs = require('fs');
-// const mnemonic = fs.readFileSync(".secret").toString().trim();
+const HDWalletProvider = require("truffle-hdwallet-provider");
+const MNEMONIC = process.env.MNEMONIC;
+const INFURA_KEY = process.env.INFURA_KEY;
+const OWNER_ADDRESS = process.env.OWNER_ADDRESS;
+
+if (!MNEMONIC || !INFURA_KEY) {
+  console.error("Please set a mnemonic and infura key.");
+  return
+}
 
 module.exports = {
   /**
@@ -42,11 +46,11 @@ module.exports = {
     // tab if you use this network and you must also set the `host`, `port` and `network_id`
     // options below to some value.
     //
-    // development: {
-    //  host: "127.0.0.1",     // Localhost (default: none)
-    //  port: 8545,            // Standard Ethereum port (default: none)
-    //  network_id: "*",       // Any network (default: none)
-    // },
+     development: {
+      host: "127.0.0.1",     // Localhost (default: none)
+      port: 8545,            // Standard Ethereum port (default: none)
+      network_id: "*",       // Any network (default: none)
+     },
 
     // Another network with more advanced options...
     // advanced: {
@@ -75,6 +79,31 @@ module.exports = {
       // network_id: 2111,   // This network is yours, in the cloud.
       // production: true    // Treats this network as if it was a public net. (default: false)
     // }
+
+    rinkeby: {
+      provider: function() {
+        return new HDWalletProvider(
+          MNEMONIC,
+          "https://rinkeby.infura.io/v3/" + INFURA_KEY
+        );
+      },
+      network_id: "*",
+      gas: 4000000,
+      skipDryRun: true,
+      from: OWNER_ADDRESS
+    },
+
+    live: {
+      network_id: 1,
+      provider: function() {
+        return new HDWalletProvider(
+          MNEMONIC,
+          "https://mainnet.infura.io/v3/" + INFURA_KEY
+        );
+      },
+      gas: 4000000,
+      gasPrice: 5000000000
+    },
   },
 
   // Set default mocha options here, use special reporters etc.

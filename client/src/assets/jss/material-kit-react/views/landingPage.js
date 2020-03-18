@@ -12,7 +12,16 @@ const landingPageStyle = {
     position: "relative",
     marginTop: "30px",
     minHeight: "32px",
-    color: "rgba(255, 255, 255, 0.6)",
+    color: "rgba(255, 255, 255, 0.9)",
+    textDecoration: "none"
+  },
+  artBreederTitle: {
+    ...title,
+    display: "inline-block",
+    position: "relative",
+    marginTop: "30px",
+    minHeight: "32px",
+    color: "#999999",
     textDecoration: "none"
   },
   subtitle: {

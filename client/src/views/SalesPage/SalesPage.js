@@ -18,11 +18,13 @@ import GridItem from "components/Grid/GridItem.js";
 import Parallax from "components/Parallax/Parallax.js";
 import MainHeader from "components/MainComponents/MainHeader";
 import MainContainer from "components/MainComponents/MainContainer";
-import ActivityImgCard from "components/ImageCards/ActivityImgCard/ActivityImgCard";
+import ActivityImgCard from "components/ImageCards/SalesImgCard/SalesImgCard";
 // Images
 import background from "assets/img/weirdos/0011.jpeg";
 // Styles
 import styles from "assets/jss/material-kit-react/views/activityPage.js";
+
+import SalesImgCard from "components/ImageCards/SalesImgCard/SalesImgCard";
 
 // @material-ui/icons
 
@@ -61,7 +63,7 @@ function a11yProps(index) {
 }
 
 
-export default function OffersPage(props) {
+export default function SalesPage(props) {
   const classes = useStyles();
 
   const [tokenCard, setTokenCard] = useState(null);
@@ -100,7 +102,7 @@ export default function OffersPage(props) {
               }
               return (
                   <GridItem xs={12} sm={6} md={12} lg={12} xl={12}>
-                    <ActivityImgCard
+                    <SalesImgCard
                         key={token.id}
                         accountAddress={token.asset.owner.address}
                         tokenId={token.asset.token_id}
@@ -108,7 +110,7 @@ export default function OffersPage(props) {
                         faceName={token.asset.name}
                         ownerImage={token.asset.owner.profile_img_url}
                         ownerName={token.asset.owner.user.username}
-                        faceDate={token.asset.collection.created_date}
+                        faceDate={""}
                         openSeaLink={token.asset.permalink}
                         imagePrice={web3.utils.fromWei(token.starting_price, 'ether')}
                         // TODO: image price
@@ -124,7 +126,7 @@ export default function OffersPage(props) {
 
                 return(<>
                   <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
-                    <ActivityImgCard
+                    <SalesImgCard
                         accountAddress={resData.asset_events[i].asset.owner.address}
                         tokenId={resData.asset_events[i].asset.token_id}
                         faceImage={resData.asset_events[i].asset.image_url}

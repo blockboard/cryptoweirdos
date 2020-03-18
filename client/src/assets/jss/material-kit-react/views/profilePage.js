@@ -4,6 +4,31 @@ import imagesStyle from "assets/jss/material-kit-react/imagesStyles.js";
 
 const profilePageStyle = {
   container,
+  linkColor: {
+    "&,&:hover,&:focus": {
+      color: "inherit",
+      textDecoration: "none",
+      display: "block",
+    }
+  },
+  signLink: {
+    color: "inherit",
+    position: "relative",
+    padding: "0.9375rem",
+    fontWeight: "400",
+    fontSize: "12px",
+    textTransform: "uppercase",
+    border: "2px solid #555555",
+    //borderRadius: "px",
+    lineHeight: "20px",
+    textDecoration: "none",
+    margin: "0px",
+    display: "inline-flex",
+    "&:hover,&:focus": {
+      color: "inherit",
+      background: "rgba(200, 200, 200, 0.2)"
+    },
+  },
   profile: {
     textAlign: "center",
     "& img": {

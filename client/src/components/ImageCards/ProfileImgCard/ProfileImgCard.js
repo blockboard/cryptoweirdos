@@ -15,7 +15,8 @@ import CardMedia from "@material-ui/core/CardMedia";
 //Core components
 
 // Styles
-import styles from "assets/jss/material-kit-react/components/imageCardStyle";
+import styles from "assets/jss/material-kit-react/components/imageCards/profileCardStyle";
+
 import {Link, Redirect} from "react-router-dom";
 import {CardActions} from "@material-ui/core";
 
