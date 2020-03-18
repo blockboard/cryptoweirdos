@@ -24,7 +24,7 @@ import HeaderLinks from "components/Header/HeaderLinks.js";
 import ActivityImgCard from "components/ImageCards/SalesImgCard/SalesImgCard";
 // Images
 import background from "assets/img/weirdos/0011.jpeg";
-import image1 from "assets/img/weirdos/0058.jpeg";
+import image1 from "assets/img/alex.jpg";
 // Styles
 import styles from "assets/jss/material-kit-react/views/createPage.js";
 

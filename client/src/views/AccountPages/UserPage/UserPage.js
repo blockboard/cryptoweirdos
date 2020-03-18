@@ -24,7 +24,7 @@ import MainHeader from "components/MainComponents/MainHeader";
 import Danger from "components/Typography/Danger.js";
 // images
 import image7 from "assets/img/weirdos/0011.jpeg";
-import profileImg from "assets/img/faces/14.png";
+import profileImg from "assets/img/faces/avatar.jpg";
 // styles
 import styles from "assets/jss/material-kit-react/views/profilePage.js";
 import ImageCard from "../../../components/ImageCards/ImageCard";
