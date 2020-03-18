@@ -110,6 +110,7 @@ function HeaderLinks(props) {
   };
 
   const checkHandler = async (event) => {
+    console.log(`Log: ${process.env.REACT_APP_BACKEND_URL}`);
     if (window.ethereum) {
       try {
         web3 = new Web3(window.ethereum);

@@ -1,4 +1,6 @@
 import React, {useEffect, useRef} from "react";
+import web3 from "web3";
+import ipfs from './ipfs'
 // nodejs library that concatenates classes
 import classNames from "classnames";
 import { useAuth } from "context/auth";
@@ -26,6 +28,8 @@ import background from "assets/img/faces/cf7.jpeg";
 // Styles
 import styles from "assets/jss/material-kit-react/components/glitches";
 
+const HDWalletProvider = require("truffle-hdwallet-provider");
+
 const useStyles = makeStyles(styles);
 
 export default function CreatePage(props) {
@@ -33,6 +37,28 @@ export default function CreatePage(props) {
 
   let canvasRef = useRef(null);
   let canvas, ctx, img, width, height, bitmapData, buf, buf8, data;
+
+  const MNEMONIC = process.env.REACT_APP_MNEMONIC;
+  const INFURA_KEY = process.env.REACT_APP_INFURA_KEY;
+  const NFT_CONTRACT_ADDRESS = process.env.REACT_APP_NFT_CONTRACT_ADDRESS;
+  const OWNER_ADDRESS = process.env.REACT_APP_OWNER_ADDRESS;
+  const NETWORK = process.env.REACT_APP_NETWORK;
+  const NUM_CREATURES = 1;
+
+  const NFT_ABI = [{
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_to",
+        "type": "address"
+      }
+    ],
+    "name": "mintTo",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }];
 
   const imageClasses = classNames(
     classes.imgRaised,
@@ -78,8 +104,41 @@ export default function CreatePage(props) {
 
   }
 
-  const mintWeirdo = () => {
+  const mintWeirdo = async () => {
+    if (!MNEMONIC || !INFURA_KEY || !OWNER_ADDRESS || !NETWORK) {
+      console.error("Please set a mnemonic, infura key, owner, network, and contract address.");
+      return
+    }
 
+    const provider = new HDWalletProvider(MNEMONIC, `https://${NETWORK}.infura.io/v3/${INFURA_KEY}`);
+    const web3Instance = new web3(
+      provider
+    );
+
+    const nftContract = new web3Instance.eth.Contract(NFT_ABI, NFT_CONTRACT_ADDRESS, { gasLimit: "1000000" });
+
+    for (let i = 0; i < NUM_CREATURES; i++) {
+      const result = await nftContract.methods.mintTo(accountAddress).send({ from: accountAddress });
+      console.log("Minted Glitched Alex. Transaction: " + result.transactionHash)
+    }
+
+    // Take image to ipfs
+    const reader = new window.FileReader();
+    reader.readAsArrayBuffer(capturedImage);
+    const buffer = Buffer(reader.result);
+
+    ipfs.files.add(buffer, (error, result) => {
+      if(error) {
+        console.error(error);
+        return
+      }
+
+      fetch(`${process.env.REACT_APP_BACKEND_API}/tokens/${tokenId}`, {
+        method: 'POST'
+      })
+    })
+
+    // store that data in server
   };
 
   return (

@@ -8,7 +8,7 @@
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "start": "react-scripts start",
+    "start": "REACT_APP_BACKEND_URL=https://weirdos.herokuapp.com/api react-scripts start",
     "build": "react-scripts build && gulp licenses",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
@@ -36,6 +36,7 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.4.0",
     "@testing-library/user-event": "^7.2.1",
+    "@transmute/element-lib": "0.0.2-3",
     "axios": "^0.19.2",
     "bcryptjs": "^2.4.3",
     "classnames": "2.2.6",
@@ -45,6 +46,7 @@
     "gh-pages": "^2.2.0",
     "gulp-sass": "^3.1.0",
     "history": "4.9.0",
+    "ipfs-api": "^26.1.2",
     "jsonwebtoken": "^8.5.1",
     "moment": "2.24.0",
     "node-sass": "4.12.0",
@@ -58,6 +60,7 @@
     "react-scripts": "3.1.0",
     "react-slick": "0.25.2",
     "react-swipeable-views": "0.13.3",
+    "truffle-hdwallet-provider": "^1.0.5",
     "web3": "^1.2.6"
   },
   "devDependencies": {

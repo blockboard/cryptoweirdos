@@ -12,6 +12,6 @@ contract GlitchedWeirdos is TradeableERC721Token {
 
   // TODO: OpenSea MetaData Link
   function baseTokenURI() public view returns (string memory) {
-    return "https://opensea-creatures-api.herokuapp.com/api/creature/";
+    return "https://weirdos.herokuapp.com/api/tokens/";
   }
 }
