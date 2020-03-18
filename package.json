@@ -1,14 +1,21 @@
 {
   "name": "cryptofaces",
   "version": "1.0.0",
-  "description": "",
   "main": "app.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
     "build": "webpack",
+<<<<<<< HEAD
     "test": "echo \"Error: no test specified\" && exit 1"
+=======
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint ./app.js",
+    "client": "npm start --prefix client",
+    "server": "nodemon app.js",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+>>>>>>> dev-client-server-contracts
   },
   "repository": {
     "type": "git",
@@ -29,7 +36,7 @@
   },
   "homepage": "https://github.com/blockboard/crypto-faces#readme",
   "devDependencies": {
-    "@openzeppelin/contracts": "^1.4.0",
+    "@openzeppelin/contracts": "^2.4.0",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-eslint": "^10.0.3",
@@ -38,11 +45,15 @@
     "babel-preset-env": "^1.7.0",
     "babel-preset-es2015": "^6.24.1",
     "babel-register": "^6.26.0",
+    "bn-chai": "^1.0.1",
     "chai": "^4.2.0",
+    "concurrently": "^5.0.2",
+    "chai-as-promised": "^7.1.1",
     "css-loader": "^3.4.0",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.19.1",
+    "express-fileupload": "^1.1.6",
     "ganache-cli": "^6.7.0",
     "json-loader": "^0.5.7",
     "mocha": "^6.2.2",
@@ -53,15 +64,34 @@
     "style-loader": "^1.1.2",
     "truffle": "^5.1.6",
     "truffle-contract": "^4.0.31",
+    "truffle-flattener": "^1.4.2",
     "web3": "^1.2.4",
     "webpack": "^4.41.5",
     "webpack-dev-server": "^3.10.1",
     "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
+    "compression": "^1.7.4",
+    "date-fns": "^2.11.0",
+    "eth-sig-util": "^2.5.2",
+    "ethereumjs-tx": "^2.1.2",
     "express": "^4.17.1",
+    "express-validator": "^6.3.1",
+    "helmet": "^3.21.3",
+    "ipfs-api": "^26.1.2",
+    "ipfs-http-client": "^41.0.1",
     "jquery": "^3.4.1",
-    "nodemon": "^2.0.2"
+    "jsonwebtoken": "^8.5.1",
+    "mongodb": "^3.5.2",
+    "mongoose": "^5.8.9",
+    "nodemon": "^2.0.2",
+    "truffle-hdwallet-provider": "^1.0.17",
+    "web3": "^1.2.5-rc.0"
+  },
+  "engines": {
+    "node": "13.10.x",
+    "npm": "6.14.x"
   }
 }
