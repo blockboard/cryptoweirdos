@@ -1,29 +1,3 @@
-<<<<<<< HEAD
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
-=======
 import React, { useState } from "react";
 // react libraries
 import {BrowserRouter as Router, Link, Route, Switch} from "react-router-dom";
@@ -33,7 +7,6 @@ import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 
 import { AuthContext } from "./context/auth";
 import PrivateRoute from './PrivateRoute';
-
 // pages for this product
 import LandingPage from "./views/LandingPage/LandingPage";
 import SignUpPage from "./views/AuthenticationPages/SignUpPage/SignUpPage";
@@ -57,7 +30,6 @@ export default function App(props) {
   const [authTokens, setAuthTokens] = useState(null);
   const [accountAddress, setAccountAddress] = useState(null);
   const [capturedImage, setCapturedImage] = useState(null);
->>>>>>> dev-client-server-contracts
 
   const setTokens = (data) => {
     localStorage.setItem("Tokens", JSON.stringify(data));

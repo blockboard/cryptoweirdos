@@ -1,5 +1,5 @@
 {
-  "name": "cryptofaces",
+  "name": "crypto-weirdos",
   "version": "1.0.0",
   "main": "app.js",
   "directories": {
@@ -7,15 +7,11 @@
   },
   "scripts": {
     "build": "webpack",
-<<<<<<< HEAD
-    "test": "echo \"Error: no test specified\" && exit 1"
-=======
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint ./app.js",
     "client": "npm start --prefix client",
     "server": "nodemon app.js",
     "dev": "concurrently \"npm run server\" \"npm run client\""
->>>>>>> dev-client-server-contracts
   },
   "repository": {
     "type": "git",
@@ -27,7 +23,9 @@
     "non-fungible tokens",
     "solidity",
     "ipfs",
-    "openzepplin"
+    "openzepplin",
+    "express",
+    "mongo"
   ],
   "author": "Blockboard",
   "license": "MIT",

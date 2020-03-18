@@ -170,17 +170,10 @@ function HeaderLinks(props) {
         {/*Gallery*/}
         <listItem className={classes.listItem}>
           <Link to="/gallery" className={classes.linkColor}>
-<<<<<<< HEAD
-            <Button
-                color="transparent"
-                round={true}
-                className={classes.navLink}>
-=======
             {(props.location.pathname === "/gallery") ? <Button
               color="transparent"
               round
               className={classes.selectedNavLink}>
->>>>>>> dev-glitches
               Gallery
             </Button> : <Button
               color="transparent"
@@ -201,15 +194,9 @@ function HeaderLinks(props) {
               Activity
             </Button> :
             <Button
-<<<<<<< HEAD
-                color="transparent"
-                round={true}
-                className={classes.navLink}>
-=======
               color="transparent"
               round
               className={classes.navLink}>
->>>>>>> dev-glitches
               Activity
             </Button>}
           </Link>
