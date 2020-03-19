@@ -1,14 +1,11 @@
 import React, { Fragment } from "react";
-
 // nodejs library that concatenates classes
 import classNames from "classnames";
-
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import CardActionArea from "@material-ui/core/CardActionArea";
 import CardMedia from "@material-ui/core/CardMedia";
 import Card from "@material-ui/core/Card";
-
 // @material-ui/icons
 import CollectionsIcon from '@material-ui/icons/Collections';
 import LocalActivityIcon from '@material-ui/icons/LocalActivity';
@@ -22,7 +19,6 @@ import StoreIcon from '@material-ui/icons/Store';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import BurstModeIcon from '@material-ui/icons/BurstMode';
 import Filter9PlusIcon from '@material-ui/icons/Filter9Plus';
-
 // core components
 import Footer from "components/Footer/Footer.js";
 import Button from "components/CustomButtons/Button.js";
@@ -31,7 +27,6 @@ import GridItem from "components/Grid/GridItem.js";
 import NavPills from "components/NavPills/NavPills.js";
 import Parallax from "components/Parallax/Parallax.js";
 import MainHeader from "components/MainComponents/MainHeader";
-
 // images
 import image2 from "assets/img/faces/cf2.jpeg";
 import image3 from "assets/img/faces/cf3.jpeg";
@@ -41,7 +36,6 @@ import image6 from "assets/img/faces/cf6.jpeg";
 import image7 from "assets/img/faces/cf7.jpeg";
 import image8 from "assets/img/faces/cf8.jpeg";
 import profile from "assets/img/faces/s+.jpeg";
-
 // styles
 import styles from "assets/jss/material-kit-react/views/profilePage.js";
 import {Link} from "react-router-dom";

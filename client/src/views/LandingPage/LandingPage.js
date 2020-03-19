@@ -33,21 +33,19 @@ export default function LandingPage(props) {
           <div className={classes.container}>
             <GridContainer justify="right">
               <GridItem xs={12} sm={12} md={6}>
-                <h1 className={classes.title}>CryptoWeirdos.</h1>
+                <h1 className={classes.title}>Title.</h1>
                 <br/>
                 <Quote
                     className={classes.title}
-                    text={<h5>Crypto's many faces. Find your Weirdo.</h5>}
+                    text={<h5>Description.</h5>}
                 />
               </GridItem>
             </GridContainer>
           </div>
         </Parallax>
         <MainContainer>
-          <LatestFaces/>
-          <MostViewed/>
           <GridContainer justify="center">
-            <h5 className={classes.artBreederTitle}>CryptoWeirdos is created using ArtBreeder tool by Joel Simon</h5>
+            <h5 className={classes.artBreederTitle}>Another title</h5>
           </GridContainer>
         </MainContainer>
         <Footer />

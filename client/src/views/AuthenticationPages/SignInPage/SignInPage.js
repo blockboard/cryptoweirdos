@@ -1,24 +1,18 @@
 import React, { useState, Fragment } from "react";
-
 // react components
 import { Link, Redirect } from "react-router-dom";
-
 // pkgs
 import axios from 'axios-instance';
 import Web3 from "web3";
-
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Icon from "@material-ui/core/Icon";
 import CardActions from "@material-ui/core/CardActions";
-
 // @material-ui/icons
 import People from "@material-ui/icons/People";
-
 // svg icons
 import MetaMaskIcon from "assets/img/svgs/metamask.svg";
-
 // core components
 import Footer from "components/Footer/Footer.js";
 import GridContainer from "components/Grid/GridContainer.js";
