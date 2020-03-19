@@ -30,7 +30,7 @@ exports.getToken = (req, res, next) => {
 
 // POST /api/accounts
 exports.postToken = (req, res,  next) => {
-  const tokenId = req.params.tokenId;
+  const tokenId = req.body.tokenId;
   const image = req.body.image;
   const external_url = req.body.external_url;
 
