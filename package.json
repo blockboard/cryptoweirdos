@@ -1,5 +1,5 @@
 {
-  "name": "crypto-weirdos",
+  "name": "login-system",
   "version": "1.0.0",
   "main": "app.js",
   "directories": {
@@ -21,10 +21,6 @@
   "keywords": [
     "crypto",
     "ethereum",
-    "non-fungible tokens",
-    "solidity",
-    "ipfs",
-    "openzepplin",
     "express",
     "mongo"
   ],

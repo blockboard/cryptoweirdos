@@ -33,11 +33,11 @@ export default function LandingPage(props) {
           <div className={classes.container}>
             <GridContainer justify="right">
               <GridItem xs={12} sm={12} md={6}>
-                <h1 className={classes.title}>Title.</h1>
+                <h1 className={classes.title}>login-system.</h1>
                 <br/>
                 <Quote
                     className={classes.title}
-                    text={<h5>Description.</h5>}
+                    text={<h5>This is login system with MetaMask.</h5>}
                 />
               </GridItem>
             </GridContainer>
