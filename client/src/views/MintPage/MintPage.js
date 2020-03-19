@@ -716,13 +716,16 @@ export default function CreatePage(props) {
         return
       }
 
-      fetch(`${process.env.REACT_APP_BACKEND_API}/tokens`, {
-        method: 'POST',
-        body: {
+      fetch(`${process.env.REACT_APP_BACKEND_API}/tokens  `, {
+        body: JSON.stringify({
           tokenId: tokenId,
           image: result[0].hash,
           external_url: "Link"
-        }
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: 'POST',
       })
         .then(res => {
           console.log(`Result: ${Object.keys(res)}`);
