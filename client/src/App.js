@@ -29,8 +29,6 @@ const hist = createBrowserHistory();
 export default function App(props) {
   const [authTokens, setAuthTokens] = useState(null);
   const [accountAddress, setAccountAddress] = useState(null);
-  const [capturedImage, setCapturedImage] = useState(null);
-  const [imageBlob, setImageBlob] = useState(null);
 
   const setTokens = (data) => {
     localStorage.setItem("Tokens", JSON.stringify(data));
@@ -42,26 +40,6 @@ export default function App(props) {
     setAccountAddress(data);
   };
 
-  const setThisCapturedImage = (data) => {
-    setCapturedImage(data);
-  };
-
-  const setThisImageBlob = (data) => {
-    setImageBlob(data);
-  };
-
-  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-
-  const theme = React.useMemo(
-    () =>
-      createMuiTheme({
-        palette: {
-          type: prefersDarkMode ? 'dark' : 'light',
-        },
-      }),
-    [prefersDarkMode],
-  );
-
   return (
    // <ThemeProvider theme={theme}>
       <AuthContext.Provider value={{
@@ -69,24 +47,12 @@ export default function App(props) {
         setAuthTokens: setTokens,
         accountAddress,
         setAccountAddress: setPublicAddress,
-        capturedImage,
-        setCapturedImage: setThisCapturedImage,
-        imageBlob,
-        setImageBlob: setThisImageBlob
       }}>
         <Router history={hist}>
           <Switch>
             <Route exact path='/' component={LandingPage}/>
-            <Route path="/signup" component={SignUpPage}/>
-            <Route path="/signin" component={SignInPage}/>
-            <Route path="/gallery" component={GalleryPage}/>
-            <Route path="/activity" component={ActivityPage}/>
-            <Route path="/offers" component={SalesPage}/>
-            <Route path="/create" component={CreatePage}/>
-            <PrivateRoute path="/mint" component={MintPage}/>
-            <Route path={`/account/:publicAddress`} component={UserPage}/>
-            <Route path="/token/:tokenId" component={ImageDetailsPage}/>
-            <Route component={NotFoundPage}/>
+            <Route path="/sign-up" component={SignUpPage}/>
+            <Route path="/sign-in" component={SignInPage}/>
           </Switch>
         </Router>
       </AuthContext.Provider>
