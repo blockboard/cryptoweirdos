@@ -620,7 +620,12 @@ export default function CreatePage(props) {
   const navImageClasses = classNames(classes.imgRounded, classes.imgGallery);
 
 
-  const { authTokens, setAuthTokens, accountAddress, setAccountAddress, capturedImage, setThisCapturedImage} = useAuth();
+  const {
+    authTokens, setAuthTokens,
+    accountAddress, setAccountAddress,
+    capturedImage, setCapturedImage,
+    imageBlob, setImageBlob
+  } = useAuth();
 
   useEffect(async () => {
     if (window.ethereum) {
@@ -696,7 +701,7 @@ export default function CreatePage(props) {
 
     const IReader = new FileReader();
     const imageBlob = new Blob([capturedImage], {
-      type: 'text/plain'
+      type: 'image/png'
     });
     //const fileBlob = new File([imageBlob]);
     console.log(imageBlob);
@@ -708,15 +713,54 @@ export default function CreatePage(props) {
     };
   };
 
-  const sendTokenMetaData = (imageBuffer) => {
+  const sendTokenMetaData = () => {
     console.log(`In IPFS`);
-    ipfs.files.add(imageBuffer, (error, result) => {
+    const imageBlob = new Blob([capturedImage], {
+      type: 'image/png'
+    });
+    //const buffer = Buffer(capturedImage);
+
+    console.log(`imageBlob: ${imageBlob}`);
+
+    let file = imageBlob;
+    let fr = new FileReader();
+    fr.onload = receivedText();
+
+    function receivedText() {
+      fr.readAsArrayBuffer(imageBlob);
+
+      //IPFS START
+        const files = [
+          {
+            path: 'image.png',
+            content: ipfs.types.Buffer.from(btoa(fr.result),"base64")
+          }
+        ]
+
+        ipfs.files.add(files, function (err, files) {
+          let url = "https://ipfs.io/ipfs/"+files[0].hash;
+          console.log("Storing file on IPFS using Javascript. HASH: https://ipfs.io/ipfs/"+files[0].hash);
+          let ipfsPath = files[0].hash;
+          console.log(`ipfs Hash: ${ipfsPath}`)
+          ipfs.files.cat(ipfsPath, function (err, file) {
+            if (err) {
+              throw err
+            }
+            let img = file.toString("base64");
+            console.log(`img ${img}`)
+          })
+        });
+    }
+
+
+    /*ipfs.files.add(buffer, (error, result) => {
       if(error) {
         console.error(error);
         return
       }
 
-      fetch(`${process.env.REACT_APP_BACKEND_API}/tokens  `, {
+      console.log(result);
+      /!*fetch(`${process.env.REACT_APP_BACKEND_API}/tokens  `, {
         body: JSON.stringify({
           tokenId: tokenId,
           image: result[0].hash,
@@ -732,9 +776,9 @@ export default function CreatePage(props) {
         })
         .catch(err => {
           console.log(err);
-        })
-    })
-  }
+        })*!/
+    })*/
+  };
 
   return (
     <div>
@@ -753,7 +797,7 @@ export default function CreatePage(props) {
                 className={classes.signInBtn}
                 round
                 size="lg"
-                onClick={() => mintWeirdo()}
+                onClick={() => sendTokenMetaData()}
               >
                 Mint Your Weirdo
               </Button>

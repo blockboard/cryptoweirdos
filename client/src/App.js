@@ -30,6 +30,7 @@ export default function App(props) {
   const [authTokens, setAuthTokens] = useState(null);
   const [accountAddress, setAccountAddress] = useState(null);
   const [capturedImage, setCapturedImage] = useState(null);
+  const [imageBlob, setImageBlob] = useState(null);
 
   const setTokens = (data) => {
     localStorage.setItem("Tokens", JSON.stringify(data));
@@ -42,8 +43,11 @@ export default function App(props) {
   };
 
   const setThisCapturedImage = (data) => {
-    localStorage.setItem("Public Address", JSON.stringify(data));
     setCapturedImage(data);
+  };
+
+  const setThisImageBlob = (data) => {
+    setImageBlob(data);
   };
 
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
@@ -66,7 +70,9 @@ export default function App(props) {
         accountAddress,
         setAccountAddress: setPublicAddress,
         capturedImage,
-        setCapturedImage: setThisCapturedImage
+        setCapturedImage: setThisCapturedImage,
+        imageBlob,
+        setImageBlob: setThisImageBlob
       }}>
         <Router history={hist}>
           <Switch>

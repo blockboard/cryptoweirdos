@@ -65,7 +65,12 @@ export default function Glitch(props) {
 
   const [showMagnitudeComponent, setShowMagnitudeComponent] = useState(true);
 
-  const { authTokens, setAuthTokens, accountAddress, setAccountAddress, capturedImage, setCapturedImage } = useAuth();
+  const {
+    authTokens, setAuthTokens,
+    accountAddress, setAccountAddress,
+    capturedImage, setCapturedImage,
+    imageBlob, setImageBlob
+  } = useAuth();
 
   const showComponent = type => {
     const shouldShowBrokenComponent = type === "alpha-blended";
@@ -383,6 +388,11 @@ export default function Glitch(props) {
   }
   function save() {
     setCapturedImage(canvas.toDataURL("image/png"));
+    const capturedImageBlob = canvas.toBlob((blob) => {
+      return URL.createObjectURL(blob);
+    });
+
+    setImageBlob(canvas.toDataURL());
   }
 
   function openInNewTab(url) {
