@@ -13,8 +13,6 @@ const app = express();
 // Routes
 const authRoutes = require('./routes/auth');
 const accountsRoutes = require('./routes/accounts');
-const artistRoutes = require('./routes/artist');
-const tokenRouter = require('./routes/tokens');
 
 
 app.use(helmet());
@@ -42,9 +40,7 @@ app.use((req, res, next) => {
 });*/
 
 app.use('/api/accounts',accountsRoutes);
-app.use('/api/artist', artistRoutes);
 app.use('/api/auth', authRoutes);
-app.use('/api/tokens', tokenRouter);
 
 app.use((error, req, res, next) => {
     console.log(error);

@@ -1,8 +1,8 @@
 {
-  "name": "crypto-weirdos",
+  "name": "project name",
   "version": "1.8.0",
   "homepage": "http://cryptoweirdos.github.io/",
-  "description": "ERC-721 tokens",
+  "description": "project discription",
   "private": true,
   "main": "dist/index.js",
   "scripts": {
