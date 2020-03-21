@@ -392,7 +392,7 @@ export default function Glitch(props) {
       return URL.createObjectURL(blob);
     });
 
-    setImageBlob(canvas.toDataURL());
+    setImageBlob(canvas);
   }
 
   function openInNewTab(url) {

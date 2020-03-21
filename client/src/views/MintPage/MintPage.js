@@ -28,7 +28,7 @@ import background from "assets/img/faces/cf7.jpeg";
 // Styles
 import styles from "assets/jss/material-kit-react/components/glitches";
 
-const HDWalletProvider = require("truffle-hdwallet-provider");
+//const HDWalletProvider = require("truffle-hdwallet-provider");
 
 const useStyles = makeStyles(styles);
 
@@ -628,6 +628,9 @@ export default function CreatePage(props) {
   } = useAuth();
 
   useEffect(async () => {
+    console.log(typeof capturedImage);
+    console.log(typeof imageBlob);
+
     if (window.ethereum) {
       window.web3 = new web3(window.ethereum);
       await window.ethereum.enable()
@@ -697,73 +700,29 @@ export default function CreatePage(props) {
     console.log("Minted Glitched Alex. Transaction: " + result.transactionHash);
 
     const transferEvent = await nftContract.getPastEvents('Transfer', {});
+    console.log(transferEvent);
     tokenId = transferEvent[0].returnValues.tokenId;
 
-    const IReader = new FileReader();
-    const imageBlob = new Blob([capturedImage], {
-      type: 'image/png'
-    });
-    //const fileBlob = new File([imageBlob]);
-    console.log(imageBlob);
-    IReader.readAsArrayBuffer(imageBlob);
-    console.log(`A1`);
-    IReader.onloadend =(e) => {
-      const buffer = Buffer(IReader.result);
-      sendTokenMetaData(buffer);
-    };
+    sendTokenMetaData();
   };
 
   const sendTokenMetaData = () => {
     console.log(`In IPFS`);
-    const imageBlob = new Blob([capturedImage], {
-      type: 'image/png'
-    });
-    //const buffer = Buffer(capturedImage);
 
-    console.log(`imageBlob: ${imageBlob}`);
-
-    let file = imageBlob;
-    let fr = new FileReader();
-    fr.onload = receivedText();
-
-    function receivedText() {
-      fr.readAsArrayBuffer(imageBlob);
-
-      //IPFS START
-        const files = [
-          {
-            path: 'image.png',
-            content: ipfs.types.Buffer.from(btoa(fr.result),"base64")
-          }
-        ]
-
-        ipfs.files.add(files, function (err, files) {
-          let url = "https://ipfs.io/ipfs/"+files[0].hash;
-          console.log("Storing file on IPFS using Javascript. HASH: https://ipfs.io/ipfs/"+files[0].hash);
-          let ipfsPath = files[0].hash;
-          console.log(`ipfs Hash: ${ipfsPath}`)
-          ipfs.files.cat(ipfsPath, function (err, file) {
-            if (err) {
-              throw err
-            }
-            let img = file.toString("base64");
-            console.log(`img ${img}`)
-          })
-        });
-    }
-
-
-    /*ipfs.files.add(buffer, (error, result) => {
-      if(error) {
-        console.error(error);
-        return
+    ipfs.files.add(Buffer(capturedImage), function (err, files) {
+      if (err) {
+        throw err
       }
 
-      console.log(result);
-      /!*fetch(`${process.env.REACT_APP_BACKEND_API}/tokens  `, {
+      let url = "https://ipfs.io/ipfs/"+files[0].hash;
+      console.log("Storing file on IPFS using Javascript. HASH: https://ipfs.io/ipfs/"+files[0].hash);
+      let ipfsPath = files[0].hash;
+      console.log(`ipfs Hash: ${ipfsPath}`);
+
+      fetch(`${process.env.REACT_APP_BACKEND_API}/tokens  `, {
         body: JSON.stringify({
           tokenId: tokenId,
-          image: result[0].hash,
+          image: ipfsPath,
           external_url: "Link"
         }),
         headers: {
@@ -776,8 +735,15 @@ export default function CreatePage(props) {
         })
         .catch(err => {
           console.log(err);
-        })*!/
-    })*/
+        });
+      ipfs.files.cat(ipfsPath, function (err, file) {
+        if (err) {
+          throw err
+        }
+        let img = file.toString("base64");
+        console.log(`img ${img}`)
+      })
+    });
   };
 
   return (
@@ -797,7 +763,7 @@ export default function CreatePage(props) {
                 className={classes.signInBtn}
                 round
                 size="lg"
-                onClick={() => sendTokenMetaData()}
+                onClick={mintWeirdo}
               >
                 Mint Your Weirdo
               </Button>

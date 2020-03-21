@@ -8,7 +8,7 @@ const Token = require('../models/tokens');
 exports.getToken = (req, res, next) => {
   const tokenId = req.params.tokenId;
 
-  Token.findOne({ tokenId: tokenId,})
+  Token.findOne({ tokenId: tokenId })
     .then(token => {
       if (!token) {
         const error = new Error(`Token ${tokenId} is not found in database`);
@@ -16,8 +16,7 @@ exports.getToken = (req, res, next) => {
         throw error;
       }
       res.status(200).send({
-        message: `Token ${tokenId} is found in database`,
-        account: token
+        token
       })
     })
     .catch(err => {
