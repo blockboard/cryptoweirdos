@@ -16,7 +16,7 @@ exports.getToken = (req, res, next) => {
         throw error;
       }
       res.status(200).send({
-        image: token.image
+        image: token.image,
         name: token.name
       })
     })
