@@ -18,11 +18,15 @@ import Parallax from "components/Parallax/Parallax.js";
 import MainHeader from "components/MainComponents/MainHeader";
 import MainContainer from "components/MainComponents/MainContainer";
 import ActivityImgCard from "components/ImageCards/ActivityImgCard/ActivityImgCard";
+import Button from "components/CustomButtons/Button.js";
 // Images
 import background from "assets/img/faces/cf3.jpeg";
 // Styles
 import styles from "assets/jss/material-kit-react/views/activityPage.js";
 import SalesImgCard from "../../components/ImageCards/SalesImgCard/SalesImgCard";
+import CardHeader from "@material-ui/core/CardHeader";
+import Avatar from "@material-ui/core/Avatar";
+import LatestFaces from "../LandingPage/Sections/LatestFaces";
 
 // @material-ui/icons
 
@@ -108,8 +112,7 @@ export default function ActivityPage(props) {
                 return 0;
               }
               return (
-                  <GridContainer justify="center" spacing={2}>
-                    <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
+                    <GridItem xs={12} sm={12} md={8} lg={8} xl={8}>
                       <ActivityImgCard
                           tokenId={token.asset.token_id}
                           faceImage={token.asset.image_url}
@@ -124,8 +127,7 @@ export default function ActivityPage(props) {
                           openSeaLink={token.asset.permalink}
                           imagePrice={web3.utils.fromWei(token.total_price, 'ether')}
                       />
-                    </GridItem>
-                  </GridContainer>)
+                    </GridItem>)
             }))
           }
         })
@@ -143,7 +145,14 @@ export default function ActivityPage(props) {
         <MainContainer>
           <div className={classes.section}>
               {(tokenCard === null) ?
-                  <GridContainer justify="center"><br/><CircularProgress disableShrink/></GridContainer> : tokenCard}
+                  <GridContainer justify="center">
+                    <br/>
+                    <CircularProgress disableShrink/>
+                  </GridContainer> :
+                  <GridContainer justify="center" spacing={2}>
+                    {tokenCard}
+                  </GridContainer>
+              }
           </div>
         </MainContainer>
         <Footer/>

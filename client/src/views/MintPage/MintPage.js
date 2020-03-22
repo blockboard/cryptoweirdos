@@ -40,6 +40,8 @@ const useStyles = makeStyles(styles);
 const dashboardRoutes = ["/"];
 
 export default function CreatePage(props) {
+  // TODO: Redirect issue
+
   const classes = useStyles();
   const { ...rest } = props;
 
@@ -747,7 +749,6 @@ export default function CreatePage(props) {
           body: JSON.stringify({
             tokenId: tokenId,
             image: url,
-            external_url: "Link",
             name: `GlitchedWeirdo #${tokenId}`
           }),
         })

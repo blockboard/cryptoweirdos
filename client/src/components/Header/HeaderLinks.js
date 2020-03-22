@@ -35,9 +35,9 @@ import accountProfileImage from "assets/img/faces/i+avatar.jpg";
 import { useAuth } from "context/auth";
 // styles
 import styles from "assets/jss/material-kit-react/components/headerLinksStyle.js";
-import {Icon} from "@material-ui/core";
+import {Icon, SvgIcon} from "@material-ui/core";
 
-import MetaMaskIcon from "assets/img/svgs/metamask.svg"
+import MetaMaskIcon from "assets/img/svgs/metamask.svg";
 import Web3 from "web3";
 
 const useStyles = makeStyles(styles);
