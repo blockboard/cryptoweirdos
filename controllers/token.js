@@ -17,6 +17,8 @@ exports.getToken = (req, res, next) => {
       }
       res.status(200).send({
         image: token.image,
+        external_utl: token.external_url,
+        description: token.description,
         name: token.name
       })
     })
