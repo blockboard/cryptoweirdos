@@ -25,6 +25,7 @@ import Warning from "@material-ui/icons/Warning";
 // @material-ui/icons
 // core components
 import Button from "components/CustomButtons/Button.js";
+import useSpinner from "components/Spinner/useSpinner";
 import CustomDropdown from "components/CustomDropdown/CustomDropdown.js";
 import SnackbarContent from "components/Snackbar/SnackbarContent.js";
 // images
@@ -46,6 +47,10 @@ function HeaderLinks(props) {
   let web3;
 
   const [anchorEl, setAnchorEl] = useState(null);
+
+  const [overlay, setOverlay] = useState(true);
+  const [spinner, showSpinner, hideSpinner] = useSpinner(overlay);
+
   const open = Boolean(anchorEl);
 
   const { authTokens, setAuthTokens, accountAddress, setAccountAddress } = useAuth();
@@ -110,6 +115,7 @@ function HeaderLinks(props) {
   };
 
   const checkHandler = async (event) => {
+    showSpinner();
     console.log(`Log: ${process.env.REACT_APP_BACKEND_URL}`);
     if (window.ethereum) {
       try {
@@ -144,6 +150,7 @@ function HeaderLinks(props) {
       // TODO: output warning msg when not having metamask
       console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
     }
+    hideSpinner();
   };
 
 

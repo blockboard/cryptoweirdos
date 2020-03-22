@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, {Fragment, useState} from "react";
 import {Link} from "react-router-dom";
 // nodejs library that concatenates classes
 import classNames from "classnames";
@@ -13,6 +13,7 @@ import Parallax from "components/Parallax/Parallax.js";
 import MainHeader from "components/MainComponents/MainHeader";
 import MainContainer from "components/MainComponents/MainContainer";
 import Quote from "components/Typography/Quote";
+import useSpinner from "components/Spinner/useSpinner";
 // styles
 import styles from "assets/jss/material-kit-react/views/landingPage.js";
 // Images
@@ -26,6 +27,10 @@ const useStyles = makeStyles(styles);
 
 export default function LandingPage(props) {
   const classes = useStyles();
+
+  const [overlay, setOverlay] = useState(true);
+  const [spinner, showSpinner, hideSpinner] = useSpinner(overlay);
+
   return (
       <>
         <MainHeader />

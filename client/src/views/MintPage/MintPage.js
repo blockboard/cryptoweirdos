@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from "react";
+import React, {useState, useEffect, useRef} from "react";
 import web3 from "web3";
 import ipfs from 'ipfs';
 // nodejs library that concatenates classes
@@ -20,20 +20,31 @@ import Footer from "components/Footer/Footer.js";
 import Button from "components/CustomButtons/Button.js";
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
+import Header from "components/Header/Header.js";
+import HeaderLinks from "components/Header/HeaderLinks.js";
 import Parallax from "components/Parallax/Parallax.js";
 import MainHeader from "components/MainComponents/MainHeader";
 import MainContainer from "components/MainComponents/MainContainer";
 // Images
 import background from "assets/img/faces/cf7.jpeg";
 // Styles
-import styles from "assets/jss/material-kit-react/components/glitches";
+import styles from "assets/jss/material-kit-react/views/mintPage.js";
+import {Link} from "react-router-dom";
+import Spinner from "components/Spinner/Spinner";
+import useSpinner from "components/Spinner/useSpinner";
 
 //const HDWalletProvider = require("truffle-hdwallet-provider");
 
 const useStyles = makeStyles(styles);
 
+const dashboardRoutes = ["/"];
+
 export default function CreatePage(props) {
   const classes = useStyles();
+  const { ...rest } = props;
+
+  const [overlay, setOverlay] = useState(true);
+  const [spinner, showSpinner, hideSpinner] = useSpinner(overlay);
 
   let canvasRef = useRef(null);
   let tokenId;
@@ -628,9 +639,6 @@ export default function CreatePage(props) {
   } = useAuth();
 
   useEffect(async () => {
-    console.log(typeof capturedImage);
-    console.log(typeof imageBlob);
-
     if (window.ethereum) {
       window.web3 = new web3(window.ethereum);
       await window.ethereum.enable()
@@ -641,6 +649,7 @@ export default function CreatePage(props) {
     else {
       window.alert('Non-Ethereum browser detected. You should consider trying MetaMask!')
     }
+
     canvas = canvasRef.current;
     ctx = canvas.getContext("2d");
     img = new Image();
@@ -651,8 +660,8 @@ export default function CreatePage(props) {
 
   function imageReady() {
     width = img.width;
-
     height = img.height;
+
     if (width > 1000){
       let scale = width/600;
       width = 600;
@@ -660,8 +669,8 @@ export default function CreatePage(props) {
 
     }
     canvas.width = width;
-
     canvas.height = height;
+
     ctx.drawImage(img, 0, 0, width, height);
 
     bitmapData = ctx.getImageData(0, 0, width, height);
@@ -671,108 +680,151 @@ export default function CreatePage(props) {
     data = new Uint32Array(buf);
 
     buf8.set(bitmapData.data);
-
   }
 
   const mintWeirdo = async () => {
+    showSpinner();
     if (!MNEMONIC || !INFURA_KEY || !OWNER_ADDRESS || !NETWORK) {
       console.error("Please set a mnemonic, infura key, owner, network, and contract address.");
       return
     }
 
     const web3 = window.web3;
-    /*const provider = new HDWalletProvider(MNEMONIC, `https://${NETWORK}.infura.io/v3/${INFURA_KEY}`);
-    const web3Instance = new web3(
-      provider
-    );*/
 
     const nftContract = new web3.eth.Contract(NFT_ABI, NFT_CONTRACT_ADDRESS, { gasLimit: "1000000" });
 
-    /*const accounts = await web3.eth.getAccounts();
-    const minterAccount = accounts[0];*/
-
-    console.log("2");
     const minterAccount = await web3.eth.getAccounts();
     const minter = minterAccount[0];
-    console.log("3", minterAccount);
-    console.log("4", minter);
     const result = await nftContract.methods.mintTo(minter).send({ from: minter });
-    console.log("Minted Glitched Alex. Transaction: " + result.transactionHash);
+    console.log("Transaction's Hash: " + result.transactionHash);
 
     const transferEvent = await nftContract.getPastEvents('Transfer', {});
-    console.log(transferEvent);
+    console.log(`Transfer Event: ${transferEvent}`);
     tokenId = transferEvent[0].returnValues.tokenId;
 
-    sendTokenMetaData();
+    sendTokenMetaData(tokenId);
   };
 
-  const sendTokenMetaData = () => {
+  const dataURLtoFile = (dataurl, filename) => {
+    let arr = dataurl.split(','),
+      mime = arr[0].match(/:(.*?);/)[1],
+      bstr = atob(arr[1]),
+      n = bstr.length,
+      u8arr = new Uint8Array(n);
+
+    while(n--){
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+
+    return new File([u8arr], filename, {type:mime});
+  };
+
+  const sendTokenMetaData = (tokenId) => {
     console.log(`In IPFS`);
 
-    ipfs.files.add(Buffer(capturedImage), function (err, files) {
-      if (err) {
-        throw err
-      }
+    //Usage example:
+    const file = dataURLtoFile(capturedImage,'image.png');
+    console.log(file);
 
-      let url = "https://ipfs.io/ipfs/"+files[0].hash;
-      console.log("Storing file on IPFS using Javascript. HASH: https://ipfs.io/ipfs/"+files[0].hash);
-      let ipfsPath = files[0].hash;
-      console.log(`ipfs Hash: ${ipfsPath}`);
+    const IReader = new window.FileReader();
+    IReader.readAsArrayBuffer(file);
+    IReader.onloadend = () => {
+      const buffer = Buffer(IReader.result);
 
-      fetch(`${process.env.REACT_APP_BACKEND_API}/tokens  `, {
-        body: JSON.stringify({
-          tokenId: tokenId,
-          image: ipfsPath,
-          external_url: "Link"
-        }),
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        method: 'POST',
-      })
-        .then(res => {
-          console.log(`Result: ${Object.keys(res)}`);
-        })
-        .catch(err => {
-          console.log(err);
-        });
-      ipfs.files.cat(ipfsPath, function (err, file) {
+      ipfs.files.add(Buffer(buffer), function (err, files) {
         if (err) {
           throw err
         }
-        let img = file.toString("base64");
-        console.log(`img ${img}`)
-      })
-    });
+
+        let url = "https://ipfs.io/ipfs/"+files[0].hash;
+        console.log("Storing file on IPFS using Javascript. HASH: https://ipfs.io/ipfs/"+files[0].hash);
+
+        fetch(`${process.env.REACT_APP_BACKEND_API}/tokens/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            tokenId: tokenId,
+            image: url,
+            external_url: "Link",
+            name: `GlitchedWeirdo #${tokenId}`
+          }),
+        })
+          .then(res => {
+            hideSpinner();
+            console.log(`Result: ${res}`);
+          })
+          .catch(err => {
+            console.log(err);
+          });
+        /*ipfs.files.cat(ipfsPath, function (err, file) {
+          if (err) {
+            throw err
+          }
+          let img = file.toString("base64");
+          console.log(`img ${img}`)
+        })*/
+      });
+    };
   };
 
   return (
-    <div>
-      <MainHeader/>
-      <Parallax small filter image={background} />
-      <MainContainer>
-        <div className={classes.section}>
-          <GridContainer justify="center" spacing={2}>
-            <GridItem xs={12} sm={12} md={6} lg={6} xl={6}>
-              <canvas
-                ref={canvasRef}/>
-            </GridItem>
-            <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
-              <Button
-                color="primary"
-                className={classes.signInBtn}
-                round
-                size="lg"
-                onClick={mintWeirdo}
-              >
-                Mint Your Weirdo
-              </Button>
-            </GridItem>
-          </GridContainer>
+    <>
+      <Header
+        color="default"
+        routes={dashboardRoutes}
+        brand="CRYPTOWEIRDOS"
+        rightLinks={<HeaderLinks/>}
+        fixed
+        changeColorOnScroll={{
+          height: 0,
+          color: "white"
+        }}
+        {...rest}
+      />
+
+      {spinner}
+
+      <div className={classNames(classes.main, classes.mainRaised)}>
+        <div className={classes.container}>
+          <div className={classes.section}>
+            <GridContainer justify="center" spacing={2}>
+              <GridItem xs={12} sm={12} md={6} lg={6} xl={6}>
+                <canvas
+                  ref={canvasRef}/>
+              </GridItem>
+            </GridContainer>
+            <GridContainer justify="center" spacing={1}>
+              {/*<GridItem xs={12} sm={12} md={3} lg={3} xl={3}>
+                <Link to="/create">
+                  <Button
+                    color="transparent"
+                    className={classes.cancelBtn}
+                    round
+                    size="lg"
+                  >
+                    Cancel
+                  </Button>
+                </Link>
+              </GridItem>*/}
+              <GridItem xs={12} sm={12} md={3} lg={3} xl={3}>
+                <Button
+                  color="primary"
+                  className={classes.mintBtn}
+                  round
+                  size="lg"
+                  onClick={mintWeirdo}
+                >
+                  Mint Your Weirdo
+                </Button>
+              </GridItem>
+            </GridContainer>
+          </div>
         </div>
-      </MainContainer>
-      <Footer />
-    </div>
+      </div>
+      <Footer/>
+    </>
   );
 }
 
