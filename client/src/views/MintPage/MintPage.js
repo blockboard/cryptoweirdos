@@ -632,7 +632,16 @@ export default function CreatePage(props) {
       "type": "function"
     }
   ];
-
+/*
+  // Fetching TotalSupply
+  fetch(`https://api.etherscan.io/api?module=stats&action=tokensupply&contractaddress=0x55a2525a0f4b0caa2005fb83a3aa3ac95683c6611`, {
+    method: 'GET'
+  })
+    .then(res => res.json())
+    .then(resData => {
+      setTotalSupply(parseInt(resData.result));
+    });
+ */
   const imageClasses = classNames(
     classes.imgRaised,
     classes.imgRoundedCircle,

@@ -894,7 +894,6 @@ export default function Glitch(props) {
             </GridItem>
           </GridItem>
           <GridItem xs={12} sm={12} md={5} lg={5} xl={6}>
-
             {(currentImg === null) ?
               <div className={btnClasses.root}>
                 {images.map(image => (
