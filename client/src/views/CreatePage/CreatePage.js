@@ -24,7 +24,7 @@ import HeaderLinks from "components/Header/HeaderLinks.js";
 import ActivityImgCard from "components/ImageCards/SalesImgCard/SalesImgCard";
 // Images
 import background from "assets/img/weirdos/0011.jpeg";
-import image1 from "assets/img/alex.jpg";
+import image1 from "assets/img/alex2.jpg";
 // Styles
 import styles from "assets/jss/material-kit-react/views/createPage.js";
 
@@ -121,55 +121,14 @@ export default function CreatePage(props) {
                     />
                   </GridItem>)
             }))
-            /*setTokenCard( () => {
-              for (let i=0; i<resData.asset_events.length; i++) {
-                if (resData.asset_events[i].asset === null) {
-                  break;
-                }
-                console.log('i = ', i + resData.asset_events[i]);
-
-                return(<>
-                  <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
-                    <SalesImgCard
-                        accountAddress={resData.asset_events[i].asset.owner.address}
-                        tokenId={resData.asset_events[i].asset.token_id}
-                        faceImage={resData.asset_events[i].asset.image_url}
-                        faceName={resData.asset_events[i].asset.name}
-                        ownerImage={resData.asset_events[i].asset.owner.user.username}
-                        ownerName={(resData.asset_events[i].asset.owner.user.username === null) ? resData.asset_events[i].asset.owner.address : resData.asset_events[i].asset.owner.user.username}
-                        faceDate={(resData.asset_events[i].asset.collection.created_date === null) ? "" : resData.asset_events[i].asset.collection.created_date}
-                        imagePrice="0.1"
-                        // TODO: image price
-                        // TODO: Handle image date
-                    />
-                  </GridItem>
-                </>)
-              }
-            })*/
           }
         })
         .catch(err => console.log(err));
   };
 
-  /*const loadMoreHandler = () => {
-    setLastVisit(lastVisit - 20);
-    fetchLatestedBornHandler(lastVisit);
-  };*/
+
   return (
       <>
-        <Header
-          color="default"
-          routes={dashboardRoutes}
-          brand="CRYPTOWEIRDOS"
-          rightLinks={<HeaderLinks/>}
-          fixed
-          changeColorOnScroll={{
-            height: 0,
-            color: "white"
-          }}
-          {...rest}
-        />
-
         <div className={classNames(classes.main, classes.mainRaised)}>
           <div className={classes.container}>
             <div className={classes.section}>

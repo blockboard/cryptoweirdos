@@ -29,7 +29,6 @@ export default function ImageCard(props) {
   return (
     <>
       <Card className={classes.root}>
-
         <a href={`/token/${props.tokenId}`}>
           <Link to={`/token/${props.tokenId}`}>
             <StyledCardMedia

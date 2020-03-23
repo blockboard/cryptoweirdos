@@ -6,11 +6,7 @@ import classNames from "classnames";
 import { useAuth } from "context/auth";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
-import CardActionArea from "@material-ui/core/CardActionArea";
-import CardMedia from "@material-ui/core/CardMedia";
-import CardContent from "@material-ui/core/CardContent";
-import Typography from "@material-ui/core/Typography";
-import Card from "@material-ui/core/Card";
+import MuiAlert from '@material-ui/lab/Alert';
 // @material-ui/icons
 import Camera from "@material-ui/icons/Camera";
 import Palette from "@material-ui/icons/Palette";
@@ -29,7 +25,7 @@ import MainContainer from "components/MainComponents/MainContainer";
 import background from "assets/img/faces/cf7.jpeg";
 // Styles
 import styles from "assets/jss/material-kit-react/views/mintPage.js";
-import {Link} from "react-router-dom";
+import {Link, Redirect} from "react-router-dom";
 import Spinner from "components/Spinner/Spinner";
 import useSpinner from "components/Spinner/useSpinner";
 
@@ -39,14 +35,26 @@ const useStyles = makeStyles(styles);
 
 const dashboardRoutes = ["/"];
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
 export default function CreatePage(props) {
   // TODO: Redirect issue
 
   const classes = useStyles();
   const { ...rest } = props;
 
+  const [finished, setFinished] = useState(false);
   const [overlay, setOverlay] = useState(true);
   const [spinner, showSpinner, hideSpinner] = useSpinner(overlay);
+
+  const {
+    authTokens, setAuthTokens,
+    accountAddress, setAccountAddress,
+    capturedImage, setCapturedImage,
+    imageBlob, setImageBlob
+  } = useAuth();
 
   let canvasRef = useRef(null);
   let tokenId;
@@ -632,14 +640,6 @@ export default function CreatePage(props) {
   );
   const navImageClasses = classNames(classes.imgRounded, classes.imgGallery);
 
-
-  const {
-    authTokens, setAuthTokens,
-    accountAddress, setAccountAddress,
-    capturedImage, setCapturedImage,
-    imageBlob, setImageBlob
-  } = useAuth();
-
   useEffect(async () => {
     if (window.ethereum) {
       window.web3 = new web3(window.ethereum);
@@ -664,11 +664,10 @@ export default function CreatePage(props) {
     width = img.width;
     height = img.height;
 
-    if (width > 1000){
-      let scale = width/600;
-      width = 600;
+    if (width < 1000){
+      let scale = width/560;
+      width = 560;
       height = height/scale;
-
     }
     canvas.width = width;
     canvas.height = height;
@@ -701,7 +700,7 @@ export default function CreatePage(props) {
     console.log("Transaction's Hash: " + result.transactionHash);
 
     const transferEvent = await nftContract.getPastEvents('Transfer', {});
-    console.log(`Transfer Event: ${transferEvent}`);
+    console.log(`${transferEvent[0].returnValues}`);
     tokenId = transferEvent[0].returnValues.tokenId;
 
     sendTokenMetaData(tokenId);
@@ -755,48 +754,37 @@ export default function CreatePage(props) {
           .then(res => {
             hideSpinner();
             console.log(`Result: ${res}`);
+            setFinished(true);
           })
           .catch(err => {
             console.log(err);
           });
-        /*ipfs.files.cat(ipfsPath, function (err, file) {
-          if (err) {
-            throw err
-          }
-          let img = file.toString("base64");
-          console.log(`img ${img}`)
-        })*/
       });
     };
   };
 
   return (
     <>
-      <Header
-        color="default"
-        routes={dashboardRoutes}
-        brand="CRYPTOWEIRDOS"
-        rightLinks={<HeaderLinks/>}
-        fixed
-        changeColorOnScroll={{
-          height: 0,
-          color: "white"
-        }}
-        {...rest}
-      />
-
       {spinner}
-
       <div className={classNames(classes.main, classes.mainRaised)}>
         <div className={classes.container}>
           <div className={classes.section}>
             <GridContainer justify="center" spacing={2}>
+              {(authTokens === null) ?
+                <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
+                    <Alert
+                      severity="warning"
+                    >
+                      This a demo! You've first to sign-in and select your weirdo to be able to mint it.
+                    </Alert>
+                </GridItem> :
+                null}
               <GridItem xs={12} sm={12} md={6} lg={6} xl={6}>
                 <canvas
                   ref={canvasRef}/>
               </GridItem>
             </GridContainer>
-            <GridContainer justify="center" spacing={1}>
+            <GridContainer justify="center" spacing={3}>
               {/*<GridItem xs={12} sm={12} md={3} lg={3} xl={3}>
                 <Link to="/create">
                   <Button
@@ -809,16 +797,26 @@ export default function CreatePage(props) {
                   </Button>
                 </Link>
               </GridItem>*/}
-              <GridItem xs={12} sm={12} md={3} lg={3} xl={3}>
-                <Button
-                  color="primary"
-                  className={classes.mintBtn}
-                  round
-                  size="lg"
-                  onClick={mintWeirdo}
-                >
-                  Mint Your Weirdo
-                </Button>
+              <GridItem xs={12} sm={12} md={6} lg={6} xl={6}>
+                {(authTokens === null) ?
+                  <Button
+                    disabled
+                    color="primary"
+                    className={classes.mintBtn}
+                    round
+                    size="lg"
+                    onClick={mintWeirdo}
+                  >
+                    Mint Your Weirdo
+                  </Button> : <Button
+                    color="primary"
+                    className={classes.mintBtn}
+                    round
+                    size="lg"
+                    onClick={mintWeirdo}
+                  >
+                    Mint Your Weirdo
+                  </Button>}
               </GridItem>
             </GridContainer>
           </div>

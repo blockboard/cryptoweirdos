@@ -1,5 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import {makeStyles, withStyles} from "@material-ui/core/styles";
+import {createBrowserHistory} from "history";
 import Web3 from "web3";
 //@material-ui/core
 import Typography from '@material-ui/core/Typography';
@@ -17,6 +18,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
 import IconButton from "@material-ui/core/IconButton";
 import Close from "@material-ui/icons/Close";
+import ButtonBase from '@material-ui/core/ButtonBase';
 import Slide from "@material-ui/core/Slide";
 //core-components
 import GridContainer from "components/Grid/GridContainer";
@@ -30,6 +32,7 @@ import styles from "assets/jss/material-kit-react/components/glitches";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Card from "@material-ui/core/Card";
 import {Link, Redirect} from "react-router-dom";
+import weirdo from "assets/img/weirdos/0001.jpeg";
 
 const useStyles = makeStyles(styles);
 
@@ -42,6 +45,81 @@ const StyledCardMedia = withStyles({
     height: "auto",
   }
 })(CardMedia);
+
+const history = createBrowserHistory();
+
+const useButtonStyles = makeStyles(theme => ({
+  root: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    minWidth: 300,
+    width: '100%',
+  },
+  image: {
+    position: 'relative',
+    height: 500,
+    [theme.breakpoints.down('xs')]: {
+      width: '100% !important', // Overrides inline-style
+      height: 500,
+    },
+    '&:hover, &$focusVisible': {
+      zIndex: 1,
+      '& $imageBackdrop': {
+        opacity: 0.15,
+      },
+      '& $imageMarked': {
+        opacity: 0,
+      },
+      '& $imageTitle': {
+        border: '4px solid currentColor',
+      },
+    },
+  },
+  focusVisible: {},
+  imageButton: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: theme.palette.common.white,
+  },
+  imageSrc: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center 40%',
+  },
+  imageBackdrop: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    backgroundColor: theme.palette.common.black,
+    opacity: 0.4,
+    transition: theme.transitions.create('opacity'),
+  },
+  imageTitle: {
+    position: 'relative',
+    padding: `${theme.spacing(2)}px ${theme.spacing(4)}px ${theme.spacing(1) + 6}px`,
+  },
+  imageMarked: {
+    height: 3,
+    width: 18,
+    backgroundColor: theme.palette.common.white,
+    position: 'absolute',
+    bottom: -2,
+    left: 'calc(50% - 9px)',
+    transition: theme.transitions.create('opacity'),
+  },
+}));
 
 export default function Glitch(props) {
   let img = props.faceImage;
@@ -62,6 +140,7 @@ export default function Glitch(props) {
   let captured;
 
   const classes = useStyles();
+  const btnClasses = useButtonStyles();
 
   const [showMagnitudeComponent, setShowMagnitudeComponent] = useState(true);
 
@@ -82,7 +161,7 @@ export default function Glitch(props) {
     showComponent(event.target.value);
   };
 
-  const [currentImg, setCurrentImg] = useState(props.faceImage);
+  const [currentImg, setCurrentImg] = useState(null);
   const [captureImg, setCaptureImg] = useState();
 
   // algorithms
@@ -100,13 +179,23 @@ export default function Glitch(props) {
   const [classicModal, setClassicModal] = useState(false);
   const [tokenCard, setTokenCard] = useState(null);
 
+  const images = [
+    {
+      url: weirdo,
+      title: 'Select Your Weirdo',
+      width: '100%',
+    }
+  ];
+
   // default selection
   //let comparator = COMP_BRIGHTNESS;
 
   useEffect(() => {
-    canvas = canvasRef.current;
-    ctx = canvas.getContext("2d");
-    window.load = init();
+    if (currentImg !== null) {
+      canvas = canvasRef.current;
+      ctx = canvas.getContext("2d");
+      window.load = init();
+    }
   }, [algorithm, horizontalIncrement, verticalIncrement, threshold, magnitude, comparator, currentImg]);
 
   function init() {
@@ -121,12 +210,6 @@ export default function Glitch(props) {
   function imageReady() {
     width = img.width;
     height = img.height;
-
-    if (width > 1000){
-      let scale = width/500;
-      width = 500;
-      height = height/scale;
-    }
 
     canvas.width = width;
     canvas.height = height;
@@ -391,7 +474,6 @@ export default function Glitch(props) {
     const capturedImageBlob = canvas.toBlob((blob) => {
       return URL.createObjectURL(blob);
     });
-
     setImageBlob(canvas);
   }
 
@@ -499,7 +581,6 @@ export default function Glitch(props) {
     })
       .then(res => res.json())
       .then(resData => {
-
         if (resData.assets[0] === undefined  || resData.assets.length == 0) {
           setTokenCard(
             <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -519,7 +600,6 @@ export default function Glitch(props) {
         } else {
           for (let [key, value] of Object.entries(resData)) {
             setTokenCard(value.map(token => {
-
               return (
                 <GridItem xs={12} sm={12} md={4} lg={4} xl={4}>
                   <Card className={classes.root}>
@@ -814,8 +894,99 @@ export default function Glitch(props) {
             </GridItem>
           </GridItem>
           <GridItem xs={12} sm={12} md={5} lg={5} xl={6}>
-            <canvas
-              ref={canvasRef}/>
+
+            {(currentImg === null) ?
+              <div className={btnClasses.root}>
+                {images.map(image => (
+                  <ButtonBase
+                    focusRipple
+                    key={image.title}
+                    className={btnClasses.image}
+                    focusVisibleClassName={btnClasses.focusVisible}
+                    style={{
+                      width: image.width,
+                    }}
+                    onClick={() => {
+                      setClassicModal(true);
+
+                      if (authTokens === null) {
+                        checkHandler();
+                      }
+                      fetchAccountCollectionsHandler();
+                    }
+                    }
+                  >
+                    <span
+                      className={btnClasses.imageSrc}
+                      style={{
+                        backgroundImage: `url(${image.url})`,
+                      }}
+                    />
+                    <span className={btnClasses.imageBackdrop} />
+                    <span className={btnClasses.imageButton}>
+                      <Typography
+                        component="span"
+                        variant="subtitle1"
+                        color="inherit"
+                        className={btnClasses.imageTitle}
+                      >
+                        {image.title}
+                        <span className={btnClasses.imageMarked} />
+                      </Typography>
+                    </span>
+                  </ButtonBase>
+                ))}
+                <Dialog
+                  classes={{
+                    root: classes.center,
+                    paper: classes.modal
+                  }}
+                  open={classicModal}
+                  TransitionComponent={Transition}
+                  keepMounted
+                  onClose={() => setClassicModal(false)}
+                  aria-labelledby="classic-modal-slide-title"
+                  aria-describedby="classic-modal-slide-description"
+                >
+                  <DialogTitle
+                    id="classic-modal-slide-title"
+                    disableTypography
+                    className={classes.modalHeader}
+                  >
+                    <IconButton
+                      className={classes.modalCloseButton}
+                      key="close"
+                      aria-label="Close"
+                      color="inherit"
+                      onClick={() => setClassicModal(false)}
+                    >
+                      <Close className={classes.modalClose} />
+                    </IconButton>
+                    <h4 className={classes.modalTitle}>Your Weirdos</h4>
+                  </DialogTitle>
+                  <DialogContent
+                    id="classic-modal-slide-description"
+                    className={classes.modalBody}
+                  >
+                    <GridContainer justify="center" spacing={1}>
+                      {(tokenCard === null) ?
+                        <CircularProgress disableShrink /> : tokenCard}
+                    </GridContainer>
+                  </DialogContent>
+                  <DialogActions className={classes.modalFooter}>
+                    <Button
+                      onClick={() => setClassicModal(false)}
+                      color="danger"
+                      simple
+                      z>
+                      Close
+                    </Button>
+                  </DialogActions>
+                </Dialog>
+              </div> : <canvas
+                ref={canvasRef}/>
+            }
+
           </GridItem>
         </GridContainer>
         <GridContainer justify="center" spacing="1">
@@ -858,7 +1029,7 @@ export default function Glitch(props) {
                   round
                   color="primary"
                   size="lg"
-                  onClick={() => save()}>
+                  onClick={save}>
                   Capture
                 </Button>
               </Link>}
@@ -866,71 +1037,7 @@ export default function Glitch(props) {
         </GridContainer>
         <GridContainer justify="center" spacing="1">
           <GridItem xs={12} sm={12} md={6} lg={6} xl={6}>
-            <Button
-              color="primary"
-              className={classes.signInBtn}
-              round
-              size="lg"
-              onClick={() => {
-                setClassicModal(true);
 
-                if (authTokens === null) {
-                  checkHandler();
-                }
-                fetchAccountCollectionsHandler();
-              }
-              }
-            >
-              <LibraryBooks className={classes.icon} />
-              Select Your Weirdo
-            </Button>
-            <Dialog
-              classes={{
-                root: classes.center,
-                paper: classes.modal
-              }}
-              open={classicModal}
-              TransitionComponent={Transition}
-              keepMounted
-              onClose={() => setClassicModal(false)}
-              aria-labelledby="classic-modal-slide-title"
-              aria-describedby="classic-modal-slide-description"
-            >
-              <DialogTitle
-                id="classic-modal-slide-title"
-                disableTypography
-                className={classes.modalHeader}
-              >
-                <IconButton
-                  className={classes.modalCloseButton}
-                  key="close"
-                  aria-label="Close"
-                  color="inherit"
-                  onClick={() => setClassicModal(false)}
-                >
-                  <Close className={classes.modalClose} />
-                </IconButton>
-                <h4 className={classes.modalTitle}>Your Weirdos</h4>
-              </DialogTitle>
-              <DialogContent
-                id="classic-modal-slide-description"
-                className={classes.modalBody}
-              >
-                <GridContainer justify="center" spacing={1}>
-                  {(tokenCard === null) ?
-                    <CircularProgress disableShrink /> : tokenCard}
-                </GridContainer>
-              </DialogContent>
-              <DialogActions className={classes.modalFooter}>
-                <Button
-                  onClick={() => setClassicModal(false)}
-                  color="danger"
-                  simple
-                >
-                  Close
-                </Button>
-              </DialogActions>
-            </Dialog>
           </GridItem>
         </GridContainer>
       </div>

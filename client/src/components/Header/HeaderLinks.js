@@ -242,7 +242,10 @@ function HeaderLinks(props) {
 
         {/*Create*/}
         <listItem className={classes.listItem}>
-          <Link to="/create" className={classes.linkColor}>
+          <a
+            target="_blank"
+            href="/create"
+            className={classes.linkColor}>
             {(props.location.pathname === "/create") ? <Button
                 color="transparent"
                 round
@@ -255,7 +258,7 @@ function HeaderLinks(props) {
                 className={classes.navLink}>
                 Create
               </Button>}
-          </Link>
+          </a>
         </listItem>
 
         {/*SignIn*/}

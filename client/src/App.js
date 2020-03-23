@@ -24,7 +24,7 @@ import "assets/scss/material-kit-react.scss?v=1.8.0";
 import CreatePage from "./views/CreatePage/CreatePage";
 import MintPage from "./views/MintPage/MintPage";
 
-const hist = createBrowserHistory();
+const history = createBrowserHistory();
 
 export default function App(props) {
   const [authTokens, setAuthTokens] = useState(null);
@@ -63,7 +63,6 @@ export default function App(props) {
   );
 
   return (
-   // <ThemeProvider theme={theme}>
       <AuthContext.Provider value={{
         authTokens,
         setAuthTokens: setTokens,
@@ -74,7 +73,7 @@ export default function App(props) {
         imageBlob,
         setImageBlob: setThisImageBlob
       }}>
-        <Router history={hist}>
+        <Router history={history}>
           <Switch>
             <Route exact path='/' component={LandingPage}/>
             <Route path="/signup" component={SignUpPage}/>
@@ -83,13 +82,12 @@ export default function App(props) {
             <Route path="/activity" component={ActivityPage}/>
             <Route path="/offers" component={SalesPage}/>
             <Route path="/create" component={CreatePage}/>
-            <PrivateRoute path="/mint" component={MintPage}/>
+            <Route path="/mint" component={MintPage}/>
             <Route path={`/account/:publicAddress`} component={UserPage}/>
             <Route path="/token/:tokenId" component={ImageDetailsPage}/>
             <Route component={NotFoundPage}/>
           </Switch>
         </Router>
       </AuthContext.Provider>
-   // </ThemeProvider>
   );
 }

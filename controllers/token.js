@@ -17,8 +17,6 @@ exports.getToken = (req, res, next) => {
       }
       res.status(200).send({
         image: token.image,
-        external_utl: token.external_url,
-        description: token.description,
         name: token.name
       })
     })
@@ -34,12 +32,12 @@ exports.getToken = (req, res, next) => {
 exports.postToken = (req, res,  next) => {
   const tokenId = req.body.tokenId;
   const image = req.body.image;
-  const external_url = req.body.external_url;
+  const name = req.body.name;
 
   const token = new Token({
     tokenId: tokenId,
     image: image,
-    external_url: external_url
+    name: name
   }).save()
     .then(result => {
       res.status(201).json({
