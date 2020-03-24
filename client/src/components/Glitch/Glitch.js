@@ -168,7 +168,7 @@ export default function Glitch(props) {
   const [algorithm, setAlgorithm] = useState(null);
 
   // variables states
-  const [horizontalIncrement, setHorizontalIncrement] = useState(0);
+  const [horizontalIncrement, setHorizontalIncrement] = useState(-1);
   const [verticalIncrement, setVerticalIncrement] = useState(-1);
   const [threshold, setThreshold] = useState(10);
   const [magnitude, setMagnitude] = useState(0.2);

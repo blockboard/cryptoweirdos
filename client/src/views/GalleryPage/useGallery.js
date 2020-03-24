@@ -28,9 +28,7 @@ export default function useGallery (offset) {
                 image: token.image_url,
                 ownerAddress: token.owner.address,
                 ownerImage: token.owner.profile_img_url,
-                ownerName: () => {
-                  return ((token.owner.user === null) ? token.owner.address : token.owner.user.username)
-                }
+                ownerName: (token.owner.user === null) ? token.owner.address : token.owner.user.username
               };
             })]
           });

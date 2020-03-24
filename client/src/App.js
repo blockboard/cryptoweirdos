@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 // react libraries
 import {BrowserRouter as Router, Link, Route, Switch} from "react-router-dom";
-import {createBrowserHistory} from "history";
+import history from "./history";
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 
@@ -23,8 +23,6 @@ import ActivityPage from "./views/ActivityPage/ActivityPage";
 import "assets/scss/material-kit-react.scss?v=1.8.0";
 import CreatePage from "./views/CreatePage/CreatePage";
 import MintPage from "./views/MintPage/MintPage";
-
-const history = createBrowserHistory();
 
 export default function App(props) {
   const [authTokens, setAuthTokens] = useState(null);
@@ -50,18 +48,6 @@ export default function App(props) {
     setImageBlob(data);
   };
 
-  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-
-  const theme = React.useMemo(
-    () =>
-      createMuiTheme({
-        palette: {
-          type: prefersDarkMode ? 'dark' : 'light',
-        },
-      }),
-    [prefersDarkMode],
-  );
-
   return (
       <AuthContext.Provider value={{
         authTokens,
@@ -73,12 +59,9 @@ export default function App(props) {
         imageBlob,
         setImageBlob: setThisImageBlob
       }}>
-        <Router history={history}>
           <Switch>
             <Route exact path='/' component={LandingPage}/>
-            <Route path="/signup" component={SignUpPage}/>
-            <Route path="/signin" component={SignInPage}/>
-            <Route path="/gallery" component={GalleryPage}/>
+            <PrivateRoute path="/gallery" component={GalleryPage}/>
             <Route path="/activity" component={ActivityPage}/>
             <Route path="/offers" component={SalesPage}/>
             <Route path="/create" component={CreatePage}/>
@@ -87,7 +70,6 @@ export default function App(props) {
             <Route path="/token/:tokenId" component={ImageDetailsPage}/>
             <Route component={NotFoundPage}/>
           </Switch>
-        </Router>
       </AuthContext.Provider>
   );
 }

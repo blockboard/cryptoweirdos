@@ -121,7 +121,7 @@ exports.signupMetaMask = (req, res, next) => {
           publicAddress: publicAddress
         }, config.secret);
 
-        return res.json({
+        return res.status(200).json({
           message: 'Successful authentication',
           token: jwtToken,
           publicAddress: publicAddress

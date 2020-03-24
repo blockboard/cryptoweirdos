@@ -37,6 +37,7 @@ import image8 from "assets/img/weirdos/08.png"
 import styles from "assets/jss/material-kit-react/views/galleryPage.js";
 import LandingImgCard from "../../components/ImageCards/LandingImgCard/LandingImgCard";
 import useGallery from "./useGallery";
+import { useAuth } from "context/auth";
 
 const useStyles = makeStyles(styles);
 
@@ -46,6 +47,8 @@ export default function GalleryPage(props) {
   const [tokenCard, setTokenCard] = useState(null);
   const [offset, setOffset] = useState(0);
   const [firstTime, setFirstTime] = useState(true);
+
+  const { authTokens,setAuthTokens, accountAddress, setAccountAddress } = useAuth();
 
   const {
     tokens,
@@ -63,6 +66,7 @@ export default function GalleryPage(props) {
         setOffset(prevOffset => prevOffset + 20);
         console.log(offset);
       }
+      console.log("Tokens2:" + authTokens);
     });
     if (node) observer.current.observe(node)
   }, [loading, hasMore]);
@@ -81,6 +85,49 @@ export default function GalleryPage(props) {
                     return (
                         <GridItem key={token.tokenId} xs={12} sm={6} md={4} lg={4} xl={4}>
                           <div ref={lastTokenElementRef}>
+                            {(token.ownerName === "CryptoWeirdos") ?
+                              <LandingImgCard
+                                accountAddress={token.ownerAddress}
+                                tokenId={token.tokenId}
+                                faceImage={token.image}
+                                faceName={token.imageName}
+                                ownerImage={token.ownerImage}
+                                ownerName={token.ownerName}
+                                faceDate={""}
+                                imagePrice="0.1"
+                                // TODO: image price
+                              /> :
+                              <ImageCard
+                                accountAddress={token.ownerAddress}
+                                tokenId={token.tokenId}
+                                faceImage={token.image}
+                                faceName={token.imageName}
+                                ownerImage={token.ownerImage}
+                                ownerName={token.ownerName}
+                                faceDate={""}
+                                imagePrice="0.1"
+                                // TODO: image price
+                                // TODO: Handle image date
+                              />
+                            }
+                          </div>
+                        </GridItem>
+                    )
+                  } else {
+                    return (
+                      <GridItem key={token.tokenId} xs={12} sm={6} md={4} lg={4} xl={4}>
+                        {(token.ownerName === "CryptoWeirdos") ?
+                          <LandingImgCard
+                            accountAddress={token.ownerAddress}
+                            tokenId={token.tokenId}
+                            faceImage={token.image}
+                            faceName={token.imageName}
+                            ownerImage={token.ownerImage}
+                            ownerName={token.ownerName}
+                            faceDate={""}
+                            imagePrice="0.1"
+                            // TODO: image price
+                          /> :
                           <ImageCard
                             accountAddress={token.ownerAddress}
                             tokenId={token.tokenId}
@@ -93,24 +140,7 @@ export default function GalleryPage(props) {
                             // TODO: image price
                             // TODO: Handle image date
                           />
-                          </div>
-                        </GridItem>
-                    )
-                  } else {
-                    return (
-                      <GridItem key={token.tokenId} xs={12} sm={6} md={4} lg={4} xl={4}>
-                        <ImageCard
-                          accountAddress={token.ownerAddress}
-                          tokenId={token.tokenId}
-                          faceImage={token.image}
-                          faceName={token.imageName}
-                          ownerImage={token.ownerImage}
-                          ownerName={token.ownerName}
-                          faceDate={""}
-                          imagePrice="0.1"
-                          // TODO: image price
-                          // TODO: Handle image date
-                        />
+                        }
                       </GridItem>
                     )
                   }

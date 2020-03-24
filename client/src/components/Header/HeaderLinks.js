@@ -2,36 +2,20 @@
 import React, {useEffect, useState} from "react";
 // react components
 import { Link, withRouter } from "react-router-dom";
+import history from "../../history";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
-import ListItemText from '@material-ui/core/ListItemText';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import Switch from '@material-ui/core/Switch';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormGroup from '@material-ui/core/FormGroup';
-
-
-import Warning from "@material-ui/icons/Warning";
 // @material-ui/icons
 // core components
 import Button from "components/CustomButtons/Button.js";
 import useSpinner from "components/Spinner/useSpinner";
-import CustomDropdown from "components/CustomDropdown/CustomDropdown.js";
-import SnackbarContent from "components/Snackbar/SnackbarContent.js";
 // images
-import artistProfileImage from "assets/img/faces/s+.jpeg";
-import accountProfileImage from "assets/img/faces/i+avatar.jpg";
-
 import { useAuth } from "context/auth";
 // styles
 import styles from "assets/jss/material-kit-react/components/headerLinksStyle.js";
@@ -53,7 +37,7 @@ function HeaderLinks(props) {
 
   const open = Boolean(anchorEl);
 
-  const { authTokens, setAuthTokens, accountAddress, setAccountAddress } = useAuth();
+  const { authTokens,setAuthTokens, accountAddress, setAccountAddress } = useAuth();
 
   useEffect(() => {
     /*window.addEventListener("load", async () => {
@@ -105,11 +89,11 @@ function HeaderLinks(props) {
       },
       method: 'POST'
     })
-      .then(res => res.json())
       .then(resData => {
-        console.log(`Tokens: ${resData.token}`);
         setAuthTokens(resData.token);
         setAccountAddress(resData.publicAddress);
+        console.log("Tokens" + Object.keys(resData));
+
       })
       .catch(err => console.log('authenticateHandlerError: ', err));
   };
@@ -173,59 +157,71 @@ function HeaderLinks(props) {
     setAnchorEl(null);
   };
 
+  const goToGallery = () => {
+    props.history.push("/gallery")
+  };
+
+  const goToActivity = () => {
+    props.history.push("/activity")
+  };
+
+  const goToOffers = () => {
+    props.history.push("/offers")
+  };
+
   return (
       <List className={classes.list}>
         {/*Gallery*/}
         <listItem className={classes.listItem}>
-          <Link to="/gallery" className={classes.linkColor}>
             {(props.location.pathname === "/gallery") ? <Button
               color="transparent"
               round
-              className={classes.selectedNavLink}>
+              className={classes.selectedNavLink}
+              onClick={goToGallery}>
               Gallery
             </Button> : <Button
               color="transparent"
               round
-              className={classes.navLink}>
+              className={classes.navLink}
+              onClick={goToGallery}>
               Gallery
             </Button>}
-          </Link>
         </listItem>
 
         {/*Activity*/}
         <listItem className={classes.listItem}>
-          <Link to="/activity" className={classes.linkColor}>
             {(props.location.pathname === "/activity") ? <Button
               color="transparent"
               round
-              className={classes.selectedNavLink}>
+              className={classes.selectedNavLink}
+              onClick={goToActivity}>
               Activity
             </Button> :
             <Button
               color="transparent"
               round
-              className={classes.navLink}>
+              className={classes.navLink}
+              onClick={goToActivity}>
               Activity
             </Button>}
-          </Link>
         </listItem>
 
         {/*Sales*/}
         <listItem className={classes.listItem}>
-          <Link to="/offers" className={classes.linkColor}>
             {(props.location.pathname === "/offers") ? <Button
                 color="transparent"
                 round
-                className={classes.selectedNavLink}>
+                className={classes.selectedNavLink}
+                onClick={goToOffers}>
                 Sales
               </Button> :
               <Button
                 color="transparent"
                 round={true}
-                className={classes.navLink}>
+                className={classes.navLink}
+                onClick={goToOffers}>
                 Sales
               </Button>}
-          </Link>
         </listItem>
 
         {/*Blog*/}
