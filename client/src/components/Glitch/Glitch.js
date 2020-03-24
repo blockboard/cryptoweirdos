@@ -191,6 +191,14 @@ export default function Glitch(props) {
   //let comparator = COMP_BRIGHTNESS;
 
   useEffect(() => {
+    const savedPublicAddress = localStorage.getItem("Public Address");
+    const savedToken = localStorage.getItem("JWT");
+
+    if ((savedPublicAddress !== "null") && (savedToken !== "null")) {
+      setAuthTokens(savedToken, false);
+      setAccountAddress(savedPublicAddress, false);
+    }
+
     if (currentImg !== null) {
       canvas = canvasRef.current;
       ctx = canvas.getContext("2d");
@@ -513,7 +521,7 @@ export default function Glitch(props) {
 
   const signMessageHandler = async (publicAddress, nonce) => {
     const signature = await web3.eth.personal.sign(
-      `I am signing my one-time nonce: ${nonce}`,
+      `Your Signature for CryptoWeirdos: \n I am signing my one-time nonce: ${nonce}`,
       publicAddress,
       // MetaMask will ignore the password argument here
     );
@@ -532,9 +540,8 @@ export default function Glitch(props) {
     })
       .then(res => res.json())
       .then(resData => {
-        console.log(`Tokens: ${resData.token}`);
-        setAuthTokens(resData.token);
-        setAccountAddress(resData.publicAddress);
+        setAuthTokens(resData.token, true);
+        setAccountAddress(resData.publicAddress, true);
       })
       .catch(err => console.log('authenticateHandlerError: ', err));
   };
@@ -547,22 +554,26 @@ export default function Glitch(props) {
 
         const publicAddress = await web3.eth.getCoinbase();
 
-        fetch(`${process.env.REACT_APP_BACKEND_API}/accounts/${publicAddress}`, {
-          method: 'GET'
-        })
-          .then(res => {
-            if (res.status === 404) {
-              signInMetaMaskHandler(publicAddress);
-            }
-            return res.json();
-          })
-          .then(account => {
-            signMessageHandler(account.account.publicAddress, account.account.nonce);
-          })
-          .catch(err => {
-            console.log('checkHandlerError: ', err);
-          })
+        const savedPublicAddress = localStorage.getItem("Public Address");
+        const savedToken = localStorage.getItem("JWT");
 
+        if ((savedPublicAddress === "null") && (savedToken === "null")) {
+          fetch(`${process.env.REACT_APP_BACKEND_API}/accounts/${publicAddress}`, {
+            method: 'GET'
+          })
+            .then(res => {
+              if (res.status === 404) {
+                signInMetaMaskHandler(publicAddress);
+              }
+              return res.json();
+            })
+            .then(account => {
+              signMessageHandler(account.account.publicAddress, account.account.nonce);
+            })
+            .catch(err => {
+              console.log('checkHandlerError: ', err);
+            })
+        }
       } catch (error) {
         // User denied account access...
         console.log(error);

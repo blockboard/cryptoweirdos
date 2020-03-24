@@ -40,10 +40,13 @@ function HeaderLinks(props) {
   const { authTokens,setAuthTokens, accountAddress, setAccountAddress } = useAuth();
 
   useEffect(() => {
-    /*window.addEventListener("load", async () => {
+    const savedPublicAddress = localStorage.getItem("Public Address");
+    const savedToken = localStorage.getItem("JWT");
 
-    });*/
-
+    if ((savedPublicAddress !== "null") && (savedToken !== "null")) {
+      setAuthTokens(savedToken, false);
+      setAccountAddress(savedPublicAddress, false);
+    }
   }, []);
 
   const signInMetaMaskHandler = (publicAddress) => {
@@ -72,8 +75,7 @@ function HeaderLinks(props) {
 
   const signMessageHandler = async (publicAddress, nonce) => {
     const signature = await web3.eth.personal.sign(
-      `Your Signature for CryptoWeirdos: \n I am signing my one-time nonce: ${nonce}`,
-      publicAddress,
+      `Your Signature for CryptoWeirdos: \n I am signing my one-time nonce: ${nonce}`, publicAddress,
       // MetaMask will ignore the password argument here
     );
     await authenticateHandler(publicAddress, signature);
@@ -89,11 +91,10 @@ function HeaderLinks(props) {
       },
       method: 'POST'
     })
+      .then(res => res.json())
       .then(resData => {
-        setAuthTokens(resData.token);
-        setAccountAddress(resData.publicAddress);
-        console.log("Tokens" + Object.keys(resData));
-
+        setAuthTokens(resData.token, true);
+        setAccountAddress(resData.publicAddress, true);
       })
       .catch(err => console.log('authenticateHandlerError: ', err));
   };
@@ -108,22 +109,29 @@ function HeaderLinks(props) {
 
         const publicAddress = await web3.eth.getCoinbase();
 
-        fetch(`${process.env.REACT_APP_BACKEND_API}/accounts/${publicAddress}`, {
-          method: 'GET'
-        })
-          .then(res => {
-            if (res.status === 404) {
-              signInMetaMaskHandler(publicAddress);
-            }
-            return res.json();
-          })
-          .then(account => {
-            signMessageHandler(account.account.publicAddress, account.account.nonce);
-          })
-          .catch(err => {
-            console.log('checkHandlerError: ', err);
-          })
+        const savedPublicAddress = localStorage.getItem("Public Address");
+        const savedToken = localStorage.getItem("JWT");
 
+        console.log(savedToken);
+        console.log(savedPublicAddress);
+
+        if ((savedPublicAddress === "null") && (savedToken === "null")) {
+          fetch(`${process.env.REACT_APP_BACKEND_API}/accounts/${publicAddress}`, {
+            method: 'GET'
+          })
+            .then(res => {
+              if (res.status === 404) {
+                signInMetaMaskHandler(publicAddress);
+              }
+              return res.json();
+            })
+            .then(account => {
+              signMessageHandler(account.account.publicAddress, account.account.nonce);
+            })
+            .catch(err => {
+              console.log('checkHandlerError: ', err);
+            })
+        }
       } catch (error) {
         // User denied account access...
         console.log(error);
@@ -137,9 +145,6 @@ function HeaderLinks(props) {
     hideSpinner();
   };
 
-
-
-
   const handleChange = event => {
     setAuth(event.target.checked);
   };
@@ -149,7 +154,9 @@ function HeaderLinks(props) {
   };
 
   const signOutHandler = () => {
-    setAuthTokens(null);
+    setAuthTokens(null, true);
+    setAccountAddress(null, true);
+    props.history.push("/");
     setAnchorEl(null);
   };
 

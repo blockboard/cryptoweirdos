@@ -1,11 +1,10 @@
 // Imports
 const express = require('express');
 const fileUploader = require('express-fileupload');
-const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
-const path = require('path');
 const compression = require('compression');
 const helmet = require('helmet');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 // Constants
 const app = express();
@@ -16,18 +15,12 @@ const accountsRoutes = require('./routes/accounts');
 const artistRoutes = require('./routes/artist');
 const tokenRouter = require('./routes/tokens');
 
-
 app.use(helmet());
 app.use(compression());
-
-//app.use(bodyParser.urlencoded()); // x-www-form-urlencoded <form>
 
 // application/json
 app.use(bodyParser.json());
 app.use(fileUploader());
-
-//app.use('/app', express.favicon(__dirname + '/public/favicon.ico'));
-//app.use(express.static(path.join(__dirname, 'client-suspended/public')));
 
 // CORS Error
 app.use((req, res, next) => {
@@ -59,8 +52,6 @@ app.use((error, req, res, next) => {
 
 // TODO: Adding SSL
 
-//const url = `mongodb://admin:1o0ydxALuKk5Ll4u@cf-shard-00-00-r3ep6.mongodb.net:27017,cf-shard-00-01-r3ep6.mongodb.net:27017,cf-shard-00-02-r3ep6.mongodb.net:27017/test?ssl=true&replicaSet=cf-shard-0&authSource=admin&retryWrites=true&w=majority`;
-
 // Connection to db and start server
 mongoose
     .connect(
@@ -74,6 +65,5 @@ mongoose
         console.log('##################################');
     })
     .catch(err =>{
-       // console.log(`%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%${process.env.production.MONDO_USER}`);
         console.log(err)
     });

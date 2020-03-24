@@ -30,13 +30,17 @@ export default function App(props) {
   const [capturedImage, setCapturedImage] = useState(null);
   const [imageBlob, setImageBlob] = useState(null);
 
-  const setTokens = (data) => {
-    localStorage.setItem("Tokens", JSON.stringify(data));
+  const setTokens = (data, notExists) => {
+    if (notExists) {
+      localStorage.setItem("JWT", JSON.stringify(data));
+    }
     setAuthTokens(data);
   };
 
-  const setPublicAddress = (data) => {
-    localStorage.setItem("Public Address", JSON.stringify(data));
+  const setPublicAddress = (data, notExists) => {
+    if (notExists) {
+      localStorage.setItem("Public Address", JSON.stringify(data));
+    }
     setAccountAddress(data);
   };
 
