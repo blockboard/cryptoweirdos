@@ -55,7 +55,8 @@ app.use((error, req, res, next) => {
 // Connection to db and start server
 mongoose
     .connect(
-      `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0-mv5jp.mongodb.net/test?retryWrites=true&w=majority`
+      `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0-mv5jp.mongodb.net/test?retryWrites=true&w=majority`,
+      { useNewUrlParser: true }
     )
     .then(result => {
         app.listen(process.env.PORT || 5000);
