@@ -65,7 +65,7 @@ export default function App(props) {
       }}>
           <Switch>
             <Route exact path='/' component={LandingPage}/>
-            <PrivateRoute path="/gallery" component={GalleryPage}/>
+            <Route path="/gallery" component={GalleryPage}/>
             <Route path="/activity" component={ActivityPage}/>
             <Route path="/offers" component={SalesPage}/>
             <Route path="/create" component={CreatePage}/>

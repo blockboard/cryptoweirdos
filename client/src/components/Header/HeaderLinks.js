@@ -50,7 +50,6 @@ function HeaderLinks(props) {
   }, []);
 
   const signInMetaMaskHandler = (publicAddress) => {
-    console.log(`${process.env.REACT_APP_BACKEND_API}/accounts`);
     fetch(`${process.env.REACT_APP_BACKEND_API}/accounts`, {
       body: JSON.stringify({ publicAddress }),
       headers: {
@@ -75,8 +74,7 @@ function HeaderLinks(props) {
 
   const signMessageHandler = async (publicAddress, nonce) => {
     const signature = await web3.eth.personal.sign(
-      `Your Signature for CryptoWeirdos: \n I am signing my one-time nonce: ${nonce}`, publicAddress,
-      // MetaMask will ignore the password argument here
+      `Your Signature for CryptoWeirdos: \n I am signing my one-time nonce: ${nonce}`, publicAddress
     );
     await authenticateHandler(publicAddress, signature);
   };
@@ -101,7 +99,6 @@ function HeaderLinks(props) {
 
   const checkHandler = async (event) => {
     showSpinner();
-    console.log(`Log: ${process.env.REACT_APP_BACKEND_URL}`);
     if (window.ethereum) {
       try {
         web3 = new Web3(window.ethereum);
@@ -112,10 +109,7 @@ function HeaderLinks(props) {
         const savedPublicAddress = localStorage.getItem("Public Address");
         const savedToken = localStorage.getItem("JWT");
 
-        console.log(savedToken);
-        console.log(savedPublicAddress);
-
-        if ((savedPublicAddress === "null") && (savedToken === "null")) {
+        if ((savedPublicAddress === "null" || null) && (savedToken === "null" || null)) {
           fetch(`${process.env.REACT_APP_BACKEND_API}/accounts/${publicAddress}`, {
             method: 'GET'
           })

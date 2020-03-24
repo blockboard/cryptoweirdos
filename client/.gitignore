@@ -1,16 +1,14 @@
-<<<<<<< HEAD
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
 /node_modules
 /.pnp
 .pnp.js
-=======
+
 # See https://help.github.com/ignore-files/ for more about ignoring files.
 
 # dependencies
 /node_modules
->>>>>>> react-template/master
 
 # testing
 /coverage
@@ -25,11 +23,10 @@
 .env.test.local
 .env.production.local
 
-<<<<<<< HEAD
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-=======
+
 package-lock.json
 
 npm-debug.log*
@@ -40,4 +37,3 @@ yarn-error.log*
 /dist
 # compiled css
 *.css
->>>>>>> react-template/master

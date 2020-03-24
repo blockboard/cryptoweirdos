@@ -60,7 +60,6 @@ export default function CreatePage(props) {
   let tokenId;
   let canvas, ctx, img, width, height, bitmapData, buf, buf8, data;
 
-  const MNEMONIC = process.env.REACT_APP_MNEMONIC;
   const INFURA_KEY = process.env.REACT_APP_INFURA_KEY;
   const NFT_CONTRACT_ADDRESS = process.env.REACT_APP_NFT_CONTRACT_ADDRESS;
   const OWNER_ADDRESS = process.env.REACT_APP_OWNER_ADDRESS;
@@ -632,6 +631,7 @@ export default function CreatePage(props) {
       "type": "function"
     }
   ];
+
 /*
   // Fetching TotalSupply
   fetch(`https://api.etherscan.io/api?module=stats&action=tokensupply&contractaddress=0x55a2525a0f4b0caa2005fb83a3aa3ac95683c6611`, {
@@ -694,7 +694,7 @@ export default function CreatePage(props) {
 
   const mintWeirdo = async () => {
     showSpinner();
-    if (!MNEMONIC || !INFURA_KEY || !OWNER_ADDRESS || !NETWORK) {
+    if (!INFURA_KEY || !OWNER_ADDRESS || !NETWORK) {
       console.error("Please set a mnemonic, infura key, owner, network, and contract address.");
       return
     }

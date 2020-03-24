@@ -26,7 +26,6 @@ import GridItem from "components/Grid/GridItem";
 import Button from "components/CustomButtons/Button.js";
 import Danger from "components/Typography/Danger.js";
 import { useAuth } from "context/auth";
-import GlitchesImgCard from "components/ImageCards/GlitchesImgCard/GlitchesImgCard";
 //styles
 import styles from "assets/jss/material-kit-react/components/glitches";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -557,7 +556,8 @@ export default function Glitch(props) {
         const savedPublicAddress = localStorage.getItem("Public Address");
         const savedToken = localStorage.getItem("JWT");
 
-        if ((savedPublicAddress === "null") && (savedToken === "null")) {
+        if ((savedPublicAddress === "null" || null) && (savedToken === "null" || null)) {
+          console.log(`current path: ${process.env.REACT_APP_BACKEND_API}`);
           fetch(`${process.env.REACT_APP_BACKEND_API}/accounts/${publicAddress}`, {
             method: 'GET'
           })
