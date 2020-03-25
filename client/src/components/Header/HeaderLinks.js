@@ -109,23 +109,25 @@ function HeaderLinks(props) {
         const savedPublicAddress = localStorage.getItem("Public Address");
         const savedToken = localStorage.getItem("JWT");
 
+        fetch(`${process.env.REACT_APP_BACKEND_API}/accounts/${publicAddress}`, {
+          method: 'GET'
+        })
+          .then(res => {
+            if (res.status === 404) {
+              signInMetaMaskHandler(publicAddress);
+            }
+            return res.json();
+          })
+          .then(account => {
+            signMessageHandler(account.account.publicAddress, account.account.nonce);
+          })
+          .catch(err => {
+            console.log('checkHandlerError: ', err);
+          });
+
         console.log("1");
         if ((savedPublicAddress === "null" || null || undefined) && (savedToken === "null" || null || undefined)) {
-          fetch(`${process.env.REACT_APP_BACKEND_API}/accounts/${publicAddress}`, {
-            method: 'GET'
-          })
-            .then(res => {
-              if (res.status === 404) {
-                signInMetaMaskHandler(publicAddress);
-              }
-              return res.json();
-            })
-            .then(account => {
-              signMessageHandler(account.account.publicAddress, account.account.nonce);
-            })
-            .catch(err => {
-              console.log('checkHandlerError: ', err);
-            })
+
         }
       } catch (error) {
         // User denied account access...
