@@ -98,9 +98,10 @@ function HeaderLinks(props) {
   };
 
   const checkHandler = async (event) => {
-    showSpinner();
+    console.log("In check");
     if (window.ethereum) {
       try {
+        console.log("In Try");
         web3 = new Web3(window.ethereum);
         await window.ethereum.enable();
 
@@ -140,7 +141,6 @@ function HeaderLinks(props) {
       // TODO: output warning msg when not having metamask
       console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
     }
-    hideSpinner();
   };
 
   const handleChange = event => {
