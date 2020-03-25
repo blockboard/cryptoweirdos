@@ -176,58 +176,6 @@ function HeaderLinks(props) {
 
   return (
       <List className={classes.list}>
-        {/*Gallery*/}
-        <listItem className={classes.listItem}>
-            {(props.location.pathname === "/gallery") ? <Button
-              color="transparent"
-              round
-              className={classes.selectedNavLink}
-              onClick={goToGallery}>
-              Gallery
-            </Button> : <Button
-              color="transparent"
-              round
-              className={classes.navLink}
-              onClick={goToGallery}>
-              Gallery
-            </Button>}
-        </listItem>
-
-        {/*Activity*/}
-        <listItem className={classes.listItem}>
-            {(props.location.pathname === "/activity") ? <Button
-              color="transparent"
-              round
-              className={classes.selectedNavLink}
-              onClick={goToActivity}>
-              Activity
-            </Button> :
-            <Button
-              color="transparent"
-              round
-              className={classes.navLink}
-              onClick={goToActivity}>
-              Activity
-            </Button>}
-        </listItem>
-
-        {/*Sales*/}
-        <listItem className={classes.listItem}>
-            {(props.location.pathname === "/offers") ? <Button
-                color="transparent"
-                round
-                className={classes.selectedNavLink}
-                onClick={goToOffers}>
-                Sales
-              </Button> :
-              <Button
-                color="transparent"
-                round={true}
-                className={classes.navLink}
-                onClick={goToOffers}>
-                Sales
-              </Button>}
-        </listItem>
 
         {/*Blog*/}
         {/*<listItem className={classes.listItem}>
