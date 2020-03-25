@@ -43,9 +43,10 @@ function HeaderLinks(props) {
   const savedToken = localStorage.getItem("JWT");
 
   useEffect(() => {
-    if (((savedPublicAddress) !== ("null" || null || undefined))
-      &&
-      (((savedToken) !== ("null" || null || undefined)))
+    if (
+      savedToken !== "null" ||
+      savedToken !== null ||
+      savedToken !== undefined
     ) {
       setAuthTokens(savedToken, false);
     }
@@ -77,7 +78,11 @@ function HeaderLinks(props) {
   const signMessageHandler = async (publicAddress, nonce) => {
     const signature = await web3.eth.personal.sign(
       `Your Signature for CryptoWeirdos: \n I am signing my one-time nonce: ${nonce}`, publicAddress
-    );
+    , (err) => {
+        if (err) {
+          setInAuth(false);
+        }
+      });
     await authenticateHandler(publicAddress, signature);
   };
 
@@ -108,9 +113,10 @@ function HeaderLinks(props) {
 
         const publicAddress = await web3.eth.getCoinbase();
 
-        if (((savedPublicAddress) === ("null" || null || undefined))
-          &&
-          ((savedToken) === ("null" || null || undefined))
+        if (
+          savedToken === "null" ||
+          savedToken === null ||
+          savedToken === undefined
         ) {
           setInAuth(true);
           fetch(`${process.env.REACT_APP_BACKEND_API}/accounts/${publicAddress}`, {
@@ -150,8 +156,7 @@ function HeaderLinks(props) {
   };
 
   const signOutHandler = () => {
-    setAuthTokens(null, true);
-    setAccountAddress(null, true);
+    localStorage.clear();
     props.history.push("/");
     setAnchorEl(null);
   };

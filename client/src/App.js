@@ -86,7 +86,7 @@ export default function App(props) {
             <Route path="/activity" component={ActivityPage}/>
             <Route path="/offers" component={SalesPage}/>
             <Route path="/create" component={CreatePage}/>
-            <Route path="/mint" component={MintPage}/>
+            <PrivateRoute path="/mint" component={MintPage}/>
             <Route path={`/account/:publicAddress`} component={UserPage}/>
             <Route path="/token/:tokenId" component={ImageDetailsPage}/>
             <Route component={NotFoundPage}/>

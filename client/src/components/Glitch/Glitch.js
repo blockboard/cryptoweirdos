@@ -14,6 +14,7 @@ import CardMedia from "@material-ui/core/CardMedia";
 import LibraryBooks from "@material-ui/icons/LibraryBooks";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
 import IconButton from "@material-ui/core/IconButton";
@@ -33,6 +34,26 @@ import Card from "@material-ui/core/Card";
 import {Link, Redirect} from "react-router-dom";
 import weirdo from "assets/img/weirdos/0001.jpeg";
 import MuiAlert from "@material-ui/lab/Alert";
+
+
+const useDialogeStyles = makeStyles(theme => ({
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+    margin: 'auto',
+    width: 'fit-content',
+  },
+  formBtn: {
+    position: "center"
+  },
+  formControl: {
+    marginTop: theme.spacing(2),
+    minWidth: 120,
+  },
+  formControlLabel: {
+    marginTop: theme.spacing(1),
+  },
+}));
 
 const useStyles = makeStyles(styles);
 
@@ -144,9 +165,16 @@ export default function Glitch(props) {
   let captured;
 
   const classes = useStyles();
+  const formClasses = useDialogeStyles();
   const btnClasses = useButtonStyles();
 
   const [showMagnitudeComponent, setShowMagnitudeComponent] = useState(true);
+
+  const [open, setOpen] = React.useState(false);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const {
     authTokens, setAuthTokens,
@@ -195,16 +223,11 @@ export default function Glitch(props) {
   const savedPublicAddress = localStorage.getItem("Public Address");
   const savedToken = localStorage.getItem("JWT");
 
-  // default selection
-  //let comparator = COMP_BRIGHTNESS;
-
   useEffect(() => {
-    const savedPublicAddress = localStorage.getItem("Public Address");
-    const savedToken = localStorage.getItem("JWT");
-
-    if (((savedPublicAddress) !== ("null" || null || undefined))
-      &&
-      (((savedToken) !== ("null" || null || undefined)))
+    if (
+      savedToken !== "null" ||
+      savedToken !== null ||
+      savedToken !== undefined
     ) {
       setAuthTokens(savedToken, false);
     }
@@ -531,16 +554,16 @@ export default function Glitch(props) {
 
   const signMessageHandler = async (publicAddress, nonce) => {
     const signature = await web3.eth.personal.sign(
-      `Your Signature for CryptoWeirdos: \n I am signing my one-time nonce: ${nonce}`,
-      publicAddress,
-      // MetaMask will ignore the password argument here
-    );
+      `Your Signature for CryptoWeirdos: \n I am signing my one-time nonce: ${nonce}`, publicAddress,
+      (err) => {
+        if (err) {
+          setInAuth(false);
+        }
+      });
     await authenticateHandler(publicAddress, signature);
   };
 
   const authenticateHandler = (publicAddress, signature) => {
-    console.log(`publicAddress: ${publicAddress}, \n signature: ${signature}`);
-
     fetch(`${process.env.REACT_APP_BACKEND_API}/auth/signin`, {
       body: JSON.stringify({ publicAddress, signature }),
       headers: {
@@ -553,6 +576,7 @@ export default function Glitch(props) {
         setAuthTokens(resData.token, true);
         setAccountAddress(resData.publicAddress, true);
         setInAuth(false);
+        fetchAccountCollectionsHandler()
       })
       .catch(err => console.log('authenticateHandlerError: ', err));
   };
@@ -565,9 +589,10 @@ export default function Glitch(props) {
 
         const publicAddress = await web3.eth.getCoinbase();
 
-        if (((savedPublicAddress) === ("null" || null || undefined))
-          &&
-          ((savedToken) === ("null" || null || undefined))
+        if (
+          savedToken === "null" ||
+          savedToken === null ||
+          savedToken === undefined
         ) {
           setInAuth(true);
           fetch(`${process.env.REACT_APP_BACKEND_API}/accounts/${publicAddress}`, {
@@ -606,7 +631,7 @@ export default function Glitch(props) {
       .then(resData => {
         if (resData.assets[0] === undefined  || resData.assets.length == 0) {
           setTokenCard(
-            <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
+            <div>
               <Danger>
                 No Collections, go and pick your Weirdo.
               </Danger>
@@ -614,34 +639,38 @@ export default function Glitch(props) {
                 <Button
                   simple
                   color="facebook"
-                  size="lg">
+                  size="lg"
+                  className={formClasses.formBtn}>
                   View All
                 </Button>
               </Link>
-            </GridItem>
+            </div>
           )
         } else {
           for (let [key, value] of Object.entries(resData)) {
             setTokenCard(value.map(token => {
               return (
-                <GridItem xs={12} sm={12} md={4} lg={4} xl={4}>
-                  <Card className={classes.root}>
-                    <StyledCardMedia
-                      className={classes.imgMedia}
-                      component="img"
-                      image={token.image_url}
-                      title={token.name}
-                      onClick={() => {
-                        setCurrentImg(token.image_url);
-                        setClassicModal(false);
-                        console.log(token.image_url);
-                      }}
-                    />
-                  </Card>
-                </GridItem>)
+                <GridContainer justify="center" spacing={1}>
+                  <GridItem xs={12} sm={12} md={4} lg={4} xl={4}>
+                    <Card className={classes.root}>
+                      <StyledCardMedia
+                        className={classes.imgMedia}
+                        component="img"
+                        image={token.image_url}
+                        title={token.name}
+                        onClick={() => {
+                          setCurrentImg(token.image_url);
+                          setClassicModal(false);
+                          console.log(token.image_url);
+                        }}
+                      />
+                    </Card>
+                  </GridItem>
+                </GridContainer>)
             }))
           }
         }
+        setClassicModal(true);
       })
   };
 
@@ -805,9 +834,9 @@ export default function Glitch(props) {
             <GridItem xs={12} sm={12} md={4} lg={4} xl={4}>
               <FormControl component="fieldset">
                 <FormLabel component="legend">Variables:</FormLabel>
-                  {(comparator === null) ?
-                    <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
-                      Horizontal Increment:
+                {(comparator === null) ?
+                  <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
+                    Horizontal Increment:
                     <Slider
                       disabled
                       track={false}
@@ -821,9 +850,9 @@ export default function Glitch(props) {
                         setHorizontalIncrement(value);
                       }}
                     />
-                    </Typography> :
-                    <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
-                      Horizontal Increment: {horizontalIncrement}
+                  </Typography> :
+                  <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
+                    Horizontal Increment: {horizontalIncrement}
                     <Slider
                       track={false}
                       valueLabelDisplay="auto"
@@ -837,7 +866,7 @@ export default function Glitch(props) {
                         setHorizontalIncrement(value);
                       }}
                     />
-                    </Typography>}
+                  </Typography>}
 
                 {(comparator === null) ?
                   <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
@@ -954,12 +983,11 @@ export default function Glitch(props) {
                       width: image.width,
                     }}
                     onClick={() => {
-                      setClassicModal(true);
-
                       if (authTokens === null) {
                         checkHandler();
+                      } else {
+                        fetchAccountCollectionsHandler();
                       }
-                      fetchAccountCollectionsHandler();
                     }
                     }
                   >
@@ -983,20 +1011,18 @@ export default function Glitch(props) {
                     </span>
                   </ButtonBase>
                 ))}
+
                 <Dialog
-                  classes={{
-                    root: classes.center,
-                    paper: classes.modal
-                  }}
+                  fullWidth={true}
+                  maxWidth={"md"}
                   open={classicModal}
                   TransitionComponent={Transition}
                   keepMounted
                   onClose={() => setClassicModal(false)}
-                  aria-labelledby="classic-modal-slide-title"
-                  aria-describedby="classic-modal-slide-description"
+                  aria-labelledby="max-width-dialog-title"
                 >
                   <DialogTitle
-                    id="classic-modal-slide-title"
+                    id="max-width-dialog-title"
                     disableTypography
                     className={classes.modalHeader}
                   >
@@ -1009,16 +1035,18 @@ export default function Glitch(props) {
                     >
                       <Close className={classes.modalClose} />
                     </IconButton>
-                    <h4 className={classes.modalTitle}>Your Weirdos</h4>
                   </DialogTitle>
-                  <DialogContent
-                    id="classic-modal-slide-description"
-                    className={classes.modalBody}
-                  >
-                    <GridContainer justify="center" spacing={1}>
-                      {(tokenCard === null) ?
-                        <CircularProgress disableShrink /> : tokenCard}
-                    </GridContainer>
+                  <DialogTitle >Your Weirdos</DialogTitle>
+                  <DialogContent>
+                    <DialogContentText>
+                      Select your weirdo and glitch it
+                    </DialogContentText>
+                    <div className={formClasses.form}>
+                      <div className={formClasses.formControl}>
+                          {(tokenCard === null) ?
+                            <CircularProgress disableShrink /> : tokenCard}
+                      </div>
+                    </div>
                   </DialogContent>
                   <DialogActions className={classes.modalFooter}>
                     <Button

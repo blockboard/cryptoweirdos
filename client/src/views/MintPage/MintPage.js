@@ -719,8 +719,6 @@ export default function CreatePage(props) {
   };
 
   const sendTokenMetaData = (tokenId) => {
-    console.log(`In IPFS`);
-
     //Usage example:
     const file = dataURLtoFile(capturedImage,'image.png');
     console.log(file);
@@ -751,7 +749,6 @@ export default function CreatePage(props) {
         })
           .then(res => {
             hideSpinner();
-            console.log(`Result: ${res}`);
             setFinished(true);
           })
           .catch(err => {
@@ -767,21 +764,6 @@ export default function CreatePage(props) {
       <div className={classNames(classes.main, classes.mainRaised)}>
         <div className={classes.container}>
           <div className={classes.section}>
-            <GridContainer justify="center" spacing={2}>
-              {(authTokens === null) ?
-                <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
-                    <Alert
-                      severity="warning"
-                    >
-                      This a demo! You've first to sign-in and select your weirdo to be able to mint it.
-                    </Alert>
-                </GridItem> :
-                null}
-              <GridItem xs={12} sm={12} md={6} lg={6} xl={6}>
-                <canvas
-                  ref={canvasRef}/>
-              </GridItem>
-            </GridContainer>
             <GridContainer justify="center" spacing={3}>
               {/*<GridItem xs={12} sm={12} md={3} lg={3} xl={3}>
                 <Link to="/create">
