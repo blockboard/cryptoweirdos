@@ -21,6 +21,8 @@ import OfferImgCard from "components/ImageCards/SalesImgCard/SalesImgCard";
 import Glitch from "components/Glitch/Glitch";
 import Header from "components/Header/Header.js";
 import HeaderLinks from "components/Header/HeaderLinks.js";
+import useSpinner from "components/Spinner/useSpinner";
+import { useAuth } from "context/auth";
 import ActivityImgCard from "components/ImageCards/SalesImgCard/SalesImgCard";
 // Images
 import background from "assets/img/weirdos/0011.jpeg";
@@ -87,6 +89,18 @@ export default function CreatePage(props) {
     setValue(newValue);
   };
 
+  const [overlay, setOverlay] = useState(true);
+  const [spinner, showSpinner, hideSpinner] = useSpinner(overlay);
+
+  const { inAuth, setInAuth } = useAuth();
+
+  useEffect(() => {
+    if (inAuth) {
+      showSpinner();
+    } else {
+      hideSpinner();
+    }
+  }, [inAuth]);
 
   useEffect(() => {
     fetchLatestBornHandler();
@@ -130,6 +144,19 @@ export default function CreatePage(props) {
 
   return (
       <>
+        <Header
+          color="default"
+          routes={dashboardRoutes}
+          brand="CRYPTOWEIRDOS"
+          rightLinks={<HeaderLinks/>}
+          fixed
+          changeColorOnScroll={{
+            height: 0,
+            color: "white"
+          }}
+          {...rest}
+        />
+        {spinner}
         <div className={classNames(classes.main, classes.mainRaised)}>
           <div className={classes.container}>
             <div className={classes.section}>

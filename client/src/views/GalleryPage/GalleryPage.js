@@ -21,6 +21,8 @@ import Parallax from "components/Parallax/Parallax.js";
 import MainHeader from "components/MainComponents/MainHeader";
 import MainContainer from "components/MainComponents/MainContainer";
 import ImageCard from "components/ImageCards/ImageCard";
+import useSpinner from "components/Spinner/useSpinner";
+import { useAuth } from "context/auth";
 import TabPanel from "components/TabPanal/TabPanal";
 import PaginationControlled from "components/PaginationControlled/PaginationControlled";
 // Images
@@ -37,7 +39,6 @@ import image8 from "assets/img/weirdos/08.png"
 import styles from "assets/jss/material-kit-react/views/galleryPage.js";
 import LandingImgCard from "../../components/ImageCards/LandingImgCard/LandingImgCard";
 import useGallery from "./useGallery";
-import { useAuth } from "context/auth";
 
 const useStyles = makeStyles(styles);
 
@@ -48,7 +49,31 @@ export default function GalleryPage(props) {
   const [offset, setOffset] = useState(0);
   const [firstTime, setFirstTime] = useState(true);
 
-  const { authTokens,setAuthTokens, accountAddress, setAccountAddress } = useAuth();
+  const { authTokens,setAuthTokens, accountAddress, setAccountAddress, totalSupply, setTotalSupply } = useAuth();
+
+  const [overlay, setOverlay] = useState(true);
+  const [spinner, showSpinner, hideSpinner] = useSpinner(overlay);
+
+  const { inAuth, setInAuth } = useAuth();
+
+  useEffect(() => {
+    if (inAuth) {
+      showSpinner();
+    } else {
+      hideSpinner();
+    }
+  }, [inAuth]);
+    /*return () => {
+        // Fetching TotalSupply
+        fetch(`https://api.etherscan.io/api?module=stats&action=tokensupply&contractaddress=0x55a2525a0f4b0caa2005fb83a3aa3ac95683c661`, {
+          method: 'GET'
+        })
+          .then(res => res.json())
+          .then(resData => {
+            console.log("from return", resData.result);
+            setTotalSupply(resData.result);
+          })
+      }*/
 
   const {
     tokens,
@@ -64,9 +89,7 @@ export default function GalleryPage(props) {
     observer.current = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting && hasMore) {
         setOffset(prevOffset => prevOffset + 20);
-        console.log(offset);
       }
-      console.log("Tokens2:" + authTokens);
     });
     if (node) observer.current.observe(node)
   }, [loading, hasMore]);
@@ -75,6 +98,7 @@ export default function GalleryPage(props) {
   return (
       <>
         <MainHeader/>
+        {spinner}
         <Parallax small filter image={background} />
         <MainContainer>
           <div className={classes.section}>

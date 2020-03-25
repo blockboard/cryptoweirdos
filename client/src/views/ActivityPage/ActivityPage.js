@@ -18,6 +18,8 @@ import Parallax from "components/Parallax/Parallax.js";
 import MainHeader from "components/MainComponents/MainHeader";
 import MainContainer from "components/MainComponents/MainContainer";
 import ActivityImgCard from "components/ImageCards/ActivityImgCard/ActivityImgCard";
+import useSpinner from "components/Spinner/useSpinner";
+import { useAuth } from "context/auth";
 import Button from "components/CustomButtons/Button.js";
 // Images
 import background from "assets/img/faces/cf3.jpeg";
@@ -85,6 +87,19 @@ export default function ActivityPage(props) {
     setValue(newValue);
   };
 
+  const [overlay, setOverlay] = useState(true);
+  const [spinner, showSpinner, hideSpinner] = useSpinner(overlay);
+
+  const { inAuth, setInAuth } = useAuth();
+
+  useEffect(() => {
+    if (inAuth) {
+      showSpinner();
+    } else {
+      hideSpinner();
+    }
+  }, [inAuth]);
+
   useEffect(() => {
     // Fetching TotalSupply
     fetch(`https://api.etherscan.io/api?module=stats&action=tokensupply&contractaddress=0x55a2525a0f4b0caa2005fb83a3aa3ac95683c661`, {
@@ -141,6 +156,7 @@ export default function ActivityPage(props) {
   return (
       <>
         <MainHeader/>
+        {spinner}
         <Parallax small filter image={background} />
         <MainContainer>
           <div className={classes.section}>

@@ -37,13 +37,16 @@ function HeaderLinks(props) {
 
   const open = Boolean(anchorEl);
 
-  const { authTokens,setAuthTokens, accountAddress, setAccountAddress } = useAuth();
+  const { authTokens,setAuthTokens, accountAddress, setAccountAddress, inAuth, setInAuth} = useAuth();
+
+  const savedPublicAddress = localStorage.getItem("Public Address");
+  const savedToken = localStorage.getItem("JWT");
 
   useEffect(() => {
-    const savedPublicAddress = localStorage.getItem("Public Address");
-    const savedToken = localStorage.getItem("JWT");
-
-    if ((savedPublicAddress !== "null") && (savedToken !== "null")) {
+    if (((savedPublicAddress) !== ("null" || null || undefined))
+      &&
+      (((savedToken) !== ("null" || null || undefined)))
+    ) {
       setAuthTokens(savedToken, false);
     }
   }, []);
@@ -90,38 +93,36 @@ function HeaderLinks(props) {
     })
       .then(res => res.json())
       .then(resData => {
-        setAuthTokens(resData.token, true);
-        setAccountAddress(resData.publicAddress, true);
+        setAuthTokens((resData.token).split('"').join(""), true);
+        setAccountAddress((resData.publicAddress).split('"').join(""), true);
+        setInAuth(false);
       })
       .catch(err => console.log('authenticateHandlerError: ', err));
   };
 
   const checkHandler = async (event) => {
-    console.log("In check");
     if (window.ethereum) {
       try {
-        console.log("In Try");
         web3 = new Web3(window.ethereum);
         await window.ethereum.enable();
 
         const publicAddress = await web3.eth.getCoinbase();
 
-        const savedPublicAddress = localStorage.getItem("Public Address");
-        const savedToken = localStorage.getItem("JWT");
-
-        if ((savedPublicAddress === "null" || null || undefined) && (savedToken === "null" || null || undefined)) {
+        if (((savedPublicAddress) === ("null" || null || undefined))
+          &&
+          ((savedToken) === ("null" || null || undefined))
+        ) {
+          setInAuth(true);
           fetch(`${process.env.REACT_APP_BACKEND_API}/accounts/${publicAddress}`, {
             method: 'GET'
           })
             .then(res => {
               if (res.status === 404) {
-                console.log("1");
                 signInMetaMaskHandler(publicAddress);
               }
               return res.json();
             })
             .then(account => {
-              console.log("2");
               signMessageHandler(account.account.publicAddress, account.account.nonce);
             })
             .catch(err => {
@@ -169,6 +170,10 @@ function HeaderLinks(props) {
 
   const goToOffers = () => {
     props.history.push("/offers")
+  };
+
+  const goToCreate = () => {
+    props.history.push("/create")
   };
 
   return (
@@ -240,23 +245,20 @@ function HeaderLinks(props) {
 
         {/*Create*/}
         <listItem className={classes.listItem}>
-          <a
-            target="_blank"
-            href="/create"
-            className={classes.linkColor}>
-            {(props.location.pathname === "/create") ? <Button
-                color="transparent"
-                round
-                className={classes.selectedNavLink}>
-                create
-              </Button> :
-              <Button
-                color="transparent"
-                round={true}
-                className={classes.navLink}>
-                Create
-              </Button>}
-          </a>
+          {(props.location.pathname === "/create") ? <Button
+              color="transparent"
+              round
+              className={classes.selectedNavLink}
+              onClick={goToCreate}>
+              create
+            </Button> :
+            <Button
+              color="transparent"
+              round={true}
+              className={classes.navLink}
+              onClick={goToCreate}>
+              Create
+            </Button>}
         </listItem>
 
         {/*SignIn*/}

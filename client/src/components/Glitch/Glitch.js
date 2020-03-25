@@ -32,6 +32,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import Card from "@material-ui/core/Card";
 import {Link, Redirect} from "react-router-dom";
 import weirdo from "assets/img/weirdos/0001.jpeg";
+import MuiAlert from "@material-ui/lab/Alert";
 
 const useStyles = makeStyles(styles);
 
@@ -120,6 +121,10 @@ const useButtonStyles = makeStyles(theme => ({
   },
 }));
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
 export default function Glitch(props) {
   let img = props.faceImage;
 
@@ -147,7 +152,8 @@ export default function Glitch(props) {
     authTokens, setAuthTokens,
     accountAddress, setAccountAddress,
     capturedImage, setCapturedImage,
-    imageBlob, setImageBlob
+    imageBlob, setImageBlob,
+    inAuth, setInAuth
   } = useAuth();
 
   const showComponent = type => {
@@ -186,6 +192,9 @@ export default function Glitch(props) {
     }
   ];
 
+  const savedPublicAddress = localStorage.getItem("Public Address");
+  const savedToken = localStorage.getItem("JWT");
+
   // default selection
   //let comparator = COMP_BRIGHTNESS;
 
@@ -193,7 +202,10 @@ export default function Glitch(props) {
     const savedPublicAddress = localStorage.getItem("Public Address");
     const savedToken = localStorage.getItem("JWT");
 
-    if ((savedPublicAddress !== "null") && (savedToken !== "null")) {
+    if (((savedPublicAddress) !== ("null" || null || undefined))
+      &&
+      (((savedToken) !== ("null" || null || undefined)))
+    ) {
       setAuthTokens(savedToken, false);
     }
 
@@ -540,6 +552,7 @@ export default function Glitch(props) {
       .then(resData => {
         setAuthTokens(resData.token, true);
         setAccountAddress(resData.publicAddress, true);
+        setInAuth(false);
       })
       .catch(err => console.log('authenticateHandlerError: ', err));
   };
@@ -552,11 +565,11 @@ export default function Glitch(props) {
 
         const publicAddress = await web3.eth.getCoinbase();
 
-        const savedPublicAddress = localStorage.getItem("Public Address");
-        const savedToken = localStorage.getItem("JWT");
-
-        if ((savedPublicAddress === "null" || null || undefined) && (savedToken === "null" || null || undefined)) {
-          console.log(`current path: ${process.env.REACT_APP_BACKEND_API}`);
+        if (((savedPublicAddress) === ("null" || null || undefined))
+          &&
+          ((savedToken) === ("null" || null || undefined))
+        ) {
+          setInAuth(true);
           fetch(`${process.env.REACT_APP_BACKEND_API}/accounts/${publicAddress}`, {
             method: 'GET'
           })
@@ -637,6 +650,14 @@ export default function Glitch(props) {
       <div className={classes.section}>
         <GridContainer justify="center" spacing="1">
           <GridItem xs={12} sm={12} md={7} lg={7} xl={6}>
+            {(currentImg === null) ?
+              <Alert
+                severity="warning"
+              >
+                You have first to select your weirdo to be able to glitch.
+              </Alert> :
+              null
+            }
             <h5 className={classes.artBreederTitle}>Select the algorithm and comparator: </h5>
             <GridItem xs={12} sm={12} md={4} lg={4} xl={4}>
               <FormControl component="fieldset">
@@ -645,27 +666,44 @@ export default function Glitch(props) {
                   <FormControlLabel
                     value="alpha-blended"
                     control={
-                      <Radio
-                        value="alpha-blended"
-                        color="primary"
-                        name="algorithm"
-                        checked={algorithm === 0}
-                        onChange={() => setAlgorithm(0)}
-                      />
+                      (currentImg === null) ?
+                        <Radio
+                          disabled
+                          value="alpha-blended"
+                          color="primary"
+                          name="algorithm"
+                          checked={algorithm === 0}
+                        /> :
+                        <Radio
+                          value="alpha-blended"
+                          color="primary"
+                          name="algorithm"
+                          checked={algorithm === 0}
+                          onChange={() => setAlgorithm(0)}
+                        />
                     }
                     label="Alpha Blended"
                     labelPlacement="end"
+                    className={classes.formColor}
                   />
                   <FormControlLabel
                     value="hard-sort"
                     control={
-                      <Radio
-                        value="hard-sort"
-                        color="primary"
-                        name="algorithm"
-                        checked={algorithm === 1}
-                        onChange={() => setAlgorithm(1)}
-                      />
+                      (currentImg === null) ?
+                        <Radio
+                          disabled
+                          value="hard-sort"
+                          color="primary"
+                          name="algorithm"
+                          checked={algorithm === 1}
+                        /> :
+                        <Radio
+                          value="hard-sort"
+                          color="primary"
+                          name="algorithm"
+                          checked={algorithm === 1}
+                          onChange={() => setAlgorithm(1)}
+                        />
                     }
                     label="Hard Sort"
                     labelPlacement="end"
@@ -995,7 +1033,6 @@ export default function Glitch(props) {
               </div> : <canvas
                 ref={canvasRef}/>
             }
-
           </GridItem>
         </GridContainer>
         <GridContainer justify="center" spacing="1">
@@ -1029,8 +1066,9 @@ export default function Glitch(props) {
                 size="lg">
                 Capture
               </Button> :
-              <Link
-                to="/mint"
+              <a
+                target="_blank"
+                href="/mint"
                 className={classes.linkColor}
               >
                 <Button
@@ -1041,7 +1079,7 @@ export default function Glitch(props) {
                   onClick={save}>
                   Capture
                 </Button>
-              </Link>}
+              </a>}
           </GridItem>
         </GridContainer>
         <GridContainer justify="center" spacing="1">

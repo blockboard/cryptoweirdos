@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import useLoading from "../../components/Loading/useLoading";
+import { useAuth } from "context/auth";
 
 export default function useGallery (offset) {
   const [totalSupply, setTotalSupply] = useState(130);
@@ -11,9 +12,12 @@ export default function useGallery (offset) {
 
   const [progress, showLoading, hideLoading] = useLoading(overlay);
 
+  //const { totalSupply, setTotalSupply } = useAuth();
+
   useEffect(() => {
     setLoading(true);
     setError(false);
+
     fetch(`https://api.opensea.io/api/v1/assets?asset_contract_address=0x55a2525a0f4b0caa2005fb83a3aa3ac95683c661&order_by=token_id&order_direction=desc&offset=${offset}`, {
       method: 'GET'
     })
@@ -34,7 +38,6 @@ export default function useGallery (offset) {
           });
         }
         setHasMore(offset < totalSupply);
-        console.log(hasMore);
         setLoading(false)
       })
       .catch(err => setError(true));

@@ -1,5 +1,6 @@
-import React, {Fragment, useState} from "react";
+import React, {Fragment, useEffect, useState} from "react";
 import {Link} from "react-router-dom";
+import { useAuth } from "context/auth";
 // nodejs library that concatenates classes
 import classNames from "classnames";
 // @material-ui/core components
@@ -31,9 +32,20 @@ export default function LandingPage(props) {
   const [overlay, setOverlay] = useState(true);
   const [spinner, showSpinner, hideSpinner] = useSpinner(overlay);
 
+  const { inAuth, setInAuth } = useAuth();
+
+  useEffect(() => {
+    if (inAuth) {
+      showSpinner();
+    } else {
+      hideSpinner();
+    }
+  }, [inAuth]);
+
   return (
       <>
         <MainHeader />
+        {spinner}
         <Parallax small filter image={image1}>
           <div className={classes.container}>
             <GridContainer justify="right">

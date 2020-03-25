@@ -64,7 +64,6 @@ export default function CreatePage(props) {
   const NFT_CONTRACT_ADDRESS = process.env.REACT_APP_NFT_CONTRACT_ADDRESS;
   const OWNER_ADDRESS = process.env.REACT_APP_OWNER_ADDRESS;
   const NETWORK = process.env.REACT_APP_NETWORK;
-  const NUM_CREATURES = 1;
 
   const NFT_ABI = [
     {
@@ -632,16 +631,6 @@ export default function CreatePage(props) {
     }
   ];
 
-/*
-  // Fetching TotalSupply
-  fetch(`https://api.etherscan.io/api?module=stats&action=tokensupply&contractaddress=0x55a2525a0f4b0caa2005fb83a3aa3ac95683c6611`, {
-    method: 'GET'
-  })
-    .then(res => res.json())
-    .then(resData => {
-      setTotalSupply(parseInt(resData.result));
-    });
- */
   const imageClasses = classNames(
     classes.imgRaised,
     classes.imgRoundedCircle,

@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
+import useSpinner from "components/Spinner/useSpinner";
 // react libraries
 import {BrowserRouter as Router, Link, Route, Switch} from "react-router-dom";
 import history from "./history";
@@ -29,17 +30,20 @@ export default function App(props) {
   const [accountAddress, setAccountAddress] = useState(null);
   const [capturedImage, setCapturedImage] = useState(null);
   const [imageBlob, setImageBlob] = useState(null);
+  const [totalSupply, setTotalSupply] = useState(null);
+  const [inAuth, setInAuth] = useState(false);
+
 
   const setTokens = (data, notExists) => {
     if (notExists) {
-      localStorage.setItem("JWT", JSON.stringify(data));
+      localStorage.setItem("JWT", data);
     }
     setAuthTokens(data);
   };
 
   const setPublicAddress = (data, notExists) => {
     if (notExists) {
-      localStorage.setItem("Public Address", JSON.stringify(data));
+      localStorage.setItem("Public Address", data);
     }
     setAccountAddress(data);
   };
@@ -52,6 +56,15 @@ export default function App(props) {
     setImageBlob(data);
   };
 
+  const setThisTotalSupply = (data) => {
+    setTotalSupply(data);
+  };
+
+  const setThisInAuth = (data) => {
+    setInAuth(data);
+  };
+
+
   return (
       <AuthContext.Provider value={{
         authTokens,
@@ -61,7 +74,11 @@ export default function App(props) {
         capturedImage,
         setCapturedImage: setThisCapturedImage,
         imageBlob,
-        setImageBlob: setThisImageBlob
+        setImageBlob: setThisImageBlob,
+        totalSupply,
+        setTotalSupply: setThisTotalSupply,
+        inAuth,
+        setInAuth: setThisInAuth
       }}>
           <Switch>
             <Route exact path='/' component={LandingPage}/>
