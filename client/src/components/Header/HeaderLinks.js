@@ -114,18 +114,19 @@ function HeaderLinks(props) {
         })
           .then(res => {
             if (res.status === 404) {
+              console.log("1");
               signInMetaMaskHandler(publicAddress);
             }
             return res.json();
           })
           .then(account => {
+            console.log("2");
             signMessageHandler(account.account.publicAddress, account.account.nonce);
           })
           .catch(err => {
             console.log('checkHandlerError: ', err);
           });
 
-        console.log("1");
         if ((savedPublicAddress === "null" || null || undefined) && (savedToken === "null" || null || undefined)) {
 
         }
