@@ -109,7 +109,8 @@ function HeaderLinks(props) {
         const savedPublicAddress = localStorage.getItem("Public Address");
         const savedToken = localStorage.getItem("JWT");
 
-        if ((savedPublicAddress === "null" || null) && (savedToken === "null" || null)) {
+        console.log("1");
+        if ((savedPublicAddress === "null" || null || undefined) && (savedToken === "null" || null || undefined)) {
           fetch(`${process.env.REACT_APP_BACKEND_API}/accounts/${publicAddress}`, {
             method: 'GET'
           })
