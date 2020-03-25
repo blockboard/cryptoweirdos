@@ -195,7 +195,6 @@ export default function Glitch(props) {
 
     if ((savedPublicAddress !== "null") && (savedToken !== "null")) {
       setAuthTokens(savedToken, false);
-      setAccountAddress(savedPublicAddress, false);
     }
 
     if (currentImg !== null) {
@@ -556,7 +555,7 @@ export default function Glitch(props) {
         const savedPublicAddress = localStorage.getItem("Public Address");
         const savedToken = localStorage.getItem("JWT");
 
-        if ((savedPublicAddress === "null" || null) && (savedToken === "null" || null)) {
+        if ((savedPublicAddress === "null" || null || undefined) && (savedToken === "null" || null || undefined)) {
           console.log(`current path: ${process.env.REACT_APP_BACKEND_API}`);
           fetch(`${process.env.REACT_APP_BACKEND_API}/accounts/${publicAddress}`, {
             method: 'GET'

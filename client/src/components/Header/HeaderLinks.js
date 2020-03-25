@@ -45,7 +45,6 @@ function HeaderLinks(props) {
 
     if ((savedPublicAddress !== "null") && (savedToken !== "null")) {
       setAuthTokens(savedToken, false);
-      setAccountAddress(savedPublicAddress, false);
     }
   }, []);
 
