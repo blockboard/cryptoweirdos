@@ -110,26 +110,24 @@ function HeaderLinks(props) {
         const savedPublicAddress = localStorage.getItem("Public Address");
         const savedToken = localStorage.getItem("JWT");
 
-        fetch(`${process.env.REACT_APP_BACKEND_API}/accounts/${publicAddress}`, {
-          method: 'GET'
-        })
-          .then(res => {
-            if (res.status === 404) {
-              console.log("1");
-              signInMetaMaskHandler(publicAddress);
-            }
-            return res.json();
-          })
-          .then(account => {
-            console.log("2");
-            signMessageHandler(account.account.publicAddress, account.account.nonce);
-          })
-          .catch(err => {
-            console.log('checkHandlerError: ', err);
-          });
-
         if ((savedPublicAddress === "null" || null || undefined) && (savedToken === "null" || null || undefined)) {
-
+          fetch(`${process.env.REACT_APP_BACKEND_API}/accounts/${publicAddress}`, {
+            method: 'GET'
+          })
+            .then(res => {
+              if (res.status === 404) {
+                console.log("1");
+                signInMetaMaskHandler(publicAddress);
+              }
+              return res.json();
+            })
+            .then(account => {
+              console.log("2");
+              signMessageHandler(account.account.publicAddress, account.account.nonce);
+            })
+            .catch(err => {
+              console.log('checkHandlerError: ', err);
+            });
         }
       } catch (error) {
         // User denied account access...
@@ -176,6 +174,58 @@ function HeaderLinks(props) {
 
   return (
       <List className={classes.list}>
+        {/*Gallery*/}
+        <listItem className={classes.listItem}>
+            {(props.location.pathname === "/gallery") ? <Button
+              color="transparent"
+              round
+              className={classes.selectedNavLink}
+              onClick={goToGallery}>
+              Gallery
+            </Button> : <Button
+              color="transparent"
+              round
+              className={classes.navLink}
+              onClick={goToGallery}>
+              Gallery
+            </Button>}
+        </listItem>
+
+        {/*Activity*/}
+        <listItem className={classes.listItem}>
+            {(props.location.pathname === "/activity") ? <Button
+              color="transparent"
+              round
+              className={classes.selectedNavLink}
+              onClick={goToActivity}>
+              Activity
+            </Button> :
+            <Button
+              color="transparent"
+              round
+              className={classes.navLink}
+              onClick={goToActivity}>
+              Activity
+            </Button>}
+        </listItem>
+
+        {/*Sales*/}
+        <listItem className={classes.listItem}>
+            {(props.location.pathname === "/offers") ? <Button
+                color="transparent"
+                round
+                className={classes.selectedNavLink}
+                onClick={goToOffers}>
+                Sales
+              </Button> :
+              <Button
+                color="transparent"
+                round={true}
+                className={classes.navLink}
+                onClick={goToOffers}>
+                Sales
+              </Button>}
+        </listItem>
 
         {/*Blog*/}
         {/*<listItem className={classes.listItem}>
