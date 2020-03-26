@@ -31,7 +31,7 @@ import { useAuth } from "context/auth";
 import styles from "assets/jss/material-kit-react/components/glitches";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Card from "@material-ui/core/Card";
-import {Link, Redirect} from "react-router-dom";
+import {Link, withRouter, Redirect} from "react-router-dom";
 import weirdo from "assets/img/weirdos/0001.jpeg";
 import MuiAlert from "@material-ui/lab/Alert";
 
@@ -41,12 +41,13 @@ const useDialogeStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     margin: 'auto',
-    width: 'fit-content',
+    width: '100%',
   },
   formBtn: {
     position: "center"
   },
   formControl: {
+    cursor: "pointer",
     marginTop: theme.spacing(2),
     minWidth: 120,
   },
@@ -146,7 +147,7 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-export default function Glitch(props) {
+function Glitch(props) {
   let img = props.faceImage;
 
   let canvasRef = useRef(null);
@@ -225,11 +226,12 @@ export default function Glitch(props) {
 
   useEffect(() => {
     if (
-      savedToken !== "null" ||
-      savedToken !== null ||
-      savedToken !== undefined
+      (savedToken !== "null") &&
+      (savedToken !== null) &&
+      (savedToken !== undefined)
     ) {
       setAuthTokens(savedToken, false);
+      setAccountAddress(savedPublicAddress, false);
     }
 
     if (currentImg !== null) {
@@ -237,7 +239,7 @@ export default function Glitch(props) {
       ctx = canvas.getContext("2d");
       window.load = init();
     }
-  }, [algorithm, horizontalIncrement, verticalIncrement, threshold, magnitude, comparator, currentImg]);
+  }, [algorithm, horizontalIncrement, verticalIncrement, threshold, magnitude, comparator, currentImg, capturedImage]);
 
   function init() {
     img = new Image();
@@ -511,7 +513,7 @@ export default function Glitch(props) {
     buf8.set(bitmapData.data);
   }
   function save() {
-    setCapturedImage(canvas.toDataURL("image/png"));
+    setCapturedImage(canvas.toDataURL("image/png"), true);
     const capturedImageBlob = canvas.toBlob((blob) => {
       return URL.createObjectURL(blob);
     });
@@ -650,7 +652,7 @@ export default function Glitch(props) {
           for (let [key, value] of Object.entries(resData)) {
             setTokenCard(value.map(token => {
               return (
-                <GridContainer justify="center" spacing={1}>
+                <GridContainer justify="left" spacing={1}>
                   <GridItem xs={12} sm={12} md={4} lg={4} xl={4}>
                     <Card className={classes.root}>
                       <StyledCardMedia
@@ -661,7 +663,6 @@ export default function Glitch(props) {
                         onClick={() => {
                           setCurrentImg(token.image_url);
                           setClassicModal(false);
-                          console.log(token.image_url);
                         }}
                       />
                     </Card>
@@ -736,6 +737,7 @@ export default function Glitch(props) {
                     }
                     label="Hard Sort"
                     labelPlacement="end"
+                    className={classes.formColor}
                   />
                 </RadioGroup>
               </FormControl>
@@ -764,6 +766,7 @@ export default function Glitch(props) {
                     }
                     label="Brightness"
                     labelPlacement="end"
+                    className={classes.formColor}
                   />
                   <FormControlLabel
                     value="hue"
@@ -785,6 +788,7 @@ export default function Glitch(props) {
                     }
                     label="Hue"
                     labelPlacement="end"
+                    className={classes.formColor}
                   />
                   <FormControlLabel
                     value="saturation"
@@ -806,6 +810,7 @@ export default function Glitch(props) {
                     }
                     label="Saturation"
                     labelPlacement="end"
+                    className={classes.formColor}
                   />
                   <FormControlLabel
                     value="color"
@@ -827,6 +832,7 @@ export default function Glitch(props) {
                     }
                     label="Color"
                     labelPlacement="end"
+                    className={classes.formColor}
                   />
                 </RadioGroup>
               </FormControl>
@@ -1119,3 +1125,5 @@ export default function Glitch(props) {
     </>
   )
 }
+
+export default withRouter(Glitch);

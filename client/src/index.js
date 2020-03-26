@@ -13,8 +13,6 @@ const config = dotenv.config();
 
 dotenvExpand(config);
 
-console.log(config);
-
 ReactDOM.render(
   <Router history={history}>
     <App/>

@@ -53,7 +53,6 @@ export default function CreatePage(props) {
     authTokens, setAuthTokens,
     accountAddress, setAccountAddress,
     capturedImage, setCapturedImage,
-    imageBlob, setImageBlob
   } = useAuth();
 
   let canvasRef = useRef(null);
@@ -638,6 +637,10 @@ export default function CreatePage(props) {
   );
   const navImageClasses = classNames(classes.imgRounded, classes.imgGallery);
 
+  const savedPublicAddress = localStorage.getItem("Public Address");
+  const savedToken = localStorage.getItem("JWT");
+  const savedCapturedImage = localStorage.getItem("Captured Image");
+
   useEffect(async () => {
     if (window.ethereum) {
       window.web3 = new web3(window.ethereum);
@@ -650,15 +653,30 @@ export default function CreatePage(props) {
       window.alert('Non-Ethereum browser detected. You should consider trying MetaMask!')
     }
 
-    canvas = canvasRef.current;
-    ctx = canvas.getContext("2d");
-    img = new Image();
-    img.crossOrigin = "Anonymous";
-    img.src = capturedImage;
-    img.onload = imageReady
+    if (
+      (savedToken !== "null") &&
+      (savedToken !== null) &&
+      (savedToken !== undefined)
+    ) {
+      setAuthTokens(savedToken, false);
+      setAccountAddress(savedPublicAddress, false);
+    }
+
+    if (savedCapturedImage !== null) {
+      canvas = canvasRef.current;
+      ctx = canvas.getContext("2d");
+      window.load = init();
+    }
   }, []);
 
-  function imageReady() {
+  const init = () => {
+    img = new Image();
+    img.crossOrigin = "Anonymous";
+    img.src = savedCapturedImage;
+    img.onload = imageReady
+  };
+
+  const imageReady = () => {
     width = img.width;
     height = img.height;
 
@@ -679,7 +697,7 @@ export default function CreatePage(props) {
     data = new Uint32Array(buf);
 
     buf8.set(bitmapData.data);
-  }
+  };
 
   const mintWeirdo = async () => {
     showSpinner();
@@ -690,15 +708,18 @@ export default function CreatePage(props) {
 
     const web3 = window.web3;
 
-    const nftContract = new web3.eth.Contract(NFT_ABI, NFT_CONTRACT_ADDRESS, { gasLimit: "1000000" });
+    const nftContract = new web3.eth.Contract(NFT_ABI, NFT_CONTRACT_ADDRESS);
 
     const minterAccount = await web3.eth.getAccounts();
     const minter = minterAccount[0];
-    const result = await nftContract.methods.mintTo(minter).send({ from: minter });
-    console.log("Transaction's Hash: " + result.transactionHash);
+    const result = await nftContract.methods.mintTo(minter).send({from: minter })
+      .on('error', (err) => {
+        if (err) {
+          hideSpinner();
+        }
+      });
 
     const transferEvent = await nftContract.getPastEvents('Transfer', {});
-    console.log(`${transferEvent[0].returnValues}`);
     tokenId = transferEvent[0].returnValues.tokenId;
 
     sendTokenMetaData(tokenId);
@@ -764,20 +785,32 @@ export default function CreatePage(props) {
       <div className={classNames(classes.main, classes.mainRaised)}>
         <div className={classes.container}>
           <div className={classes.section}>
+            <GridContainer justify="center">
+              <h5 className={classes.artBreederTitle}>Mint and trade your weirdo.</h5>
+            </GridContainer>
             <GridContainer justify="center" spacing={3}>
-              {/*<GridItem xs={12} sm={12} md={3} lg={3} xl={3}>
+              <GridItem xs={12} sm={12} md={6} lg={6} xl={6}>
+                <canvas
+                  ref={canvasRef}/>
+              </GridItem>
+            </GridContainer>
+            <GridContainer justify="left" spacing={3}>
+              <GridItem xs={12} sm={12} md={3} lg={3} xl={3}>
                 <Link to="/create">
                   <Button
                     color="transparent"
                     className={classes.cancelBtn}
                     round
                     size="lg"
+                    onClick={() => {
+                      window.close();
+                    }}
                   >
                     Cancel
                   </Button>
                 </Link>
-              </GridItem>*/}
-              <GridItem xs={12} sm={12} md={6} lg={6} xl={6}>
+              </GridItem>
+              <GridItem xs={12} sm={12} md={3} lg={3} xl={3}>
                 {(authTokens === null) ?
                   <Button
                     disabled

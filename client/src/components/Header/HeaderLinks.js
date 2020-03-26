@@ -28,7 +28,6 @@ const useStyles = makeStyles(styles);
 
 function HeaderLinks(props) {
   const classes = useStyles();
-  let web3;
 
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -42,13 +41,14 @@ function HeaderLinks(props) {
   const savedPublicAddress = localStorage.getItem("Public Address");
   const savedToken = localStorage.getItem("JWT");
 
-  useEffect(() => {
+  useEffect(async () => {
     if (
-      savedToken !== "null" ||
-      savedToken !== null ||
-      savedToken !== undefined
+      (savedToken !== "null") &&
+      (savedToken !== null) &&
+      (savedToken !== undefined)
     ) {
       setAuthTokens(savedToken, false);
+      setAccountAddress(savedPublicAddress, false);
     }
   }, []);
 
@@ -157,8 +157,10 @@ function HeaderLinks(props) {
 
   const signOutHandler = () => {
     localStorage.clear();
-    props.history.push("/");
+    setAuthTokens(null, true);
+    setAccountAddress(null, true);
     setAnchorEl(null);
+    props.history.push("/");
   };
 
   const handleClose = () => {

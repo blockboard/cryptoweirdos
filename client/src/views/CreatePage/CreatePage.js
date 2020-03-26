@@ -1,40 +1,37 @@
 import React, {useEffect, useState} from "react";
-import Web3 from "web3";
+import web3 from "web3";
 // nodejs library that concatenates classes
 // @material-ui/core components
 import {makeStyles} from "@material-ui/core/styles";
-import Paper from '@material-ui/core/Paper';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
 import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import CircularProgress from '@material-ui/core/CircularProgress';
 // core components
 import Footer from "components/Footer/Footer.js";
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
-import Parallax from "components/Parallax/Parallax.js";
-import MainHeader from "components/MainComponents/MainHeader";
-import MainContainer from "components/MainComponents/MainContainer";
 import OfferImgCard from "components/ImageCards/SalesImgCard/SalesImgCard";
 import Glitch from "components/Glitch/Glitch";
 import Header from "components/Header/Header.js";
 import HeaderLinks from "components/Header/HeaderLinks.js";
 import useSpinner from "components/Spinner/useSpinner";
 import { useAuth } from "context/auth";
-import ActivityImgCard from "components/ImageCards/SalesImgCard/SalesImgCard";
 // Images
-import background from "assets/img/weirdos/0011.jpeg";
 import image1 from "assets/img/alex2.jpg";
 // Styles
 import styles from "assets/jss/material-kit-react/views/createPage.js";
 
 import classNames from "classnames";
+import MuiAlert from "@material-ui/lab/Alert";
+
 // @material-ui/icons
 const useStyles = makeStyles(styles);
 
 // TODO: Fixed Tabs
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -74,27 +71,26 @@ export default function CreatePage(props) {
 
   const [tokenCard, setTokenCard] = useState(null);
 
-  const [totalSupply, setTotalSupply] = useState(null);
-  const [lastVisit, setLastVisit] = useState(80);
-
-  const [page, setPage] = useState(31);
-  const [totalPages, setTotalPages] = useState(null);
-  const [per, setPer] = useState(2);
-
-  const [value, setValue] = useState(0);
-
-  const web3 = new Web3(window.ethereum);
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
+  const [ethWarning, setEthWarning] = useState(false);
+  const [networkWarning, setNetworkWarning] = useState(false);
 
   const [overlay, setOverlay] = useState(true);
   const [spinner, showSpinner, hideSpinner] = useSpinner(overlay);
 
   const { inAuth, setInAuth } = useAuth();
 
-  useEffect(() => {
+  useEffect(async () => {
+    if (window.ethereum) {
+      window.web3 = new web3(window.ethereum);
+      await window.ethereum.enable()
+    }
+    else if (window.web3) {
+      window.web3 = new web3(window.web3.currentProvider);
+    }
+    else {
+      setEthWarning(true);
+    }
+
     if (inAuth) {
       showSpinner();
     } else {
@@ -112,8 +108,6 @@ export default function CreatePage(props) {
     })
         .then(res => res.json())
         .then(resData => {
-          console.log(`Data: ${resData.asset_events.length}`);
-
           for (let [key, value] of Object.entries(resData)) {
             setTokenCard(value.map(token => {
               if (token.asset === null) {
@@ -163,6 +157,18 @@ export default function CreatePage(props) {
               <GridContainer justify="center">
                 <h5 className={classes.artBreederTitle}>Glitch and trade your weirdo.</h5>
               </GridContainer>
+              {(ethWarning) ?
+                <GridContainer justify="center">
+                  <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
+                    <Alert
+                      severity="warning"
+                    >
+                      Non-Ethereum browser detected. You should consider trying MetaMask!
+                    </Alert>
+                  </GridItem>
+                </GridContainer> :
+                null
+              }
               <Glitch
                 faceImage={image1}
               />

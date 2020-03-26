@@ -1,4 +1,5 @@
 import React, {Fragment, useEffect, useState} from "react";
+import web3 from "web3";
 import {Link} from "react-router-dom";
 import { useAuth } from "context/auth";
 // nodejs library that concatenates classes
@@ -23,18 +24,38 @@ import image1 from "assets/img/weirdos/0058.jpeg";
 import LatestFaces from "./Sections/LatestFaces";
 import MostViewed from "./Sections/MostViewed";
 import RandomSelection from "./Sections/RandomSelection";
+import MuiAlert from "@material-ui/lab/Alert";
 
 const useStyles = makeStyles(styles);
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
+
 export default function LandingPage(props) {
   const classes = useStyles();
+
+  const [ethWarning, setEthWarning] = useState(false);
+  const [networkWarning, setNetworkWarning] = useState(false);
 
   const [overlay, setOverlay] = useState(true);
   const [spinner, showSpinner, hideSpinner] = useSpinner(overlay);
 
   const { inAuth, setInAuth } = useAuth();
 
-  useEffect(() => {
+  useEffect(async () => {
+    if (window.ethereum) {
+      window.web3 = new web3(window.ethereum);
+      await window.ethereum.enable()
+    }
+    else if (window.web3) {
+      window.web3 = new web3(window.web3.currentProvider);
+    }
+    else {
+      setEthWarning(true);
+    }
+
     if (inAuth) {
       showSpinner();
     } else {
@@ -56,6 +77,18 @@ export default function LandingPage(props) {
                     className={classes.title}
                     text={<h5>Crypto's many faces. Find your Weirdo.</h5>}
                 />
+                {(ethWarning) ?
+                  <GridContainer justify="center">
+                    <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
+                      <Alert
+                        severity="warning"
+                      >
+                        Non-Ethereum browser detected. You should consider trying MetaMask!
+                      </Alert>
+                    </GridItem>
+                  </GridContainer> :
+                  null
+                }
               </GridItem>
             </GridContainer>
           </div>

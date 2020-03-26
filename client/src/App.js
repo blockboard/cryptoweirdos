@@ -48,7 +48,10 @@ export default function App(props) {
     setAccountAddress(data);
   };
 
-  const setThisCapturedImage = (data) => {
+  const setThisCapturedImage = (data, notExists) => {
+    if (notExists) {
+      localStorage.setItem("Captured Image", data);
+    }
     setCapturedImage(data);
   };
 
@@ -86,7 +89,7 @@ export default function App(props) {
             <Route path="/activity" component={ActivityPage}/>
             <Route path="/offers" component={SalesPage}/>
             <Route path="/create" component={CreatePage}/>
-            <PrivateRoute path="/mint" component={MintPage}/>
+            <Route path="/mint" component={MintPage}/>
             <Route path={`/account/:publicAddress`} component={UserPage}/>
             <Route path="/token/:tokenId" component={ImageDetailsPage}/>
             <Route component={NotFoundPage}/>
