@@ -44,7 +44,16 @@ export default function LandingPage(props) {
 
   const { inAuth, setInAuth } = useAuth();
 
-  useEffect(async () => {
+  useEffect( () => {
+    if (inAuth) {
+      showSpinner();
+    } else {
+      hideSpinner();
+    }
+  }, [inAuth]);
+
+
+  const detectEth = async () => {
     if (window.ethereum) {
       window.web3 = new web3(window.ethereum);
       await window.ethereum.enable()
@@ -53,15 +62,9 @@ export default function LandingPage(props) {
       window.web3 = new web3(window.web3.currentProvider);
     }
     else {
-      setEthWarning(true);
+      window.alert('Non-Ethereum browser detected. You should consider trying MetaMask!')
     }
-
-    if (inAuth) {
-      showSpinner();
-    } else {
-      hideSpinner();
-    }
-  }, [inAuth]);
+  };
 
   return (
       <>

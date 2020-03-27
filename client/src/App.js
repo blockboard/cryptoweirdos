@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from "react";
-import useSpinner from "components/Spinner/useSpinner";
+import "assets/scss/material-kit-react.scss?v=1.8.0";
 // react libraries
 import {BrowserRouter as Router, Link, Route, Switch} from "react-router-dom";
 import history from "./history";
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
-
+import useSpinner from "components/Spinner/useSpinner";
 import { AuthContext } from "./context/auth";
 import PrivateRoute from './PrivateRoute';
 // pages for this product
@@ -20,8 +20,6 @@ import NotFoundPage from "./views/NotFoundPage/NotFoundPage";
 import BlogPage from "./views/BlogPage/BlogPage";
 import SalesPage from "./views/SalesPage/SalesPage";
 import ActivityPage from "./views/ActivityPage/ActivityPage";
-
-import "assets/scss/material-kit-react.scss?v=1.8.0";
 import CreatePage from "./views/CreatePage/CreatePage";
 import MintPage from "./views/MintPage/MintPage";
 
@@ -33,6 +31,14 @@ export default function App(props) {
   const [totalSupply, setTotalSupply] = useState(null);
   const [inAuth, setInAuth] = useState(false);
 
+
+  useEffect(() => {
+    const abortController = new AbortController();
+
+    return function cleanup() {
+      abortController.abort();
+    }
+  }, []);
 
   const setTokens = (data, notExists) => {
     if (notExists) {

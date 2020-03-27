@@ -1,4 +1,5 @@
 import React, {useState, useEffect, useRef} from "react";
+import { withRouter } from "react-router-dom";
 import web3 from "web3";
 import ipfs from 'ipfs';
 // nodejs library that concatenates classes
@@ -39,7 +40,7 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-export default function CreatePage(props) {
+function MintPage(props) {
   // TODO: Redirect issue
 
   const classes = useStyles();
@@ -315,8 +316,8 @@ export default function CreatePage(props) {
       ],
       "name": "mintTo",
       "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
+      "payable": true,
+      "stateMutability": "payable",
       "type": "function"
     },
     {
@@ -630,29 +631,11 @@ export default function CreatePage(props) {
     }
   ];
 
-  const imageClasses = classNames(
-    classes.imgRaised,
-    classes.imgRoundedCircle,
-    classes.imgFluid
-  );
-  const navImageClasses = classNames(classes.imgRounded, classes.imgGallery);
-
   const savedPublicAddress = localStorage.getItem("Public Address");
   const savedToken = localStorage.getItem("JWT");
   const savedCapturedImage = localStorage.getItem("Captured Image");
 
-  useEffect(async () => {
-    if (window.ethereum) {
-      window.web3 = new web3(window.ethereum);
-      await window.ethereum.enable()
-    }
-    else if (window.web3) {
-      window.web3 = new web3(window.web3.currentProvider);
-    }
-    else {
-      window.alert('Non-Ethereum browser detected. You should consider trying MetaMask!')
-    }
-
+  useEffect(() => {
     if (
       (savedToken !== "null") &&
       (savedToken !== null) &&
@@ -668,6 +651,19 @@ export default function CreatePage(props) {
       window.load = init();
     }
   }, []);
+
+  const detectEth = async () => {
+    if (window.ethereum) {
+      window.web3 = new web3(window.ethereum);
+      await window.ethereum.enable()
+    }
+    else if (window.web3) {
+      window.web3 = new web3(window.web3.currentProvider);
+    }
+    else {
+      window.alert('Non-Ethereum browser detected. You should consider trying MetaMask!')
+    }
+  };
 
   const init = () => {
     img = new Image();
@@ -700,6 +696,7 @@ export default function CreatePage(props) {
   };
 
   const mintWeirdo = async () => {
+    detectEth();
     showSpinner();
     if (!INFURA_KEY || !OWNER_ADDRESS || !NETWORK) {
       console.error("Please set a mnemonic, infura key, owner, network, and contract address.");
@@ -708,18 +705,24 @@ export default function CreatePage(props) {
 
     const web3 = window.web3;
 
-    const nftContract = new web3.eth.Contract(NFT_ABI, NFT_CONTRACT_ADDRESS);
+    const nftContract = new web3.eth.Contract(NFT_ABI, NFT_CONTRACT_ADDRESS, { gasLimit: "1000000" });
 
     const minterAccount = await web3.eth.getAccounts();
     const minter = minterAccount[0];
-    const result = await nftContract.methods.mintTo(minter).send({from: minter })
+    const result = await nftContract.methods.mintTo(minter).send({
+      from: minter,
+      value: web3.utils.toWei("0.1", "ether")
+    })
       .on('error', (err) => {
         if (err) {
+          console.log(err);
           hideSpinner();
         }
       });
 
     const transferEvent = await nftContract.getPastEvents('Transfer', {});
+    console.log(transferEvent);
+    console.log(transferEvent[0]);
     tokenId = transferEvent[0].returnValues.tokenId;
 
     sendTokenMetaData(tokenId);
@@ -741,7 +744,7 @@ export default function CreatePage(props) {
 
   const sendTokenMetaData = (tokenId) => {
     //Usage example:
-    const file = dataURLtoFile(capturedImage,'image.png');
+    const file = dataURLtoFile(savedCapturedImage,'image.png');
     console.log(file);
 
     const IReader = new window.FileReader();
@@ -769,8 +772,10 @@ export default function CreatePage(props) {
           }),
         })
           .then(res => {
-            hideSpinner();
             setFinished(true);
+            console.log('Minted Successfully');
+            props.history.push("/");
+            hideSpinner();
           })
           .catch(err => {
             console.log(err);
@@ -840,4 +845,4 @@ export default function CreatePage(props) {
   );
 }
 
-
+export default withRouter(MintPage);

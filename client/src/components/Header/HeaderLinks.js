@@ -1,7 +1,8 @@
 /*eslint-disable*/
 import React, {useEffect, useState} from "react";
 // react components
-import { Link, withRouter } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { withRouter } from 'react-router';
 import history from "../../history";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
@@ -41,7 +42,7 @@ function HeaderLinks(props) {
   const savedPublicAddress = localStorage.getItem("Public Address");
   const savedToken = localStorage.getItem("JWT");
 
-  useEffect(async () => {
+  useEffect( () => {
     if (
       (savedToken !== "null") &&
       (savedToken !== null) &&

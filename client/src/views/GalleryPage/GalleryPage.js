@@ -57,10 +57,16 @@ export default function GalleryPage(props) {
   const { inAuth, setInAuth } = useAuth();
 
   useEffect(() => {
+    const abortController = new AbortController();
+
     if (inAuth) {
       showSpinner();
     } else {
       hideSpinner();
+    }
+
+    return function cleanup() {
+      abortController.abort();
     }
   }, [inAuth]);
     /*return () => {
