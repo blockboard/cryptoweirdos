@@ -159,9 +159,6 @@ export default function CreatePage(props) {
               <GridContainer justify="center">
                 <h5 className={classes.artBreederTitle}>Glitch and trade your weirdo.</h5>
               </GridContainer>
-              <GridContainer justify="center">
-                <h5 className={classes.artBreederTitle}>Glitch Will cost <strong>0.015 Eth</strong>.</h5>
-              </GridContainer>
               {(authTokens === null) ?
                 <GridContainer justify="center">
                   <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
