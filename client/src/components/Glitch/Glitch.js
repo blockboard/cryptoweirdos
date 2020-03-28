@@ -717,7 +717,7 @@ function Glitch(props) {
                           onChange={() => setAlgorithm(0)}
                         />
                     }
-                    label="Alpha Blended"
+                    label="Crypto Algo I"
                     labelPlacement="end"
                     className={classes.formColor}
                   />
@@ -740,7 +740,7 @@ function Glitch(props) {
                           onChange={() => setAlgorithm(1)}
                         />
                     }
-                    label="Hard Sort"
+                    label="Crypto Algo II"
                     labelPlacement="end"
                     className={classes.formColor}
                   />
