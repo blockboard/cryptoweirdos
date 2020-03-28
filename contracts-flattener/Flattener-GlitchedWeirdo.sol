@@ -791,19 +791,19 @@ contract ERC721 is Context, ERC165, IERC721 {
      * @return bool whether the call correctly returned the expected magic value
      */
     function _checkOnERC721Received(address from, address to, uint256 tokenId, bytes memory _data)
-    internal returns (bool)
+        internal returns (bool)
     {
         if (!to.isContract()) {
             return true;
         }
         // solhint-disable-next-line avoid-low-level-calls
         (bool success, bytes memory returndata) = to.call(abi.encodeWithSelector(
-                IERC721Receiver(to).onERC721Received.selector,
-                _msgSender(),
-                from,
-                tokenId,
-                _data
-            ));
+            IERC721Receiver(to).onERC721Received.selector,
+            _msgSender(),
+            from,
+            tokenId,
+            _data
+        ));
         if (!success) {
             if (returndata.length > 0) {
                 // solhint-disable-next-line no-inline-assembly
@@ -1299,22 +1299,22 @@ contract Ownable is Context {
 pragma solidity ^0.5.0;
 
 library Strings {
-    // via https://github.com/oraclize/ethereum-api/blob/master/oraclizeAPI_0.5.sol
-    function strConcat(string memory _a, string memory _b, string memory _c, string memory _d, string memory _e) internal pure returns (string memory) {
-        bytes memory _ba = bytes(_a);
-        bytes memory _bb = bytes(_b);
-        bytes memory _bc = bytes(_c);
-        bytes memory _bd = bytes(_d);
-        bytes memory _be = bytes(_e);
-        string memory abcde = new string(_ba.length + _bb.length + _bc.length + _bd.length + _be.length);
-        bytes memory babcde = bytes(abcde);
-        uint k = 0;
-        for (uint i = 0; i < _ba.length; i++) babcde[k++] = _ba[i];
-        for (uint i = 0; i < _bb.length; i++) babcde[k++] = _bb[i];
-        for (uint i = 0; i < _bc.length; i++) babcde[k++] = _bc[i];
-        for (uint i = 0; i < _bd.length; i++) babcde[k++] = _bd[i];
-        for (uint i = 0; i < _be.length; i++) babcde[k++] = _be[i];
-        return string(babcde);
+  // via https://github.com/oraclize/ethereum-api/blob/master/oraclizeAPI_0.5.sol
+  function strConcat(string memory _a, string memory _b, string memory _c, string memory _d, string memory _e) internal pure returns (string memory) {
+      bytes memory _ba = bytes(_a);
+      bytes memory _bb = bytes(_b);
+      bytes memory _bc = bytes(_c);
+      bytes memory _bd = bytes(_d);
+      bytes memory _be = bytes(_e);
+      string memory abcde = new string(_ba.length + _bb.length + _bc.length + _bd.length + _be.length);
+      bytes memory babcde = bytes(abcde);
+      uint k = 0;
+      for (uint i = 0; i < _ba.length; i++) babcde[k++] = _ba[i];
+      for (uint i = 0; i < _bb.length; i++) babcde[k++] = _bb[i];
+      for (uint i = 0; i < _bc.length; i++) babcde[k++] = _bc[i];
+      for (uint i = 0; i < _bd.length; i++) babcde[k++] = _bd[i];
+      for (uint i = 0; i < _be.length; i++) babcde[k++] = _be[i];
+      return string(babcde);
     }
 
     function strConcat(string memory _a, string memory _b, string memory _c, string memory _d) internal pure returns (string memory) {
@@ -1367,73 +1367,98 @@ contract ProxyRegistry {
  * TradeableERC721Token - ERC721 contract that whitelists a trading address, and has minting functionality.
  */
 contract TradeableERC721Token is ERC721Full, Ownable {
-    using Strings for string;
+  using Strings for string;
 
-    address proxyRegistryAddress;
-    uint256 private _currentTokenId = 0;
+  address proxyRegistryAddress;
+  uint256 private _currentTokenId = 0;
 
-    constructor(string memory _name, string memory _symbol, address _proxyRegistryAddress) ERC721Full(_name, _symbol) public {
-        proxyRegistryAddress = _proxyRegistryAddress;
+  uint256 glitchValue;
+
+  constructor(string memory _name, string memory _symbol, address _proxyRegistryAddress) ERC721Full(_name, _symbol) public {
+    proxyRegistryAddress = _proxyRegistryAddress;
+    glitchValue = 0.015 ether;
+  }
+
+  function showCurrentGlitchFees() public view returns (uint256) {
+    return glitchValue;
+  }
+
+  /**
+    * @dev Mints a token to an address with a tokenURI.
+    * @param _value address of the future owner of the token
+    */
+  function changeGlitchFees(uint256 _value) public onlyOwner {
+    glitchValue = _value;
+  }
+
+  /**
+    * @dev Mints a token to an address with a tokenURI.
+    * @param _to address of the future owner of the token
+    */
+  function mint(address _to) public {
+    uint256 newTokenId = _getNextTokenId();
+    _mint(_to, newTokenId);
+    _incrementTokenId();
+  }
+
+  /**
+    * @dev Mints a token to an address with a tokenURI.
+    * @param _to address of the future owner of the token
+    */
+  function mintTo(address _to) public payable {
+    require(msg.value >= glitchValue, 'Value is lower that required');
+    address contractOwner = owner();
+    address(uint160(contractOwner)).send(msg.value);
+    uint256 newTokenId = _getNextTokenId();
+    _mint(_to, newTokenId);
+    _incrementTokenId();
+  }
+
+  /**
+    * @dev calculates the next token ID based on value of _currentTokenId
+    * @return uint256 for the next token ID
+    */
+  function _getNextTokenId() private view returns (uint256) {
+    return _currentTokenId.add(1);
+  }
+
+  /**
+    * @dev increments the value of _currentTokenId
+    */
+  function _incrementTokenId() private  {
+    _currentTokenId++;
+  }
+
+  function baseTokenURI() public view returns (string memory) {
+    return "";
+  }
+
+  function tokenURI(uint256 _tokenId) external view returns (string memory) {
+    return Strings.strConcat(
+      baseTokenURI(),
+      Strings.uint2str(_tokenId)
+    );
+  }
+
+  /**
+   * Override isApprovedForAll to whitelist user's OpenSea proxy accounts to enable gas-less listings.
+   */
+  function isApprovedForAll(
+    address owner,
+    address operator
+  )
+  public
+  view
+  returns (bool)
+  {
+    // Whitelist OpenSea proxy contract for easy trading.
+    ProxyRegistry proxyRegistry = ProxyRegistry(proxyRegistryAddress);
+    if (address(proxyRegistry.proxies(owner)) == operator) {
+      return true;
     }
 
-    /**
-      * @dev Mints a token to an address with a tokenURI.
-      * @param _to address of the future owner of the token
-      */
-    function mint(address _to) public payable {
-        require(msg.value >= 0.015 ether);
-        address contractOwner = owner();
-        address(uint160(contractOwner)).transfer(msg.value);
-        uint256 newTokenId = _getNextTokenId();
-        _mint(_to, newTokenId);
-        _incrementTokenId();
-    }
-
-    /**
-      * @dev calculates the next token ID based on value of _currentTokenId
-      * @return uint256 for the next token ID
-      */
-    function _getNextTokenId() private view returns (uint256) {
-        return _currentTokenId.add(1);
-    }
-
-    /**
-      * @dev increments the value of _currentTokenId
-      */
-    function _incrementTokenId() private  {
-        _currentTokenId++;
-    }
-
-    function baseTokenURI() public view returns (string memory) {
-        return "";
-    }
-
-    function tokenURI(uint256 _tokenId) external view returns (string memory) {
-        return Strings.strConcat(
-            baseTokenURI(),
-            Strings.uint2str(_tokenId)
-        );
-    }
-
-    /**
-     * Override isApprovedForAll to whitelist user's OpenSea proxy accounts to enable gas-less listings.
-     */
-    function isApprovedForAll(
-        address owner,
-        address operator
-    )
-    public
-    view
-    returns (bool)
-    {
-        // Whitelist OpenSea proxy contract for easy trading.
-        ProxyRegistry proxyRegistry = ProxyRegistry(proxyRegistryAddress);
-        if (address(proxyRegistry.proxies(owner)) == operator) {
-            return true;
-        }
-
-        return super.isApprovedForAll(owner, operator);
-    }
+    return super.isApprovedForAll(owner, operator);
+  }
 }
 
 // File: contracts/GlitchedWeirdos.sol
@@ -1447,10 +1472,10 @@ pragma solidity ^0.5.0;
  * Creature - a contract for my non-fungible creatures.
  */
 contract GlitchedWeirdos is TradeableERC721Token {
-    constructor(address _proxyRegistryAddress) TradeableERC721Token("GlitchedWeirdos", "GW", _proxyRegistryAddress) public {  }
+  constructor(address _proxyRegistryAddress) TradeableERC721Token("GlitchedWeirdos", "GW", _proxyRegistryAddress) public {  }
 
-    // TODO: OpenSea MetaData Link
-    function baseTokenURI() public view returns (string memory) {
-        return "https://weirdos.herokuapp.com/api/tokens/";
-    }
+  // TODO: OpenSea MetaData Link
+  function baseTokenURI() public view returns (string memory) {
+    return "https://weirdos.herokuapp.com/api/tokens/";
+  }
 }

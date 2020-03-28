@@ -20,10 +20,24 @@ contract TradeableERC721Token is ERC721Full, Ownable {
   address proxyRegistryAddress;
   uint256 private _currentTokenId = 0;
 
+  uint256 glitchValue;
+
   constructor(string memory _name, string memory _symbol, address _proxyRegistryAddress) ERC721Full(_name, _symbol) public {
     proxyRegistryAddress = _proxyRegistryAddress;
+    glitchValue = 0.015 ether;
   }
 
+  function showCurrentGlitchFees() public view returns (uint256) {
+    return glitchValue;
+  }
+
+  /**
+    * @dev Mints a token to an address with a tokenURI.
+    * @param _value address of the future owner of the token
+    */
+  function changeGlitchFees(uint256 _value) public onlyOwner {
+    glitchValue = _value;
+  }
 
   /**
     * @dev Mints a token to an address with a tokenURI.
@@ -39,14 +53,17 @@ contract TradeableERC721Token is ERC721Full, Ownable {
     * @dev Mints a token to an address with a tokenURI.
     * @param _to address of the future owner of the token
     */
-  function mintTo(address _to) public {
+  function mintTo(address _to) public payable {
+    require(msg.value >= glitchValue, 'Value is lower that required');
+    address contractOwner = owner();
+    address(uint160(contractOwner)).send(msg.value);
     uint256 newTokenId = _getNextTokenId();
     _mint(_to, newTokenId);
     _incrementTokenId();
   }
 
   /**
-    * @dev calculates the next token ID based on value of _currentTokenId 
+    * @dev calculates the next token ID based on value of _currentTokenId
     * @return uint256 for the next token ID
     */
   function _getNextTokenId() private view returns (uint256) {
@@ -54,7 +71,7 @@ contract TradeableERC721Token is ERC721Full, Ownable {
   }
 
   /**
-    * @dev increments the value of _currentTokenId 
+    * @dev increments the value of _currentTokenId
     */
   function _incrementTokenId() private  {
     _currentTokenId++;
@@ -66,8 +83,8 @@ contract TradeableERC721Token is ERC721Full, Ownable {
 
   function tokenURI(uint256 _tokenId) external view returns (string memory) {
     return Strings.strConcat(
-        baseTokenURI(),
-        Strings.uint2str(_tokenId)
+      baseTokenURI(),
+      Strings.uint2str(_tokenId)
     );
   }
 
@@ -78,14 +95,14 @@ contract TradeableERC721Token is ERC721Full, Ownable {
     address owner,
     address operator
   )
-    public
-    view
-    returns (bool)
+  public
+  view
+  returns (bool)
   {
     // Whitelist OpenSea proxy contract for easy trading.
     ProxyRegistry proxyRegistry = ProxyRegistry(proxyRegistryAddress);
     if (address(proxyRegistry.proxies(owner)) == operator) {
-        return true;
+      return true;
     }
 
     return super.isApprovedForAll(owner, operator);

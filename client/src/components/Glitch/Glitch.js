@@ -253,6 +253,11 @@ function Glitch(props) {
   function imageReady() {
     width = img.width;
     height = img.height;
+    if(width > 500){
+     let scale = width/350;
+      width = 350;
+      height = height/scale;
+    }
 
     canvas.width = width;
     canvas.height = height;
@@ -680,7 +685,7 @@ function Glitch(props) {
       <div className={classes.section}>
         <GridContainer justify="center" spacing="1">
           <GridItem xs={12} sm={12} md={7} lg={7} xl={6}>
-            {(currentImg === null) ?
+            {((currentImg === null) && (authTokens !== null)) ?
               <Alert
                 severity="warning"
               >
@@ -977,26 +982,19 @@ function Glitch(props) {
             </GridItem>
           </GridItem>
           <GridItem xs={12} sm={12} md={5} lg={5} xl={6}>
-            {(currentImg === null) ?
-              <div className={btnClasses.root}>
-                {images.map(image => (
+            {
+              (authTokens === null) ?
+                <div>
+                  {images.map(image => (
                   <ButtonBase
+                    disabled
                     focusRipple
                     key={image.title}
                     className={btnClasses.image}
                     focusVisibleClassName={btnClasses.focusVisible}
                     style={{
                       width: image.width,
-                    }}
-                    onClick={() => {
-                      if (authTokens === null) {
-                        checkHandler();
-                      } else {
-                        fetchAccountCollectionsHandler();
-                      }
-                    }
-                    }
-                  >
+                    }}>
                     <span
                       className={btnClasses.imageSrc}
                       style={{
@@ -1016,56 +1014,140 @@ function Glitch(props) {
                       </Typography>
                     </span>
                   </ButtonBase>
-                ))}
+                  ))}
 
-                <Dialog
-                  fullWidth={true}
-                  maxWidth={"md"}
-                  open={classicModal}
-                  TransitionComponent={Transition}
-                  keepMounted
-                  onClose={() => setClassicModal(false)}
-                  aria-labelledby="max-width-dialog-title"
-                >
-                  <DialogTitle
-                    id="max-width-dialog-title"
-                    disableTypography
-                    className={classes.modalHeader}
+                  <Dialog
+                    fullWidth={true}
+                    maxWidth={"md"}
+                    open={classicModal}
+                    TransitionComponent={Transition}
+                    keepMounted
+                    onClose={() => setClassicModal(false)}
+                    aria-labelledby="max-width-dialog-title"
                   >
-                    <IconButton
-                      className={classes.modalCloseButton}
-                      key="close"
-                      aria-label="Close"
-                      color="inherit"
-                      onClick={() => setClassicModal(false)}
+                    <DialogTitle
+                      id="max-width-dialog-title"
+                      disableTypography
+                      className={classes.modalHeader}
                     >
-                      <Close className={classes.modalClose} />
-                    </IconButton>
-                  </DialogTitle>
-                  <DialogTitle >Your Weirdos</DialogTitle>
-                  <DialogContent>
-                    <DialogContentText>
-                      Select your weirdo and glitch it
-                    </DialogContentText>
-                    <div className={formClasses.form}>
-                      <div className={formClasses.formControl}>
+                      <IconButton
+                        className={classes.modalCloseButton}
+                        key="close"
+                        aria-label="Close"
+                        color="inherit"
+                        onClick={() => setClassicModal(false)}
+                      >
+                        <Close className={classes.modalClose} />
+                      </IconButton>
+                    </DialogTitle>
+                    <DialogTitle >Your Weirdos</DialogTitle>
+                    <DialogContent>
+                      <DialogContentText>
+                        Select your weirdo and glitch it
+                      </DialogContentText>
+                      <div className={formClasses.form}>
+                        <div className={formClasses.formControl}>
                           {(tokenCard === null) ?
                             <CircularProgress disableShrink /> : tokenCard}
+                        </div>
                       </div>
-                    </div>
-                  </DialogContent>
-                  <DialogActions className={classes.modalFooter}>
-                    <Button
-                      onClick={() => setClassicModal(false)}
-                      color="danger"
-                      simple
-                      z>
-                      Close
-                    </Button>
-                  </DialogActions>
-                </Dialog>
-              </div> : <canvas
-                ref={canvasRef}/>
+                    </DialogContent>
+                    <DialogActions className={classes.modalFooter}>
+                      <Button
+                        onClick={() => setClassicModal(false)}
+                        color="danger"
+                        simple
+                        z>
+                        Close
+                      </Button>
+                    </DialogActions>
+                  </Dialog>
+                </div> :
+                  (currentImg === null) ?
+                    <div className={btnClasses.root}>
+                      {images.map(image => (
+                        <ButtonBase
+                          focusRipple
+                          key={image.title}
+                          className={btnClasses.image}
+                          focusVisibleClassName={btnClasses.focusVisible}
+                          style={{
+                            width: image.width,
+                          }}
+                          onClick={() => {
+                            fetchAccountCollectionsHandler();
+                          }
+                          }
+                        >
+                    <span
+                      className={btnClasses.imageSrc}
+                      style={{
+                        backgroundImage: `url(${image.url})`,
+                      }}
+                    />
+                          <span className={btnClasses.imageBackdrop} />
+                          <span className={btnClasses.imageButton}>
+                      <Typography
+                        component="span"
+                        variant="subtitle1"
+                        color="inherit"
+                        className={btnClasses.imageTitle}
+                      >
+                        {image.title}
+                        <span className={btnClasses.imageMarked} />
+                      </Typography>
+                    </span>
+                        </ButtonBase>
+                      ))}
+
+                      <Dialog
+                        fullWidth={true}
+                        maxWidth={"md"}
+                        open={classicModal}
+                        TransitionComponent={Transition}
+                        keepMounted
+                        onClose={() => setClassicModal(false)}
+                        aria-labelledby="max-width-dialog-title"
+                      >
+                        <DialogTitle
+                          id="max-width-dialog-title"
+                          disableTypography
+                          className={classes.modalHeader}
+                        >
+                          <IconButton
+                            className={classes.modalCloseButton}
+                            key="close"
+                            aria-label="Close"
+                            color="inherit"
+                            onClick={() => setClassicModal(false)}
+                          >
+                            <Close className={classes.modalClose} />
+                          </IconButton>
+                        </DialogTitle>
+                        <DialogTitle >Your Weirdos</DialogTitle>
+                        <DialogContent>
+                          <DialogContentText>
+                            Select your weirdo and glitch it
+                          </DialogContentText>
+                          <div className={formClasses.form}>
+                            <div className={formClasses.formControl}>
+                              {(tokenCard === null) ?
+                                <CircularProgress disableShrink /> : tokenCard}
+                            </div>
+                          </div>
+                        </DialogContent>
+                        <DialogActions className={classes.modalFooter}>
+                          <Button
+                            onClick={() => setClassicModal(false)}
+                            color="danger"
+                            simple
+                            z>
+                            Close
+                          </Button>
+                        </DialogActions>
+                      </Dialog>
+                    </div> : <canvas
+                      ref={canvasRef}/>
             }
           </GridItem>
         </GridContainer>

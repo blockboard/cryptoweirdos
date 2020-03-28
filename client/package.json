@@ -39,6 +39,7 @@
     "@transmute/element-lib": "0.0.2-3",
     "axios": "^0.19.2",
     "bcryptjs": "^2.4.3",
+    "bignumber.js": "^9.0.0",
     "classnames": "2.2.6",
     "date-fns": "^2.11.0",
     "dotenv": "^8.2.0",

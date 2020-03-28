@@ -45,6 +45,7 @@ export default function LandingPage(props) {
   const { inAuth, setInAuth } = useAuth();
 
   useEffect( () => {
+    detectEth();
     if (inAuth) {
       showSpinner();
     } else {
@@ -62,7 +63,7 @@ export default function LandingPage(props) {
       window.web3 = new web3(window.web3.currentProvider);
     }
     else {
-      window.alert('Non-Ethereum browser detected. You should consider trying MetaMask!')
+      setEthWarning(true);
     }
   };
 
@@ -80,20 +81,20 @@ export default function LandingPage(props) {
                     className={classes.title}
                     text={<h5>Crypto's many faces. Find your Weirdo.</h5>}
                 />
-                {(ethWarning) ?
-                  <GridContainer justify="center">
-                    <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
-                      <Alert
-                        severity="warning"
-                      >
-                        Non-Ethereum browser detected. You should consider trying MetaMask!
-                      </Alert>
-                    </GridItem>
-                  </GridContainer> :
-                  null
-                }
               </GridItem>
             </GridContainer>
+            {(ethWarning) ?
+              <GridContainer justify="center">
+                <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
+                  <Alert
+                    severity="warning"
+                  >
+                    Non-Ethereum browser detected. You should consider trying MetaMask!
+                  </Alert>
+                </GridItem>
+              </GridContainer> :
+              null
+            }
           </div>
         </Parallax>
         <MainContainer>

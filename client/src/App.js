@@ -31,7 +31,6 @@ export default function App(props) {
   const [totalSupply, setTotalSupply] = useState(null);
   const [inAuth, setInAuth] = useState(false);
 
-
   useEffect(() => {
     const abortController = new AbortController();
 
@@ -73,7 +72,6 @@ export default function App(props) {
     setInAuth(data);
   };
 
-
   return (
       <AuthContext.Provider value={{
         authTokens,
@@ -87,7 +85,7 @@ export default function App(props) {
         totalSupply,
         setTotalSupply: setThisTotalSupply,
         inAuth,
-        setInAuth: setThisInAuth
+        setInAuth: setThisInAuth,
       }}>
           <Switch>
             <Route exact path='/' component={LandingPage}/>

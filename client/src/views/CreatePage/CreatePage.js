@@ -77,7 +77,7 @@ export default function CreatePage(props) {
   const [overlay, setOverlay] = useState(true);
   const [spinner, showSpinner, hideSpinner] = useSpinner(overlay);
 
-  const { inAuth, setInAuth } = useAuth();
+  const { authTokens, inAuth, setInAuth } = useAuth();
 
   useEffect( () => {
     if (inAuth) {
@@ -159,7 +159,22 @@ export default function CreatePage(props) {
               <GridContainer justify="center">
                 <h5 className={classes.artBreederTitle}>Glitch and trade your weirdo.</h5>
               </GridContainer>
-              {(ethWarning) ?
+              <GridContainer justify="center">
+                <h5 className={classes.artBreederTitle}>Glitch Will cost <strong>0.015 Eth</strong>.</h5>
+              </GridContainer>
+              {(authTokens === null) ?
+                <GridContainer justify="center">
+                  <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
+                    <Alert
+                      severity="warning"
+                    >
+                      Please Sign-In first to be able to Glitch.
+                    </Alert>
+                  </GridItem>
+                </GridContainer> : null
+              }
+
+                {(ethWarning) ?
                 <GridContainer justify="center">
                   <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
                     <Alert

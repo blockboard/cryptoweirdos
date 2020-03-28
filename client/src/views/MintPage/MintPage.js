@@ -229,6 +229,21 @@ function MintPage(props) {
       "type": "function"
     },
     {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_value",
+          "type": "uint256"
+        }
+      ],
+      "name": "changeGlitchFees",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
       "constant": true,
       "inputs": [
         {
@@ -631,6 +646,7 @@ function MintPage(props) {
     }
   ];
 
+
   const savedPublicAddress = localStorage.getItem("Public Address");
   const savedToken = localStorage.getItem("JWT");
   const savedCapturedImage = localStorage.getItem("Captured Image");
@@ -774,7 +790,7 @@ function MintPage(props) {
           .then(res => {
             setFinished(true);
             console.log('Minted Successfully');
-            props.history.push("/");
+            props.history.push("/create");
             hideSpinner();
           })
           .catch(err => {
