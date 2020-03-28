@@ -727,7 +727,7 @@ function MintPage(props) {
     const minter = minterAccount[0];
     const result = await nftContract.methods.mintTo(minter).send({
       from: minter,
-      value: web3.utils.toWei("0.1", "ether")
+      value: web3.utils.toWei("0.015", "ether")
     })
       .on('error', (err) => {
         if (err) {
