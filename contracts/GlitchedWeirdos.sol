@@ -8,9 +8,21 @@ import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
  * Creature - a contract for my non-fungible creatures.
  */
 contract GlitchedWeirdos is TradeableERC721Token {
-  constructor(address _proxyRegistryAddress) TradeableERC721Token("GlitchedWeirdos", "GW", _proxyRegistryAddress) public {  }
+  string tokensURI;
+
+  constructor(address _proxyRegistryAddress) TradeableERC721Token("GlitchedWeirdos", "GW", _proxyRegistryAddress) public {
+    tokensURI = "https://cryptoweirdos.herokuapp.com/api/tokens/";
+  }
+
+  function showCurrentTokenBaseURI() public view returns (string memory) {
+    return tokensURI;
+  }
+
+  function changeTokensBaseURI(string _tokensURI) public onlyOwner{
+    tokensURI = _tokensURI;
+  }
 
   function baseTokenURI() public view returns (string memory) {
-    return "https://cryptoweirdos.herokuapp.com/api/tokens/";
+    return tokensURI;
   }
 }
