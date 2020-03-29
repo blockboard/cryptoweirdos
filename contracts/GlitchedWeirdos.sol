@@ -10,8 +10,7 @@ import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 contract GlitchedWeirdos is TradeableERC721Token {
   constructor(address _proxyRegistryAddress) TradeableERC721Token("GlitchedWeirdos", "GW", _proxyRegistryAddress) public {  }
 
-  // TODO: OpenSea MetaData Link
   function baseTokenURI() public view returns (string memory) {
-    return "https://weirdos.herokuapp.com/api/tokens/";
+    return "https://cryptoweirdos.herokuapp.com/api/tokens/";
   }
 }
