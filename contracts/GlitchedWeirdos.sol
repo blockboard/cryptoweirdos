@@ -18,7 +18,7 @@ contract GlitchedWeirdos is TradeableERC721Token {
     return tokensURI;
   }
 
-  function changeTokensBaseURI(string _tokensURI) public onlyOwner{
+  function changeTokensBaseURI(string memory _tokensURI) public onlyOwner{
     tokensURI = _tokensURI;
   }
 

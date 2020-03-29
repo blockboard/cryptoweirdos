@@ -27,7 +27,7 @@ contract TradeableERC721Token is ERC721Full, Ownable {
     glitchValue = 0.015 ether;
   }
 
-  function showCurrentGlitchFees() public view returns (uint256 memory) {
+  function showCurrentGlitchFees() public view returns (uint256) {
     return glitchValue;
   }
 
