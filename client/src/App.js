@@ -29,6 +29,7 @@ export default function App(props) {
   const [capturedImage, setCapturedImage] = useState(null);
   const [imageBlob, setImageBlob] = useState(null);
   const [totalSupply, setTotalSupply] = useState(null);
+  const [isMinting, setIsMinting] = useState(false);
   const [inAuth, setInAuth] = useState(false);
 
   useEffect(() => {
@@ -53,11 +54,16 @@ export default function App(props) {
     setAccountAddress(data);
   };
 
-  const setThisCapturedImage = (data, notExists) => {
-    if (notExists) {
+  const setThisCapturedImage = (data) => {
+    /*if (notExists) {
       localStorage.setItem("Captured Image", data);
-    }
+    }*/
     setCapturedImage(data);
+  };
+
+  const setThisIsMinting = (data) => {
+    localStorage.setItem("Minting", data);
+    setIsMinting(data);
   };
 
   const setThisImageBlob = (data) => {
@@ -86,6 +92,8 @@ export default function App(props) {
         setTotalSupply: setThisTotalSupply,
         inAuth,
         setInAuth: setThisInAuth,
+        isMinting,
+        setIsMinting: setThisIsMinting
       }}>
           <Switch>
             <Route exact path='/' component={LandingPage}/>

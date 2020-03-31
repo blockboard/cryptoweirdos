@@ -77,7 +77,9 @@ export default function CreatePage(props) {
   const [overlay, setOverlay] = useState(true);
   const [spinner, showSpinner, hideSpinner] = useSpinner(overlay);
 
-  const { authTokens, inAuth, setInAuth } = useAuth();
+  const { authTokens, inAuth, setInAuth, isMinting, setIsMinting } = useAuth();
+
+  const savedIsMinted = localStorage.getItem("Minting");
 
   useEffect( () => {
     if (inAuth) {
@@ -85,7 +87,18 @@ export default function CreatePage(props) {
     } else {
       hideSpinner();
     }
-  }, [inAuth]);
+
+    if (
+      (savedIsMinted !== "null") &&
+      (savedIsMinted !== null) &&
+      (savedIsMinted !== undefined) &&
+      (savedIsMinted !== "false")
+    ) {
+      showSpinner();
+    } else {
+      hideSpinner();
+    }
+  }, [inAuth, isMinting]);
 
   useEffect(() => {
     fetchLatestBornHandler();
@@ -168,7 +181,8 @@ export default function CreatePage(props) {
                       Please Sign-In first to be able to Glitch.
                     </Alert>
                   </GridItem>
-                </GridContainer> : null
+                </GridContainer> :
+                null
               }
 
                 {(ethWarning) ?

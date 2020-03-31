@@ -800,6 +800,12 @@ function MintPage(props) {
     };
   };
 
+  const cancel = () => {
+    localStorage.setItem("Captured Image", null);
+    setCapturedImage(null);
+    window.close();
+  };
+
   return (
     <>
       {spinner}
@@ -823,9 +829,7 @@ function MintPage(props) {
                     className={classes.cancelBtn}
                     round
                     size="lg"
-                    onClick={() => {
-                      window.close();
-                    }}
+                    onClick={cancel}
                   >
                     Cancel
                   </Button>

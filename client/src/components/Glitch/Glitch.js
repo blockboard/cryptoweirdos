@@ -1,7 +1,8 @@
 import React, {useEffect, useRef, useState} from "react";
 import {makeStyles, withStyles} from "@material-ui/core/styles";
 import {createBrowserHistory} from "history";
-import Web3 from "web3";
+import web3 from "web3";
+import ipfs from 'ipfs';
 //@material-ui/core
 import Typography from '@material-ui/core/Typography';
 import Slider from '@material-ui/core/Slider';
@@ -27,6 +28,7 @@ import GridItem from "components/Grid/GridItem";
 import Button from "components/CustomButtons/Button.js";
 import Danger from "components/Typography/Danger.js";
 import { useAuth } from "context/auth";
+import useSpinner from "components/Spinner/useSpinner";
 //styles
 import styles from "assets/jss/material-kit-react/components/glitches";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -38,8 +40,6 @@ import MuiAlert from "@material-ui/lab/Alert";
 
 const useDialogeStyles = makeStyles(theme => ({
   form: {
-    display: 'flex',
-    flexDirection: 'column',
     margin: 'auto',
     width: '100%',
   },
@@ -151,7 +151,10 @@ function Glitch(props) {
   let img = props.faceImage;
 
   let canvasRef = useRef(null);
+  let capturedRef = useRef(null);
+
   let canvas, ctx;
+  let canvas2, ctx2;
 
   let width, height;
 
@@ -161,9 +164,598 @@ function Glitch(props) {
 
   let buf, buf8, data;
 
-  let web3;
+  let tokenId;
+  let openSeaLink;
 
   let captured;
+
+  const INFURA_KEY = process.env.REACT_APP_INFURA_KEY;
+  const NFT_CONTRACT_ADDRESS = process.env.REACT_APP_NFT_CONTRACT_ADDRESS;
+  const OWNER_ADDRESS = process.env.REACT_APP_OWNER_ADDRESS;
+  const NETWORK = process.env.REACT_APP_NETWORK;
+
+  const NFT_ABI = [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_proxyRegistryAddress",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "approved",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "Approval",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "operator",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "bool",
+          "name": "approved",
+          "type": "bool"
+        }
+      ],
+      "name": "ApprovalForAll",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "Transfer",
+      "type": "event"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "approve",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "balanceOf",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "baseURI",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_value",
+          "type": "uint256"
+        }
+      ],
+      "name": "changeGlitchFees",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getApproved",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "operator",
+          "type": "address"
+        }
+      ],
+      "name": "isApprovedForAll",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "isOwner",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_to",
+          "type": "address"
+        }
+      ],
+      "name": "mint",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_to",
+          "type": "address"
+        }
+      ],
+      "name": "mintTo",
+      "outputs": [],
+      "payable": true,
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "name",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "ownerOf",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "safeTransferFrom",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "_data",
+          "type": "bytes"
+        }
+      ],
+      "name": "safeTransferFrom",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "internalType": "bool",
+          "name": "approved",
+          "type": "bool"
+        }
+      ],
+      "name": "setApprovalForAll",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "bytes4",
+          "name": "interfaceId",
+          "type": "bytes4"
+        }
+      ],
+      "name": "supportsInterface",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "symbol",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "index",
+          "type": "uint256"
+        }
+      ],
+      "name": "tokenByIndex",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "index",
+          "type": "uint256"
+        }
+      ],
+      "name": "tokenOfOwnerByIndex",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "tokenURI",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "totalSupply",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "transferFrom",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "baseTokenURI",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ];
+
+  const savedCapturedImage = localStorage.getItem("Captured Image");
 
   const classes = useStyles();
   const formClasses = useDialogeStyles();
@@ -171,7 +763,10 @@ function Glitch(props) {
 
   const [showMagnitudeComponent, setShowMagnitudeComponent] = useState(true);
 
-  const [open, setOpen] = React.useState(false);
+  const [overlay, setOverlay] = useState(true);
+  const [spinner, showSpinner, hideSpinner] = useSpinner(overlay);
+
+  const [open, setOpen] = useState(false);
 
   const handleClose = () => {
     setOpen(false);
@@ -182,7 +777,8 @@ function Glitch(props) {
     accountAddress, setAccountAddress,
     capturedImage, setCapturedImage,
     imageBlob, setImageBlob,
-    inAuth, setInAuth
+    inAuth, setInAuth,
+    isMinting, setIsMinting
   } = useAuth();
 
   const showComponent = type => {
@@ -198,6 +794,11 @@ function Glitch(props) {
   const [currentImg, setCurrentImg] = useState(null);
   const [captureImg, setCaptureImg] = useState();
 
+  const [mintMsg, setMintMsg] = useState(false);
+  const [minted, setMinted] = useState(false);
+
+  const [token, setToken] = useState();
+
   // algorithms
   const [algorithm, setAlgorithm] = useState(null);
 
@@ -211,6 +812,7 @@ function Glitch(props) {
   const [comparator, setComparator] = useState(null);
 
   const [classicModal, setClassicModal] = useState(false);
+  const [capturedModel, setCapturedModel] = useState(false);
   const [tokenCard, setTokenCard] = useState(null);
 
   const images = [
@@ -234,12 +836,31 @@ function Glitch(props) {
       setAccountAddress(savedPublicAddress, false);
     }
 
-    if (currentImg !== null) {
+    if ((currentImg !== null) && (capturedImage === null)) {
       canvas = canvasRef.current;
       ctx = canvas.getContext("2d");
       window.load = init();
     }
+
+    if (capturedImage !== null) {
+      canvas2 = capturedRef.current;
+      ctx2 = canvas2.getContext("2d");
+      window.load = initCaptured();
+    }
   }, [algorithm, horizontalIncrement, verticalIncrement, threshold, magnitude, comparator, currentImg, capturedImage]);
+
+  const detectEth = async () => {
+    if (window.ethereum) {
+      window.web3 = new web3(window.ethereum);
+      await window.ethereum.enable()
+    }
+    else if (window.web3) {
+      window.web3 = new web3(window.web3.currentProvider);
+    }
+    else {
+      window.alert('Non-Ethereum browser detected. You should consider trying MetaMask!')
+    }
+  };
 
   function init() {
     img = new Image();
@@ -253,9 +874,9 @@ function Glitch(props) {
   function imageReady() {
     width = img.width;
     height = img.height;
-    if(width > 500){
-     let scale = width/350;
-      width = 350;
+    if(width < 1000){
+     let scale = width/500;
+      width = 500;
       height = height/scale;
     }
 
@@ -291,6 +912,36 @@ function Glitch(props) {
     //tell the program to run again next time it's convenient
     animation = window.requestAnimationFrame(start);
   }
+
+  const initCaptured = () => {
+    img = new Image();
+    img.crossOrigin = "Anonymous";
+    img.src = capturedImage;
+    img.onload = imageReadyCaptured
+  };
+
+  const imageReadyCaptured = () => {
+    width = img.width;
+    height = img.height;
+
+    if (width < 1000){
+      let scale = width/560;
+      width = 560;
+      height = height/scale;
+    }
+    canvas2.width = width;
+    canvas2.height = height;
+
+    ctx2.drawImage(img, 0, 0, width, height);
+
+    bitmapData = ctx2.getImageData(0, 0, width, height);
+    //prepare ArrayBuffer and typed arrays
+    buf = new ArrayBuffer(bitmapData.data.length);
+    buf8 = new Uint8ClampedArray(buf);
+    data = new Uint32Array(buf);
+
+    buf8.set(bitmapData.data);
+  };
 
   function iterate() {
     if (algorithm === null)
@@ -518,116 +1169,136 @@ function Glitch(props) {
     buf8.set(bitmapData.data);
   }
   function save() {
-    setCapturedImage(canvas.toDataURL("image/png"), true);
+    setCapturedImage(canvas.toDataURL("image/png"));
     const capturedImageBlob = canvas.toBlob((blob) => {
       return URL.createObjectURL(blob);
     });
     setImageBlob(canvas);
+    setCapturedModel(true);
   }
 
-  function openInNewTab(url) {
-    console.log(`URL = ${url}`);
-    let win = window.open(url, '_blank');
-    win.focus();
-  }
+  const mintWeirdo = async () => {
+    detectEth();
+    showSpinner();
 
-  const selectImgHandler = (token) => {
-    setCurrentImg(token.image_url);
-  };
+    if (!INFURA_KEY || !OWNER_ADDRESS || !NETWORK) {
+      console.error("Please set a mnemonic, infura key, owner, network, and contract address.");
+      return
+    }
 
-  const signInMetaMaskHandler = (publicAddress) => {
-    console.log(`${process.env.REACT_APP_BACKEND_API}/accounts`);
-    fetch(`${process.env.REACT_APP_BACKEND_API}/accounts`, {
-      body: JSON.stringify({ publicAddress }),
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      method: 'POST'
+    const web3 = window.web3;
+
+    const nftContract = new web3.eth.Contract(NFT_ABI, NFT_CONTRACT_ADDRESS, { gasLimit: "1000000" });
+
+    const minterAccount = await web3.eth.getAccounts();
+    const minter = minterAccount[0];
+    setIsMinting(true);
+    console.log('In Phase (1): Mint');
+    await nftContract.methods.mintTo(minter)
+      .send({
+      from: minter,
+      value: web3.utils.toWei("0.015", "ether")
     })
-      .then(res => {
-        // TODO: validate Ethereum Address
-        if (res.status !== 200 && res.status !== 201) {
-          throw new Error('Creating a user failed!');
+      .on('error', (err) => {
+        if (err) {
+          console.log('Error In MetaMask');
+          console.log(err);
+          console.log('============================================================================');
+          hideSpinner();
+          setIsMinting(false);
         }
-        return res.json();
-      })
-      .then(account => {
-        console.log('ACCOUNT:',account);
+      });
+
+    console.log('In Phase (2): TokenId');
+    await nftContract.getPastEvents('Transfer', {})
+      .then(transferEvent => {
+        tokenId = transferEvent[0].returnValues.tokenId;
+        sendTokenMetaData(tokenId);
+        openOnOpenSea(tokenId);
       })
       .catch(err => {
-        console.log('ERROR', err);
-      });
-  };
-
-  const signMessageHandler = async (publicAddress, nonce) => {
-    const signature = await web3.eth.personal.sign(
-      `Your Signature for CryptoWeirdos: \n I am signing my one-time nonce: ${nonce}`, publicAddress,
-      (err) => {
-        if (err) {
-          setInAuth(false);
-        }
-      });
-    await authenticateHandler(publicAddress, signature);
-  };
-
-  const authenticateHandler = (publicAddress, signature) => {
-    fetch(`${process.env.REACT_APP_BACKEND_API}/auth/signin`, {
-      body: JSON.stringify({ publicAddress, signature }),
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      method: 'POST'
-    })
-      .then(res => res.json())
-      .then(resData => {
-        setAuthTokens(resData.token, true);
-        setAccountAddress(resData.publicAddress, true);
-        setInAuth(false);
-        fetchAccountCollectionsHandler()
+        console.log(err);
       })
-      .catch(err => console.log('authenticateHandlerError: ', err));
+
+    //0xD09014d944fC8c6707f1dfEff4938D723DeBab70
   };
 
-  const checkHandler = async (event) => {
-    if (window.ethereum) {
-      try {
-        web3 = new Web3(window.ethereum);
-        await window.ethereum.enable();
+  const sendTokenMetaData = (tokenId) => {
+    console.log(tokenId);
+    setToken(tokenId);
+    console.log('============================================================================');
 
-        const publicAddress = await web3.eth.getCoinbase();
+    //Usage example:
+    const file = dataURLtoFile(capturedImage,'image.png');
 
-        if (
-          savedToken === "null" ||
-          savedToken === null ||
-          savedToken === undefined
-        ) {
-          setInAuth(true);
-          fetch(`${process.env.REACT_APP_BACKEND_API}/accounts/${publicAddress}`, {
-            method: 'GET'
-          })
-            .then(res => {
-              if (res.status === 404) {
-                signInMetaMaskHandler(publicAddress);
-              }
-              return res.json();
-            })
-            .then(account => {
-              signMessageHandler(account.account.publicAddress, account.account.nonce);
-            })
-            .catch(err => {
-              console.log('checkHandlerError: ', err);
-            })
+    const IReader = new window.FileReader();
+    IReader.readAsArrayBuffer(file);
+    IReader.onloadend = () => {
+      const buffer = Buffer(IReader.result);
+
+      ipfs.files.add(Buffer(buffer), function (err, files) {
+        console.log('In Phase (3): IPFS');
+
+        if (err) {
+          console.log('Error In IPFS');
+          console.log(err);
+          console.log('============================================================================');
+          setIsMinting(false);
         }
-      } catch (error) {
-        // User denied account access...
-        console.log(error);
-      }
-    } else if (window.web3) {
-      web3 = new Web3(window.web3.currentProvider);
-    } else {
-      // TODO: output warning msg when not having metamask
-      console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
+
+        let url = "https://ipfs.io/ipfs/"+files[0].hash;
+        console.log("Storing file on IPFS using Javascript. HASH: https://ipfs.io/ipfs/"+files[0].hash);
+        console.log('============================================================================');
+
+        fetch(`${process.env.REACT_APP_BACKEND_API}/tokens/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            tokenId: tokenId,
+            image: url,
+            name: `GlitchedWeirdo #${tokenId}`
+          }),
+        })
+          .then(res => {
+            console.log('In Phase (4): In Backend');
+            console.log('============================================================================');
+
+            hideSpinner();
+            setMinted(true);
+            setMintMsg(true);
+            setIsMinting(false);
+          })
+          .catch(err => {
+            console.log('Error In Backend');
+            console.log('============================================================================');
+            setIsMinting(false);
+            console.log(err);
+          });
+      });
+    };
+  };
+
+  const dataURLtoFile = (dataurl, filename) => {
+    let arr = dataurl.split(','),
+      mime = arr[0].match(/:(.*?);/)[1],
+      bstr = atob(arr[1]),
+      n = bstr.length,
+      u8arr = new Uint8Array(n);
+
+    while(n--){
+      u8arr[n] = bstr.charCodeAt(n);
     }
+
+    return new File([u8arr], filename, {type:mime});
+  };
+
+  const cancel = () => {
+    setMinted(false);
+    setMintMsg(false);
+    setCapturedImage(null);
+    setCapturedModel(false);
   };
 
   const fetchAccountCollectionsHandler = () => {
@@ -657,7 +1328,7 @@ function Glitch(props) {
           for (let [key, value] of Object.entries(resData)) {
             setTokenCard(value.map(token => {
               return (
-                <GridContainer justify="left" spacing={1}>
+                <GridContainer justify="center" spacing={1}>
                   <GridItem xs={12} sm={12} md={4} lg={4} xl={4}>
                     <Card className={classes.root}>
                       <StyledCardMedia
@@ -678,6 +1349,11 @@ function Glitch(props) {
         }
         setClassicModal(true);
       })
+  };
+
+  const openOnOpenSea = (tokenId) => {
+    openSeaLink = `https://opensea.io/assets/${NFT_CONTRACT_ADDRESS}/${tokenId}`
+    return openSeaLink;
   };
 
   return (
@@ -1146,8 +1822,59 @@ function Glitch(props) {
                           </Button>
                         </DialogActions>
                       </Dialog>
-                    </div> : <canvas
+                    </div> :
+                    <div>
+                    <canvas
+                      onClick={() => setClassicModal(true)}
+                      style={{cursor: "pointer"}}
                       ref={canvasRef}/>
+                      <Dialog
+                        fullWidth={true}
+                        maxWidth={"md"}
+                        open={classicModal}
+                        TransitionComponent={Transition}
+                        keepMounted
+                        onClose={() => setClassicModal(false)}
+                        aria-labelledby="max-width-dialog-title"
+                      >
+                        <DialogTitle
+                          id="max-width-dialog-title"
+                          disableTypography
+                          className={classes.modalHeader}
+                        >
+                          <IconButton
+                            className={classes.modalCloseButton}
+                            key="close"
+                            aria-label="Close"
+                            color="inherit"
+                            onClick={() => setClassicModal(false)}
+                          >
+                            <Close className={classes.modalClose} />
+                          </IconButton>
+                        </DialogTitle>
+                        <DialogTitle >Your Weirdos</DialogTitle>
+                        <DialogContent>
+                          <DialogContentText>
+                            Select your weirdo and glitch it
+                          </DialogContentText>
+                          <div className={formClasses.form}>
+                            <div className={formClasses.formControl}>
+                              {(tokenCard === null) ?
+                                <CircularProgress disableShrink /> : tokenCard}
+                            </div>
+                          </div>
+                        </DialogContent>
+                        <DialogActions className={classes.modalFooter}>
+                          <Button
+                            onClick={() => setClassicModal(false)}
+                            color="danger"
+                            simple
+                            z>
+                            Close
+                          </Button>
+                        </DialogActions>
+                      </Dialog>
+                    </div>
             }
           </GridItem>
         </GridContainer>
@@ -1182,11 +1909,7 @@ function Glitch(props) {
                 size="lg">
                 Capture
               </Button> :
-              <a
-                target="_blank"
-                href="/mint"
-                className={classes.linkColor}
-              >
+              <div>
                 <Button
                   className={classes.signInBtn}
                   round
@@ -1195,7 +1918,130 @@ function Glitch(props) {
                   onClick={save}>
                   Capture
                 </Button>
-              </a>}
+                <Dialog
+                  fullWidth={true}
+                  maxWidth={"md"}
+                  open={capturedModel}
+                  TransitionComponent={Transition}
+                  keepMounted
+                  onClose={() => setCapturedModel(false)}
+                  aria-labelledby="max-width-dialog-title"
+                >
+                  {spinner}
+                  <DialogTitle
+                    id="max-width-dialog-title"
+                    disableTypography
+                    className={classes.modalHeader}
+                  >
+                    <IconButton
+                      className={classes.modalCloseButton}
+                      key="close"
+                      aria-label="Close"
+                      color="inherit"
+                      onClick={cancel}
+                    >
+                      <Close className={classes.modalClose} />
+                    </IconButton>
+                  </DialogTitle>
+                  <DialogTitle>Mint</DialogTitle>
+                  <DialogContent>
+                    <DialogContentText>
+                      Mint and Trade your Glitched Weirdo
+                    </DialogContentText>
+                    <div className={formClasses.form}>
+                      <div className={formClasses.formControl}>
+                        {(mintMsg) ?
+                          <GridContainer justify="center">
+                            <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
+                              <Alert
+                                severity="success"
+                              >
+                                Your Glitched Weirdo Minted Successfully!
+                              </Alert>
+                            </GridItem>
+                          </GridContainer> :
+                          <GridContainer justify="center">
+                            <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
+                              <Alert
+                                severity="warning"
+                              >
+                                Please DON'T close tab/browser before confirmation HERE!
+                                <br/>
+                                One Weirdo at a time!
+                              </Alert>
+                            </GridItem>
+                          </GridContainer>
+                        }
+                        <GridContainer justify="center">
+                          <canvas
+                            ref={capturedRef}/>
+                        </GridContainer>
+                        <GridContainer justify="center" spacing={3}>
+                          <GridItem xs={12} sm={12} md={6} lg={6} xl={6}>
+                              <Button
+                                color="transparent"
+                                className={classes.cancelBtn}
+                                round
+                                size="lg"
+                                onClick={cancel}
+                              >
+                                Cancel
+                              </Button>
+                          </GridItem>
+                          {(!minted) ?
+                            <GridItem xs={12} sm={12} md={6} lg={6} xl={6}>
+                              {(authTokens === null) ?
+                                <Button
+                                  disabled
+                                  color="primary"
+                                  className={classes.mintBtn}
+                                  round
+                                  size="lg"
+                                  onClick={mintWeirdo}
+                                >
+                                  Mint Your Weirdo
+                                </Button> :
+                                  <Button
+                                    color="primary"
+                                    className={classes.mintBtn}
+                                    round
+                                    size="lg"
+                                    onClick={mintWeirdo}
+                                  >
+                                    Mint Your Weirdo
+                                  </Button>}
+                            </GridItem> : null
+                          }
+                          {(minted) ?
+                            <GridItem xs={12} sm={12} md={6} lg={6} xl={6}>
+                              <Button
+                                color="primary"
+                                className={classes.mintBtn}
+                                round
+                                target="_blank"
+                                size="lg"
+                                href={`https://opensea.io/assets/${NFT_CONTRACT_ADDRESS}/${token}`}
+                              >
+                                View On OpenSea
+                              </Button>
+                            </GridItem> : null
+                          }
+                        </GridContainer>
+                      </div>
+                    </div>
+                  </DialogContent>
+                  <DialogActions className={classes.modalFooter}>
+                    <Button
+                      onClick={cancel}
+                      color="danger"
+                      simple
+                      z>
+                      Close
+                    </Button>
+                  </DialogActions>
+                </Dialog>
+              </div>
+            }
           </GridItem>
         </GridContainer>
         <GridContainer justify="center" spacing="1">
