@@ -875,8 +875,8 @@ function Glitch(props) {
     width = img.width;
     height = img.height;
     if(width < 1000){
-     let scale = width/500;
-      width = 500;
+     let scale = width/512;
+      width = 512;
       height = height/scale;
     }
 
@@ -925,8 +925,8 @@ function Glitch(props) {
     height = img.height;
 
     if (width < 1000){
-      let scale = width/560;
-      width = 560;
+      let scale = width/512;
+      width = 512;
       height = height/scale;
     }
     canvas2.width = width;
@@ -1193,7 +1193,6 @@ function Glitch(props) {
     const minterAccount = await web3.eth.getAccounts();
     const minter = minterAccount[0];
     setIsMinting(true);
-    console.log('In Phase (1): Mint');
     const transferEvent = await nftContract.methods.mintTo(minter)
       .send({
       from: minter,
@@ -1201,38 +1200,20 @@ function Glitch(props) {
     })
       .on('confirmation', function(confirmationNumber, receipt){
         if (confirmationNumber === 1) {
-          console.log('In confirmation (1)');
           sendTokenMetaData(transferEvent.events.Transfer.returnValues.tokenId);
           openOnOpenSea(transferEvent.events.Transfer.returnValues.tokenId);
         }
       })
       .on('error', (err) => {
         if (err) {
-          console.log('Error In MetaMask');
-          console.log(err);
-          console.log('============================================================================');
           hideSpinner();
           setIsMinting(false);
         }
       });
-
-    /*console.log('In Phase (2): TokenId');
-    await nftContract.getPastEvents('Transfer', {})
-      .then(transferEvent => {
-        tokenId = transferEvent[0].returnValues.tokenId;
-
-      })
-      .catch(err => {
-        console.log(err);
-      })*/
-
-    //
   };
 
   const sendTokenMetaData = (tokenId) => {
-    console.log(tokenId);
     setToken(tokenId);
-    console.log('============================================================================');
 
     //Usage example:
     const file = dataURLtoFile(capturedImage,'image.png');
@@ -1243,18 +1224,12 @@ function Glitch(props) {
       const buffer = Buffer(IReader.result);
 
       ipfs.files.add(Buffer(buffer), function (err, files) {
-        console.log('In Phase (3): IPFS');
 
         if (err) {
-          console.log('Error In IPFS');
-          console.log(err);
-          console.log('============================================================================');
           setIsMinting(false);
         }
 
         let url = "https://ipfs.io/ipfs/"+files[0].hash;
-        console.log("Storing file on IPFS using Javascript. HASH: https://ipfs.io/ipfs/"+files[0].hash);
-        console.log('============================================================================');
 
         fetch(`${process.env.REACT_APP_BACKEND_API}/tokens/`, {
           method: 'POST',
@@ -1268,17 +1243,12 @@ function Glitch(props) {
           }),
         })
           .then(res => {
-            console.log('In Phase (4): In Backend');
-            console.log('============================================================================');
-
             hideSpinner();
             setMinted(true);
             setMintMsg(true);
             setIsMinting(false);
           })
           .catch(err => {
-            console.log('Error In Backend');
-            console.log('============================================================================');
             setIsMinting(false);
             console.log(err);
           });
@@ -1316,25 +1286,24 @@ function Glitch(props) {
         if (resData.assets[0] === undefined  || resData.assets.length == 0) {
           setTokenCard(
             <div>
-              <Danger>
-                No Collections, go and pick your Weirdo.
-              </Danger>
-              <Link to="/gallery" className={classes.linkColor}>
-                <Button
-                  simple
-                  color="facebook"
-                  size="lg"
-                  className={formClasses.formBtn}>
-                  View All
-                </Button>
-              </Link>
+                <Danger>
+                  No Collections, go and pick your Weirdo.
+                  <Link to="/gallery" className={classes.linkColor}>
+                    <Button
+                      simple
+                      color="facebook"
+                      size="lg"
+                      className={formClasses.formBtn}>
+                      View All
+                    </Button>
+                  </Link>
+                </Danger>
             </div>
           )
         } else {
           for (let [key, value] of Object.entries(resData)) {
             setTokenCard(value.map(token => {
               return (
-                <GridContainer justify="center" spacing={1}>
                   <GridItem xs={12} sm={12} md={4} lg={4} xl={4}>
                     <Card className={classes.root}>
                       <StyledCardMedia
@@ -1348,8 +1317,7 @@ function Glitch(props) {
                         }}
                       />
                     </Card>
-                  </GridItem>
-                </GridContainer>)
+                  </GridItem>)
             }))
           }
         }
@@ -1730,7 +1698,11 @@ function Glitch(props) {
                       <div className={formClasses.form}>
                         <div className={formClasses.formControl}>
                           {(tokenCard === null) ?
-                            <CircularProgress disableShrink /> : tokenCard}
+                            <CircularProgress disableShrink /> :
+                            <GridContainer justify="center" spacing={1}>
+                              {tokenCard}
+                            </GridContainer>
+                          }
                         </div>
                       </div>
                     </DialogContent>
@@ -1814,7 +1786,10 @@ function Glitch(props) {
                           <div className={formClasses.form}>
                             <div className={formClasses.formControl}>
                               {(tokenCard === null) ?
-                                <CircularProgress disableShrink /> : tokenCard}
+                                <CircularProgress disableShrink /> :
+                                <GridContainer justify="center" spacing={1}>
+                                  {tokenCard}
+                                </GridContainer>}
                             </div>
                           </div>
                         </DialogContent>
@@ -1866,7 +1841,10 @@ function Glitch(props) {
                           <div className={formClasses.form}>
                             <div className={formClasses.formControl}>
                               {(tokenCard === null) ?
-                                <CircularProgress disableShrink /> : tokenCard}
+                                <CircularProgress disableShrink /> :
+                                <GridContainer justify="center" spacing={1}>
+                                  {tokenCard}
+                                </GridContainer>}
                             </div>
                           </div>
                         </DialogContent>
@@ -1972,17 +1950,15 @@ function Glitch(props) {
                                 severity="warning"
                               >
                                 Please DON'T close tab/browser before confirmation HERE!
-                                <br/>
-                                One Weirdo at a time!
                               </Alert>
                             </GridItem>
                           </GridContainer>
                         }
                         <GridContainer justify="center">
-                          <canvas
-                            ref={capturedRef}/>
+                            <canvas
+                              ref={capturedRef}/>
                         </GridContainer>
-                        <GridContainer justify="center" spacing={3}>
+                        <GridContainer justify="center" spacing={1}>
                           <GridItem xs={12} sm={12} md={6} lg={6} xl={6}>
                               <Button
                                 color="transparent"

@@ -38,10 +38,10 @@ export default function ImageDetailsPage(props) {
     fetchTokenDataHandler();
   }, []);
 
-  let { tokenId } = useParams();
+  let { contractAddress ,tokenId } = useParams();
 
   const fetchTokenDataHandler = () => {
-    fetch(`https://api.opensea.io/api/v1/asset/0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661/${tokenId}/`, {
+    fetch(`https://api.opensea.io/api/v1/asset/${contractAddress}/${tokenId}/`, {
       method: 'GET'
     })
       .then(res => res.json())

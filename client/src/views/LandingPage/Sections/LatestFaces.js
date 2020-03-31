@@ -43,7 +43,8 @@ export default function LatestFaces(props) {
                         ownerName={token.owner.user.username}
                         faceDate={token.sell_orders.created_date}
                         imagePrice="0.1"
-                        // TODO: image price
+                        contractAddress={0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661}
+                      // TODO: image price
                     />
                   </GridItem>)
             }))

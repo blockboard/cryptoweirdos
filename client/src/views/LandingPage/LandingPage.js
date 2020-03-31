@@ -25,6 +25,7 @@ import LatestFaces from "./Sections/LatestFaces";
 import MostViewed from "./Sections/MostViewed";
 import RandomSelection from "./Sections/RandomSelection";
 import MuiAlert from "@material-ui/lab/Alert";
+import LatestGlitched from "./Sections/LatestGlitched";
 
 const useStyles = makeStyles(styles);
 
@@ -99,6 +100,7 @@ export default function LandingPage(props) {
         </Parallax>
         <MainContainer>
           <LatestFaces/>
+          <LatestGlitched/>
           <MostViewed/>
           <GridContainer justify="center">
             <h5 className={classes.artBreederTitle}>CryptoWeirdos is created using ArtBreeder tool by Joel Simon</h5>

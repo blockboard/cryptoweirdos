@@ -103,7 +103,7 @@ export default function App(props) {
             <Route path="/create" component={CreatePage}/>
             <Route path="/mint" component={MintPage}/>
             <Route path={`/account/:publicAddress`} component={UserPage}/>
-            <Route path="/token/:tokenId" component={ImageDetailsPage}/>
+            <Route path="/token/:contractAddress/:tokenId" component={ImageDetailsPage}/>
             <Route component={NotFoundPage}/>
           </Switch>
       </AuthContext.Provider>
