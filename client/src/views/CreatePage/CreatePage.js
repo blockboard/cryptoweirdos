@@ -87,17 +87,7 @@ export default function CreatePage(props) {
     } else {
       hideSpinner();
     }
-
-    if (
-      (savedIsMinted !== "null") &&
-      (savedIsMinted !== null) &&
-      (savedIsMinted !== undefined) &&
-      (savedIsMinted !== "false")
-    ) {
-      showSpinner();
-    } else {
-      hideSpinner();
-    }
+    
   }, [inAuth, isMinting]);
 
   useEffect(() => {

@@ -1194,11 +1194,18 @@ function Glitch(props) {
     const minter = minterAccount[0];
     setIsMinting(true);
     console.log('In Phase (1): Mint');
-    await nftContract.methods.mintTo(minter)
+    const transferEvent = await nftContract.methods.mintTo(minter)
       .send({
       from: minter,
       value: web3.utils.toWei("0.015", "ether")
     })
+      .on('confirmation', function(confirmationNumber, receipt){
+        if (confirmationNumber === 1) {
+          console.log('In confirmation (1)');
+          sendTokenMetaData(transferEvent.events.Transfer.returnValues.tokenId);
+          openOnOpenSea(transferEvent.events.Transfer.returnValues.tokenId);
+        }
+      })
       .on('error', (err) => {
         if (err) {
           console.log('Error In MetaMask');
@@ -1209,16 +1216,15 @@ function Glitch(props) {
         }
       });
 
-    console.log('In Phase (2): TokenId');
+    /*console.log('In Phase (2): TokenId');
     await nftContract.getPastEvents('Transfer', {})
       .then(transferEvent => {
         tokenId = transferEvent[0].returnValues.tokenId;
-        sendTokenMetaData(tokenId);
-        openOnOpenSea(tokenId);
+
       })
       .catch(err => {
         console.log(err);
-      })
+      })*/
 
     //0xD09014d944fC8c6707f1dfEff4938D723DeBab70
   };
