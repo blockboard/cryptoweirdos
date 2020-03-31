@@ -1226,7 +1226,7 @@ function Glitch(props) {
         console.log(err);
       })*/
 
-    //0xD09014d944fC8c6707f1dfEff4938D723DeBab70
+    //
   };
 
   const sendTokenMetaData = (tokenId) => {

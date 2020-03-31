@@ -87,7 +87,7 @@ export default function CreatePage(props) {
     } else {
       hideSpinner();
     }
-    
+
   }, [inAuth, isMinting]);
 
   useEffect(() => {
