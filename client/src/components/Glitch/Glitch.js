@@ -1205,10 +1205,10 @@ function Glitch(props) {
         }
       })
       .on('error', (err) => {
-        if (err) {
+        if (err.code === 4001) {
           hideSpinner();
           setIsMinting(false);
-        }
+        } 
       });
   };
 
@@ -1934,9 +1934,13 @@ function Glitch(props) {
                     </DialogContentText>
                     <div className={formClasses.form}>
                       <div className={formClasses.formControl}>
+                        <GridContainer justify="center">
+                            <canvas
+                              ref={capturedRef}/>
+                        </GridContainer>
                         {(mintMsg) ?
                           <GridContainer justify="center">
-                            <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
+                            <GridItem xs={12} sm={12} md={12} lg={12} xl={12} style={{ marginTop: "30px" }}>
                               <Alert
                                 severity="success"
                               >
@@ -1945,7 +1949,7 @@ function Glitch(props) {
                             </GridItem>
                           </GridContainer> :
                           <GridContainer justify="center">
-                            <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
+                            <GridItem xs={12} sm={12} md={12} lg={12} xl={12} style={{ marginTop: "30px" }}>
                               <Alert
                                 severity="warning"
                               >
@@ -1954,10 +1958,6 @@ function Glitch(props) {
                             </GridItem>
                           </GridContainer>
                         }
-                        <GridContainer justify="center">
-                            <canvas
-                              ref={capturedRef}/>
-                        </GridContainer>
                         <GridContainer justify="center" spacing={1}>
                           <GridItem xs={12} sm={12} md={6} lg={6} xl={6}>
                               <Button
