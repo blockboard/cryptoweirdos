@@ -141,6 +141,7 @@ export default function ActivityPage(props) {
                           faceDate={""}
                           openSeaLink={token.asset.permalink}
                           imagePrice={web3.utils.fromWei(token.total_price, 'ether')}
+                          contractAddress={"0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661"}
                       />
                     </GridItem>)
             }))

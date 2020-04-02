@@ -24,6 +24,7 @@ import NavPills from "components/NavPills/NavPills.js";
 import Parallax from "components/Parallax/Parallax.js";
 import MainHeader from "components/MainComponents/MainHeader";
 import Danger from "components/Typography/Danger.js";
+import { useAuth } from "context/auth";
 // images
 import image7 from "assets/img/weirdos/0011.jpeg";
 import profileImg from "assets/img/faces/14.png";
@@ -687,8 +688,22 @@ function UserPage(props) {
     }
   ];
 
+  const {
+    authTokens, setAuthTokens,
+    accountAddress, setAccountAddress,
+    capturedImage, setCapturedImage,
+    imageBlob, setImageBlob,
+    inAuth, setInAuth,
+    isMinting, setIsMinting
+  } = useAuth();
+
   useEffect(() => {
-    isOwnerHandler();
+    if (authTokens) {
+      isOwnerHandler();
+    } else {
+      fetchAccountDataHandler();
+      fetchAccountCollectionsHandler();
+    }
   }, [owner]);
 
   const detectEth = async () => {
@@ -731,12 +746,16 @@ function UserPage(props) {
   };
 
   const isOwnerHandler = async () => {
-    fetch(`${process.env.REACT_APP_BACKEND_API}/accounts/${publicAddress}`, {
+    fetch(`${process.env.REACT_APP_BACKEND_API}/accounts/${accountAddress}`, {
       method: 'GET'
     })
       .then(res => res.json())
       .then(resData => {
         setOwner(resData.account.isArtist);
+        fetchAccountDataHandler();
+        fetchAccountCollectionsHandler();
+      })
+      .catch(err => {
         fetchAccountDataHandler();
         fetchAccountCollectionsHandler();
       })
@@ -789,6 +808,7 @@ function UserPage(props) {
                       tokenId={token.token_id}
                       faceImage={token.image_url}
                       faceName={token.name}
+                      contractAddress={"0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661"}
                     />
                   </GridItem>)
               }))

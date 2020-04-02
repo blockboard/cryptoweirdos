@@ -77,7 +77,14 @@ export default function CreatePage(props) {
   const [overlay, setOverlay] = useState(true);
   const [spinner, showSpinner, hideSpinner] = useSpinner(overlay);
 
-  const { authTokens, inAuth, setInAuth, isMinting, setIsMinting } = useAuth();
+  const {
+    authTokens,
+    inAuth, setInAuth,
+    isMinting, setIsMinting,
+    isInGlitch, setIsInGlitch,
+    minted, setMinted,
+    inMintWindow, setInMintWindow
+  } = useAuth();
 
   const savedIsMinted = localStorage.getItem("Minting");
 
@@ -88,7 +95,30 @@ export default function CreatePage(props) {
       hideSpinner();
     }
 
-  }, [inAuth, isMinting]);
+    if (savedIsMinted === "true") {
+      showSpinner();
+    } else {
+      hideSpinner();
+    }
+
+    if (isInGlitch) {
+      window.addEventListener('beforeunload', (event) => {
+        // Cancel the event as stated by the standard.
+        event.preventDefault();
+        // Chrome requires returnValue to be set.
+        event.returnValue = '';
+      });
+
+      if (!minted) {
+        window.addEventListener('unload', (event) => {
+          // Cancel the event as stated by the standard.
+          event.preventDefault();
+          setIsMinting(false);
+        });
+      }
+    }
+
+  }, [inAuth, isMinting, minted, isInGlitch]);
 
   useEffect(() => {
     fetchLatestBornHandler();
@@ -131,7 +161,8 @@ export default function CreatePage(props) {
                         faceDate={""}
                         openSeaLink={token.asset.permalink}
                         imagePrice={web3.utils.fromWei(token.starting_price, 'ether')}
-                        // TODO: image price
+                        contractAddress={"0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661"}
+                      // TODO: image price
                     />
                   </GridItem>)
             }))

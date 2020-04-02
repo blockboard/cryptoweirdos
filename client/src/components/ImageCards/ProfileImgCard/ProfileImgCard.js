@@ -33,7 +33,7 @@ export default function ProfileImgCard(props) {
   return (
       <div>
         <Card className={classes.root}>
-          <Link to={`/token/${props.tokenId}`}>
+          <Link to={`/token/${props.contractAddress}/${props.tokenId}`}>
             <StyledCardMedia
                 className={classes.media}
                 component="img"

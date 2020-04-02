@@ -29,8 +29,12 @@ export default function App(props) {
   const [capturedImage, setCapturedImage] = useState(null);
   const [imageBlob, setImageBlob] = useState(null);
   const [totalSupply, setTotalSupply] = useState(null);
-  const [isMinting, setIsMinting] = useState(false);
   const [inAuth, setInAuth] = useState(false);
+
+  const [isMinting, setIsMinting] = useState(false);
+  const [isInGlitch, setIsInGlitch] = useState(false);
+  const [minted, setMinted] = useState(false);
+  const [inMintWindow, setInMintWindow] = useState(false);
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -78,6 +82,18 @@ export default function App(props) {
     setInAuth(data);
   };
 
+  const setThisIsInGlitch = (data) => {
+    setIsInGlitch(data)
+  };
+
+  const setThisMinted = (data) => {
+    setMinted(data);
+  };
+
+  const setThisInMintWindow = (data) => {
+    setInMintWindow(data);
+  };
+
   return (
       <AuthContext.Provider value={{
         authTokens,
@@ -93,7 +109,13 @@ export default function App(props) {
         inAuth,
         setInAuth: setThisInAuth,
         isMinting,
-        setIsMinting: setThisIsMinting
+        setIsMinting: setThisIsMinting,
+        isInGlitch,
+        setIsInGlitch: setThisIsInGlitch,
+        minted,
+        setMinted: setThisMinted,
+        inMintWindow,
+        setInMintWindow: setThisInMintWindow
       }}>
           <Switch>
             <Route exact path='/' component={LandingPage}/>

@@ -778,7 +778,10 @@ function Glitch(props) {
     capturedImage, setCapturedImage,
     imageBlob, setImageBlob,
     inAuth, setInAuth,
-    isMinting, setIsMinting
+    isMinting, setIsMinting,
+    isInGlitch, setIsInGlitch,
+    minted, setMinted,
+    inMintWindow, setInMintWindow
   } = useAuth();
 
   const showComponent = type => {
@@ -795,7 +798,6 @@ function Glitch(props) {
   const [captureImg, setCaptureImg] = useState();
 
   const [mintMsg, setMintMsg] = useState(false);
-  const [minted, setMinted] = useState(false);
 
   const [token, setToken] = useState();
 
@@ -827,6 +829,7 @@ function Glitch(props) {
   const savedToken = localStorage.getItem("JWT");
 
   useEffect(() => {
+    setIsInGlitch(true);
     if (
       (savedToken !== "null") &&
       (savedToken !== null) &&
@@ -836,7 +839,7 @@ function Glitch(props) {
       setAccountAddress(savedPublicAddress, false);
     }
 
-    if ((currentImg !== null) && (capturedImage === null)) {
+    if ((currentImg !== null) && (capturedImage === null) && (!inMintWindow)) {
       canvas = canvasRef.current;
       ctx = canvas.getContext("2d");
       window.load = init();
@@ -847,7 +850,8 @@ function Glitch(props) {
       ctx2 = canvas2.getContext("2d");
       window.load = initCaptured();
     }
-  }, [algorithm, horizontalIncrement, verticalIncrement, threshold, magnitude, comparator, currentImg, capturedImage]);
+
+  }, [algorithm, horizontalIncrement, verticalIncrement, threshold, magnitude, comparator, currentImg, capturedImage, classicModal, capturedModel, isMinting, inMintWindow]);
 
   const detectEth = async () => {
     if (window.ethereum) {
@@ -1174,12 +1178,16 @@ function Glitch(props) {
       return URL.createObjectURL(blob);
     });
     setImageBlob(canvas);
+
+    setCurrentImg(null);
+    setAlgorithm(null);
     setCapturedModel(true);
   }
 
   const mintWeirdo = async () => {
     detectEth();
     showSpinner();
+    setIsMinting(true);
 
     if (!INFURA_KEY || !OWNER_ADDRESS || !NETWORK) {
       console.error("Please set a mnemonic, infura key, owner, network, and contract address.");
@@ -1192,24 +1200,56 @@ function Glitch(props) {
 
     const minterAccount = await web3.eth.getAccounts();
     const minter = minterAccount[0];
-    setIsMinting(true);
-    const transferEvent = await nftContract.methods.mintTo(minter)
+    nftContract.methods.mintTo(accountAddress)
       .send({
-      from: minter,
+      from: accountAddress,
       value: web3.utils.toWei("0.015", "ether")
-    })
-      .on('confirmation', function(confirmationNumber, receipt){
-        if (confirmationNumber === 1) {
-          sendTokenMetaData(transferEvent.events.Transfer.returnValues.tokenId);
-          openOnOpenSea(transferEvent.events.Transfer.returnValues.tokenId);
-        }
-      })
-      .on('error', (err) => {
-        if (err.code === 4001) {
+    }, (error, transactionHash) => {
+        if (error) {
+          console.log('In Error');
           hideSpinner();
           setIsMinting(false);
-        } 
+        }
       });
+      /*.on('transactionHash', function(hash){
+        console.log(`In transactionHash:  ${hash}`);
+        console.log(`${transferEvent.events.Transfer.returnValues.tokenId}`);
+      })
+      .on('receipt', function(receipt){
+        // receipt example
+        console.log(`In receipt:  ${receipt}`);
+      })*/
+      /*.on('confirmation', function(confirmationNumber, receipt){
+        console.log(`In Confirmation: ${confirmationNumber}`);
+
+        if (confirmationNumber === 1) {
+          console.log('In Confirmation 1');
+          sendTokenMetaData(transferEvent.events.Transfer.returnValues.tokenId);
+          openOnOpenSea(transferEvent.events.Transfer.returnValues.tokenId);
+        } else {
+          console.log(`In Confirmation: ${confirmationNumber}`);
+        }
+      })*/
+      /*.on('error', (err) => {
+        if (err.code === 4001) {
+          console.log('In Error');
+          hideSpinner();
+          setIsMinting(false);
+        }
+      });*/
+
+    nftContract.once('Transfer', (error, event) => {
+      if (parseInt(event.returnValues.to) === parseInt(accountAddress)) {
+        console.log(`In Transfer`);
+        console.log(event.returnValues.tokenId);
+        sendTokenMetaData(event.returnValues.tokenId);
+        openOnOpenSea(event.returnValues.tokenId);
+      }
+
+      if (error) {
+        console.log(error);
+      }
+    })
   };
 
   const sendTokenMetaData = (tokenId) => {
@@ -1226,6 +1266,7 @@ function Glitch(props) {
       ipfs.files.add(Buffer(buffer), function (err, files) {
 
         if (err) {
+          console.log('In IPFS');
           setIsMinting(false);
         }
 
@@ -1243,6 +1284,7 @@ function Glitch(props) {
           }),
         })
           .then(res => {
+            console.log('In Backend');
             hideSpinner();
             setMinted(true);
             setMintMsg(true);
@@ -1274,6 +1316,7 @@ function Glitch(props) {
     setMinted(false);
     setMintMsg(false);
     setCapturedImage(null);
+    setInMintWindow(false);
     setCapturedModel(false);
   };
 
@@ -1512,22 +1555,40 @@ function Glitch(props) {
                       }}
                     />
                   </Typography> :
-                  <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
-                    Horizontal Increment: {horizontalIncrement}
-                    <Slider
-                      track={false}
-                      valueLabelDisplay="auto"
-                      defaultValue={horizontalIncrement}
-                      aria-labelledby="discrete-slider"
-                      step={1}
-                      marks
-                      min={-3}
-                      max={3}
-                      onChangeCommitted={(event, value) => {
-                        setHorizontalIncrement(value);
-                      }}
-                    />
-                  </Typography>}
+                  (algorithm === null) ?
+                    <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
+                      Horizontal Increment:
+                      <Slider
+                        disabled
+                        track={false}
+                        defaultValue={horizontalIncrement}
+                        aria-labelledby="discrete-slider"
+                        valueLabelDisplay="auto"
+                        step={1}
+                        min={-3}
+                        max={3}
+                        onChangeCommitted={(event, value) => {
+                          setHorizontalIncrement(value);
+                        }}
+                      />
+                    </Typography> :
+                    <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
+                      Horizontal Increment: {horizontalIncrement}
+                      <Slider
+                        track={false}
+                        valueLabelDisplay="auto"
+                        defaultValue={horizontalIncrement}
+                        aria-labelledby="discrete-slider"
+                        step={1}
+                        marks
+                        min={-3}
+                        max={3}
+                        onChangeCommitted={(event, value) => {
+                          setHorizontalIncrement(value);
+                        }}
+                      />
+                    </Typography>
+                }
 
                 {(comparator === null) ?
                   <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
@@ -1547,7 +1608,25 @@ function Glitch(props) {
                       }}
                     />
                   </Typography> :
-                  <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
+                  (algorithm === null) ?
+                    <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
+                      Vertical Increment:
+                      <Slider
+                        disabled
+                        track={false}
+                        defaultValue={verticalIncrement}
+                        aria-labelledby="discrete-slider"
+                        valueLabelDisplay="auto"
+                        step={1}
+                        marks
+                        min={-3}
+                        max={3}
+                        onChangeCommitted={(event, value) => {
+                          setVerticalIncrement(value);
+                        }}
+                      />
+                    </Typography> :
+                    <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
                     Vertical Increment: {verticalIncrement}
                     <Slider
                       track={false}
@@ -1580,7 +1659,23 @@ function Glitch(props) {
                       }}
                     />
                   </Typography> :
-                  <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
+                  (algorithm === null) ?
+                    <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
+                      Threshold:
+                      <Slider
+                        disabled
+                        defaultValue={threshold}
+                        aria-labelledby="discrete-slider"
+                        valueLabelDisplay="auto"
+                        step={1}
+                        min={1}
+                        max={200}
+                        onChangeCommitted={(event, value) => {
+                          setThreshold(value);
+                        }}
+                      />
+                    </Typography> :
+                    <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
                     Threshold: {threshold}
                     <Slider
                       defaultValue={threshold}
@@ -1613,7 +1708,24 @@ function Glitch(props) {
                         }}
                       />
                     </Typography> :
-                    <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
+                    (algorithm === null) ?
+                      <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
+                        Magnitude:
+                        <Slider
+                          disabled
+                          defaultValue={magnitude}
+                          aria-labelledby="discrete-slider"
+                          valueLabelDisplay="auto"
+                          step={0.01}
+                          min={0}
+                          max={1}
+                          onChangeCommitted={(event, value) => {
+                            setMagnitude(value);
+                            console.log(magnitude);
+                          }}
+                        />
+                      </Typography> :
+                      <Typography id="discrete-slider" gutterBottom className={classes.sliderName}>
                       Magnitude: {magnitude}
                       <Slider
                         defaultValue={magnitude}
@@ -1905,10 +2017,14 @@ function Glitch(props) {
                 <Dialog
                   fullWidth={true}
                   maxWidth={"md"}
+                  disableBackdropClick={true}
                   open={capturedModel}
                   TransitionComponent={Transition}
                   keepMounted
-                  onClose={() => setCapturedModel(false)}
+                  onClose={() => {
+                    setInMintWindow(false);
+                    setCapturedModel(false)
+                  }}
                   aria-labelledby="max-width-dialog-title"
                 >
                   {spinner}
@@ -1954,6 +2070,8 @@ function Glitch(props) {
                                 severity="warning"
                               >
                                 Please DON'T close tab/browser before confirmation HERE!
+                                <br/>
+                                One Mint at a time.
                               </Alert>
                             </GridItem>
                           </GridContainer>

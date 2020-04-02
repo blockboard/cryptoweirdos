@@ -125,6 +125,7 @@ export default function GalleryPage(props) {
                                 ownerName={token.ownerName}
                                 faceDate={""}
                                 imagePrice="0.1"
+                                contractAddress={"0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661"}
                                 // TODO: image price
                               /> :
                               <ImageCard
@@ -136,6 +137,7 @@ export default function GalleryPage(props) {
                                 ownerName={token.ownerName}
                                 faceDate={""}
                                 imagePrice="0.1"
+                                contractAddress={"0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661"}
                                 // TODO: image price
                                 // TODO: Handle image date
                               />
@@ -156,6 +158,7 @@ export default function GalleryPage(props) {
                             ownerName={token.ownerName}
                             faceDate={""}
                             imagePrice="0.1"
+                            contractAddress={"0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661"}
                             // TODO: image price
                           /> :
                           <ImageCard
@@ -167,6 +170,7 @@ export default function GalleryPage(props) {
                             ownerName={token.ownerName}
                             faceDate={""}
                             imagePrice="0.1"
+                            contractAddress={"0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661"}
                             // TODO: image price
                             // TODO: Handle image date
                           />

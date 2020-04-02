@@ -39,7 +39,7 @@ export default function ActivityImgCard(props) {
       <>
         <GridContainer justify="center" spacing="1">
           <GridItem xs={12} sm={12} md={5} lg={5} xl={5}>
-              <a href={`/token/${props.tokenId}`}>
+              <a href={`/token/${props.contractAddress}/${props.tokenId}`}>
                 <StyledCardMedia
                     className={classes.media}
                     component="img"
