@@ -22,6 +22,7 @@ import SalesPage from "./views/SalesPage/SalesPage";
 import ActivityPage from "./views/ActivityPage/ActivityPage";
 import CreatePage from "./views/CreatePage/CreatePage";
 import MintPage from "./views/MintPage/MintPage";
+import GlitchedPage from "./views/Glitched/GlitchedPage";
 
 export default function App(props) {
   const [authTokens, setAuthTokens] = useState(null);
@@ -121,8 +122,8 @@ export default function App(props) {
             <Route exact path='/' component={LandingPage}/>
             <Route path="/gallery" component={GalleryPage}/>
             <Route path="/activity" component={ActivityPage}/>
-            <Route path="/offers" component={SalesPage}/>
             <Route path="/create" component={CreatePage}/>
+            <Route path="/glitched" component={GlitchedPage}/>
             <Route path="/mint" component={MintPage}/>
             <Route path={`/account/:publicAddress`} component={UserPage}/>
             <Route path="/token/:contractAddress/:tokenId" component={ImageDetailsPage}/>

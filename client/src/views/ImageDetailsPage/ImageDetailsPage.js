@@ -49,29 +49,34 @@ export default function ImageDetailsPage(props) {
         console.log(token.collection.created_date);
         setTokenCard(
           (
-            <GridContainer justify="center">
-
-              <GridItem xs={12} sm={12} md={6} lg={7} xl={7}>
-                <Card className={classes.root}>
-                  <CardMedia
-                    className={classes.media}
-                    image={token.image_url}
-                    title={token.tokenid}
-                  />
-                </Card>
-              </GridItem>
-
-              <GridItem lg={5}>
+            <>
+            <GridContainer justify="left">
+              <GridContainer justify="center">
+                <GridItem>
+                  <Card className={classes.root}>
+                    <CardMedia
+                      className={classes.media}
+                      image={token.image_url}
+                      title={token.tokenid}
+                    />
+                  </Card>
+                </GridItem>
+              </GridContainer>
+              <GridItem>
                 <CardContent>
                   <Typography variant="body1" color="textPrimary" component="p">
                     {token.name}
                   </Typography>
                 </CardContent>
-                <CardContent>
-                  <Typography variant="body2" color="textSecondary" component="p">
-                    {token.description}
-                  </Typography>
-                </CardContent>
+                {(token.description) ?
+                  <CardContent>
+                    <Typography variant="body2" color="textSecondary" component="p">
+                      {token.description}
+                    </Typography>
+                  </CardContent> :
+                  null
+                }
+
                 <h6 className={classes.tokenName}>Owned By: </h6>
                 <CardHeader
                   className={classes.ownerName}
@@ -95,6 +100,7 @@ export default function ImageDetailsPage(props) {
               </GridItem>
 
             </GridContainer>
+              </>
           )
         )
       })

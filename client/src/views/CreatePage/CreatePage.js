@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import web3 from "web3";
 // nodejs library that concatenates classes
 // @material-ui/core components
@@ -88,6 +88,35 @@ export default function CreatePage(props) {
 
   const savedIsMinted = localStorage.getItem("Minting");
 
+  const handleBeforeUnload = useCallback((event) => {
+    console.log(`in Return1`);
+
+    // Cancel the event as stated by the standard.
+    event.preventDefault();
+    // Chrome requires returnValue to be set.
+    event.returnValue = '';
+  }, [setIsInGlitch]);
+
+  useEffect(() => {
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    if (!minted) {
+      window.addEventListener('unload', (event) => {
+        // Cancel the event as stated by the standard.
+        event.preventDefault();
+        setIsMinting(false);
+      });
+    }
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+      window.removeEventListener('unload', (event) => {
+        console.log(`in Return2`);
+        // Cancel the event as stated by the standard.
+        event.preventDefault();
+      });
+    };
+  }, [isInGlitch]);
+
   useEffect( () => {
     if (inAuth) {
       showSpinner();
@@ -101,13 +130,9 @@ export default function CreatePage(props) {
       hideSpinner();
     }
 
-    if (isInGlitch) {
-      window.addEventListener('beforeunload', (event) => {
-        // Cancel the event as stated by the standard.
-        event.preventDefault();
-        // Chrome requires returnValue to be set.
-        event.returnValue = '';
-      });
+    /*if (isInGlitch) {
+      console.log(isInGlitch);
+      window.addEventListener('beforeunload', handleBeforeUnload);
 
       if (!minted) {
         window.addEventListener('unload', (event) => {
@@ -118,6 +143,16 @@ export default function CreatePage(props) {
       }
     }
 
+    return function cleanUp() {
+      console.log(isInGlitch);
+      window.removeEventListener('beforeunload', (event) => {
+        // Cancel the event as stated by the standard.
+        event.preventDefault();
+      });
+      window.removeEventListener('unload', (event) => {
+        event.preventDefault();
+      });
+    }*/
   }, [inAuth, isMinting, minted, isInGlitch]);
 
   useEffect(() => {

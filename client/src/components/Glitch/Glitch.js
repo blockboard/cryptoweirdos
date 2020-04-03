@@ -829,7 +829,6 @@ function Glitch(props) {
   const savedToken = localStorage.getItem("JWT");
 
   useEffect(() => {
-    setIsInGlitch(true);
     if (
       (savedToken !== "null") &&
       (savedToken !== null) &&
@@ -1179,6 +1178,7 @@ function Glitch(props) {
     });
     setImageBlob(canvas);
 
+    setIsInGlitch(true);
     setCurrentImg(null);
     setAlgorithm(null);
     setCapturedModel(true);
@@ -1313,6 +1313,7 @@ function Glitch(props) {
   };
 
   const cancel = () => {
+    setIsInGlitch(false);
     setMinted(false);
     setMintMsg(false);
     setCapturedImage(null);
@@ -2021,9 +2022,11 @@ function Glitch(props) {
                   open={capturedModel}
                   TransitionComponent={Transition}
                   keepMounted
-                  onClose={() => {
+                  onExit={() => {
+                    console.log('hello1');
+                    setIsInGlitch(false);
                     setInMintWindow(false);
-                    setCapturedModel(false)
+                    setCapturedModel(false);
                   }}
                   aria-labelledby="max-width-dialog-title"
                 >
@@ -2115,7 +2118,7 @@ function Glitch(props) {
                           {(minted) ?
                             <GridItem xs={12} sm={12} md={6} lg={6} xl={6}>
                               <Button
-                                color="primary"
+                                color="transparent"
                                 className={classes.mintBtn}
                                 round
                                 target="_blank"

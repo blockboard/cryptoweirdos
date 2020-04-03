@@ -184,6 +184,10 @@ function HeaderLinks(props) {
     props.history.push("/create")
   };
 
+  const goToGlitched = () => {
+    props.history.push("/glitched")
+  };
+
   return (
       <List className={classes.list}>
         {/*Gallery*/}
@@ -200,6 +204,24 @@ function HeaderLinks(props) {
               className={classes.navLink}
               onClick={goToGallery}>
               Gallery
+            </Button>}
+        </listItem>
+
+        {/*Glitched*/}
+        <listItem className={classes.listItem}>
+          {(props.location.pathname === "/glitched") ? <Button
+              color="transparent"
+              round
+              className={classes.selectedNavLink}
+              onClick={goToGlitched}>
+              Glitched
+            </Button> :
+            <Button
+              color="transparent"
+              round={true}
+              className={classes.navLink}
+              onClick={goToGlitched}>
+              Glitched
             </Button>}
         </listItem>
 
@@ -222,7 +244,7 @@ function HeaderLinks(props) {
         </listItem>
 
         {/*Sales*/}
-        <listItem className={classes.listItem}>
+        {/*<listItem className={classes.listItem}>
             {(props.location.pathname === "/offers") ? <Button
                 color="transparent"
                 round
@@ -237,7 +259,7 @@ function HeaderLinks(props) {
                 onClick={goToOffers}>
                 Sales
               </Button>}
-        </listItem>
+        </listItem>*/}
 
         {/*Blog*/}
         {/*<listItem className={classes.listItem}>
