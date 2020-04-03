@@ -22,6 +22,7 @@ import IconButton from "@material-ui/core/IconButton";
 import Close from "@material-ui/icons/Close";
 import ButtonBase from '@material-ui/core/ButtonBase';
 import Slide from "@material-ui/core/Slide";
+import { AlertTitle } from '@material-ui/lab';
 //core-components
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
@@ -1383,6 +1384,7 @@ function Glitch(props) {
               <Alert
                 severity="warning"
               >
+                <AlertTitle>Warning</AlertTitle>
                 You have first to select your weirdo to be able to glitch.
               </Alert> :
               null
@@ -2063,6 +2065,7 @@ function Glitch(props) {
                               <Alert
                                 severity="success"
                               >
+                                <AlertTitle>Success</AlertTitle>
                                 Your Glitched Weirdo Minted Successfully!
                               </Alert>
                             </GridItem>
@@ -2072,6 +2075,7 @@ function Glitch(props) {
                               <Alert
                                 severity="warning"
                               >
+                                <AlertTitle>Warning</AlertTitle>
                                 Please DON'T close tab/browser before confirmation HERE!
                                 <br/>
                                 One Mint at a time.
@@ -2119,9 +2123,8 @@ function Glitch(props) {
                             <GridItem xs={12} sm={12} md={6} lg={6} xl={6}>
                               <Button
                                 color="transparent"
-                                className={classes.mintBtn}
+                                className={classes.cancelBtn}
                                 round
-                                target="_blank"
                                 size="lg"
                                 href={`https://opensea.io/assets/${NFT_CONTRACT_ADDRESS}/${token}`}
                               >

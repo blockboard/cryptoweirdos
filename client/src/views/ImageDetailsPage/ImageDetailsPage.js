@@ -50,19 +50,10 @@ export default function ImageDetailsPage(props) {
         setTokenCard(
           (
             <>
-            <GridContainer justify="left">
-              <GridContainer justify="center">
-                <GridItem>
-                  <Card className={classes.root}>
-                    <CardMedia
-                      className={classes.media}
-                      image={token.image_url}
-                      title={token.tokenid}
-                    />
-                  </Card>
-                </GridItem>
-              </GridContainer>
-              <GridItem>
+              <GridItem xs={12} sm={12} md={6} lg={6} xl={6}>
+                <img className={classes.root} src={token.image_url}/>
+              </GridItem>
+              <GridItem xs={12} sm={12} md={6} lg={6} xl={6}>
                 <CardContent>
                   <Typography variant="body1" color="textPrimary" component="p">
                     {token.name}
@@ -98,9 +89,7 @@ export default function ImageDetailsPage(props) {
                   View on OpenSea
                 </Button>
               </GridItem>
-
-            </GridContainer>
-              </>
+            </>
           )
         )
       })

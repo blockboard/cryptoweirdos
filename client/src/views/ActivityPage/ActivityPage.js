@@ -22,7 +22,7 @@ import useSpinner from "components/Spinner/useSpinner";
 import { useAuth } from "context/auth";
 import Button from "components/CustomButtons/Button.js";
 // Images
-import background from "assets/img/faces/cf3.jpeg";
+import background from "assets/img/weirdos/0011.jpeg";
 // Styles
 import styles from "assets/jss/material-kit-react/views/activityPage.js";
 import SalesImgCard from "../../components/ImageCards/SalesImgCard/SalesImgCard";
@@ -33,8 +33,6 @@ import LatestFaces from "../LandingPage/Sections/LatestFaces";
 // @material-ui/icons
 
 const useStyles = makeStyles(styles);
-
-// TODO: Fixed Tabs
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
