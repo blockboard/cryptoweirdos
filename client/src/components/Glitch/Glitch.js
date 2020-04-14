@@ -2125,6 +2125,7 @@ function Glitch(props) {
                                 color="transparent"
                                 className={classes.cancelBtn}
                                 round
+                                target="_blank"
                                 size="lg"
                                 href={`https://opensea.io/assets/${NFT_CONTRACT_ADDRESS}/${token}`}
                               >
