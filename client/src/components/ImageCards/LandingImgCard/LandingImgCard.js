@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {Link, Redirect} from "react-router-dom";
 // nodejs library that concatenates classes
 import classNames from "classnames";
@@ -12,6 +12,7 @@ import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import Avatar from "@material-ui/core/Avatar";
+import image1 from "assets/img/weirdos/download.png";
 // @material-ui/icons
 //Core components
 // Styles
@@ -27,6 +28,7 @@ const StyledCardMedia = withStyles({
 
 export default function LandingImgCard(props) {
     const classes = useStyles();
+
     return (
         <div>
             <Card className={classes.root}>
@@ -34,7 +36,7 @@ export default function LandingImgCard(props) {
                     <StyledCardMedia
                         className={classes.media}
                         component="img"
-                        image={props.faceImage}
+                        image={(props.faceImage === "") ? image1 : props.faceImage}
                         title={props.faceName}
                     />
                 </a>

@@ -13,6 +13,7 @@ import Avatar from "@material-ui/core/Avatar";
 // Core components
 // Styles
 import styles from "assets/jss/material-kit-react/components/imageCards/imageCardStyle";
+import image1 from "assets/img/weirdos/download.png";
 
 import {Link} from "react-router-dom";
 
@@ -34,7 +35,7 @@ export default function ImageCard(props) {
             <StyledCardMedia
               className={classes.media}
               component="img"
-              image={props.faceImage}
+              image={(props.faceImage === "") ? image1 : props.faceImage}
               title={props.faceName}
             />
           </Link>

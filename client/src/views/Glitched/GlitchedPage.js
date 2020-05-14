@@ -27,6 +27,7 @@ import TabPanel from "components/TabPanal/TabPanal";
 import PaginationControlled from "components/PaginationControlled/PaginationControlled";
 // Images
 import background from "assets/img/weirdos/5.jpg";
+import image1 from "assets/img/weirdos/download.png";
 // Styles
 import styles from "assets/jss/material-kit-react/views/galleryPage.js";
 import LandingImgCard from "../../components/ImageCards/LandingImgCard/LandingImgCard";
