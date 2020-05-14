@@ -9,8 +9,8 @@ const imageDetailsPageStyle = {
         textAlign: "left"
     },
     root: {
-        maxWidth: 550,
-        maxHeight: 550,
+        maxWidth: 512,
+        maxHeight: 512,
         position: "relative"
     },
     media: {
@@ -19,16 +19,16 @@ const imageDetailsPageStyle = {
         width: 250
       },
       "@media (min-width: 768px)": {
-        height: 500,
-        width: 500
+        height: 512,
+        width: 512
       },
       "@media (min-width: 992px)": {
-        height: 500,
-        width: 500
+        height: 512,
+        width: 512
       },
       "@media (min-width: 1200px)": {
-        height: 600,
-        width: 600
+        height: 512,
+        width: 512
       }
     },
     btn: {

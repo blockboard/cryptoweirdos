@@ -1,11 +1,12 @@
 {
-  "name": "cryptofaces",
+  "name": "crypto-weirdos",
   "version": "1.0.0",
   "main": "app.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
+    "start": "node app.js",
     "build": "webpack",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint ./app.js",
@@ -23,7 +24,9 @@
     "non-fungible tokens",
     "solidity",
     "ipfs",
-    "openzepplin"
+    "openzepplin",
+    "express",
+    "mongo"
   ],
   "author": "Blockboard",
   "license": "MIT",
@@ -83,11 +86,11 @@
     "mongodb": "^3.5.2",
     "mongoose": "^5.8.9",
     "nodemon": "^2.0.2",
-    "truffle-hdwallet-provider": "^1.0.17",
+    "truffle-hdwallet-provider": "^1.0.5",
     "web3": "^1.2.5-rc.0"
   },
   "engines": {
-    "node": "13.10.x",
-    "npm": "6.14.x"
+    "node": "8.11.x",
+    "npm": "5.6.x"
   }
 }

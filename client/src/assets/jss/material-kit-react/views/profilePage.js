@@ -81,6 +81,27 @@ const profilePageStyle = {
   navWrapper: {
     margin: "20px auto 50px auto",
     textAlign: "center"
+  },
+  artBreederTitle: {
+    ...title,
+    display: "inline-block",
+    position: "relative",
+    marginTop: "30px",
+    minHeight: "32px",
+    color: "#999999",
+    textDecoration: "none"
+  },
+  mintBtn:{
+    width: "100%",
+    fontSize: "13px",
+    position: "right",
+    padding: "0.9375rem",
+    fontWeight: "500",
+    textTransform: "uppercase",
+    lineHeight: "20px",
+    textDecoration: "none",
+    margin: "0px",
+    display: "inline-flex",
   }
 };
 

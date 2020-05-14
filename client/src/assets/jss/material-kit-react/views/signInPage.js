@@ -119,7 +119,7 @@ const signupPageStyle = {
     height: '100%',
   },
   iconRoot: {
-    textAlign: 'center'
+    textAlign: 'center',
   }
 };
 

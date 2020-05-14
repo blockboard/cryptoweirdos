@@ -149,7 +149,8 @@ const headerLinksStyle = theme => ({
   icons: {
     width: "20px",
     height: "20px",
-    marginRight: "3px"
+    marginRight: "3px",
+    marginTop: "3px",
   },
   socialIcons: {
     position: "relative",
@@ -170,7 +171,8 @@ const headerLinksStyle = theme => ({
   img: {
     width: "50px",
     height: "50px",
-    borderRadius: "60%"
+    borderRadius: "60%",
+    verticalAlign: "top"
   },
   imageDropdownButton: {
     padding: "0px",

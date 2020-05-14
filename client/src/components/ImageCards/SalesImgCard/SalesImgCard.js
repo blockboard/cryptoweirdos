@@ -39,7 +39,7 @@ export default function SalesImgCard(props) {
       <>
         <GridContainer justify="center" spacing="3">
           <GridItem xs={12} sm={12} md={3} lg={3} xl={3}>
-              <Link to={`/token/${props.tokenId}`}>
+              <Link to={`/token/${props.contractAddress}/${props.tokenId}`}>
                 <StyledCardMedia
                     className={classes.media}
                     component="img"

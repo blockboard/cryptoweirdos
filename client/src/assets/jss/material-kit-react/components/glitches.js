@@ -3,10 +3,46 @@ import { container, title } from "assets/jss/material-kit-react.js";
 import imagesStyle from "assets/jss/material-kit-react/imagesStyles.js";
 
 const glitchStyle = {
+  formColor: {
+    color: "black",
+  },
   container,
   section: {
     padding: "70px 0",
     textAlign: "left"
+  },
+  mintBtn:{
+    marginTop: "20px",
+    width: "100%",
+    fontSize: "13px",
+    position: "right",
+    padding: "0.9375rem",
+    fontWeight: "500",
+    textTransform: "uppercase",
+    lineHeight: "20px",
+    textDecoration: "none",
+    margin: "0px",
+    display: "inline-flex",
+  },
+  cancelBtn:{
+    marginTop: "20px",
+    width: "100%",
+    fontSize: "13px",
+    color: "black",
+    position: "right",
+    padding: "0.9375rem",
+    fontWeight: "500",
+    textTransform: "uppercase",
+    border: "2px solid #555555",
+    //borderRadius: "px",
+    lineHeight: "20px",
+    textDecoration: "none",
+    margin: "0px",
+    display: "inline-flex",
+    "&:hover,&:focus": {
+      color: "black",
+      background: "rgba(200, 200, 200, 0.2)"
+    },
   },
   imgMedia: {
     height: 320,

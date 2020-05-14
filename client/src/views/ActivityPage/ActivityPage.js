@@ -18,17 +18,21 @@ import Parallax from "components/Parallax/Parallax.js";
 import MainHeader from "components/MainComponents/MainHeader";
 import MainContainer from "components/MainComponents/MainContainer";
 import ActivityImgCard from "components/ImageCards/ActivityImgCard/ActivityImgCard";
+import useSpinner from "components/Spinner/useSpinner";
+import { useAuth } from "context/auth";
+import Button from "components/CustomButtons/Button.js";
 // Images
-import background from "assets/img/faces/cf3.jpeg";
+import background from "assets/img/weirdos/0011.jpeg";
 // Styles
 import styles from "assets/jss/material-kit-react/views/activityPage.js";
 import SalesImgCard from "../../components/ImageCards/SalesImgCard/SalesImgCard";
+import CardHeader from "@material-ui/core/CardHeader";
+import Avatar from "@material-ui/core/Avatar";
+import LatestFaces from "../LandingPage/Sections/LatestFaces";
 
 // @material-ui/icons
 
 const useStyles = makeStyles(styles);
-
-// TODO: Fixed Tabs
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -81,6 +85,19 @@ export default function ActivityPage(props) {
     setValue(newValue);
   };
 
+  const [overlay, setOverlay] = useState(true);
+  const [spinner, showSpinner, hideSpinner] = useSpinner(overlay);
+
+  const { inAuth, setInAuth } = useAuth();
+
+  useEffect(() => {
+    if (inAuth) {
+      showSpinner();
+    } else {
+      hideSpinner();
+    }
+  }, [inAuth]);
+
   useEffect(() => {
     // Fetching TotalSupply
     fetch(`https://api.etherscan.io/api?module=stats&action=tokensupply&contractaddress=0x55a2525a0f4b0caa2005fb83a3aa3ac95683c661`, {
@@ -108,8 +125,7 @@ export default function ActivityPage(props) {
                 return 0;
               }
               return (
-                  <GridContainer justify="center" spacing={2}>
-                    <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
+                    <GridItem xs={12} sm={12} md={8} lg={8} xl={8}>
                       <ActivityImgCard
                           tokenId={token.asset.token_id}
                           faceImage={token.asset.image_url}
@@ -123,9 +139,9 @@ export default function ActivityPage(props) {
                           faceDate={""}
                           openSeaLink={token.asset.permalink}
                           imagePrice={web3.utils.fromWei(token.total_price, 'ether')}
+                          contractAddress={"0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661"}
                       />
-                    </GridItem>
-                  </GridContainer>)
+                    </GridItem>)
             }))
           }
         })
@@ -139,11 +155,19 @@ export default function ActivityPage(props) {
   return (
       <>
         <MainHeader/>
+        {spinner}
         <Parallax small filter image={background} />
         <MainContainer>
           <div className={classes.section}>
               {(tokenCard === null) ?
-                  <GridContainer justify="center"><br/><CircularProgress disableShrink/></GridContainer> : tokenCard}
+                  <GridContainer justify="center">
+                    <br/>
+                    <CircularProgress disableShrink/>
+                  </GridContainer> :
+                  <GridContainer justify="center" spacing={2}>
+                    {tokenCard}
+                  </GridContainer>
+              }
           </div>
         </MainContainer>
         <Footer/>

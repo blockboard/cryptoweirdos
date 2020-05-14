@@ -30,8 +30,7 @@ export default function LandingImgCard(props) {
     return (
         <div>
             <Card className={classes.root}>
-
-                <a href={`/token/${props.tokenId}`}>
+                <a href={`/token/${props.contractAddress}/${props.tokenId}`}>
                     <StyledCardMedia
                         className={classes.media}
                         component="img"

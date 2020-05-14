@@ -38,10 +38,10 @@ export default function ImageDetailsPage(props) {
     fetchTokenDataHandler();
   }, []);
 
-  let { tokenId } = useParams();
+  let { contractAddress ,tokenId } = useParams();
 
   const fetchTokenDataHandler = () => {
-    fetch(`https://api.opensea.io/api/v1/asset/0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661/${tokenId}/`, {
+    fetch(`https://api.opensea.io/api/v1/asset/${contractAddress}/${tokenId}/`, {
       method: 'GET'
     })
       .then(res => res.json())
@@ -49,29 +49,25 @@ export default function ImageDetailsPage(props) {
         console.log(token.collection.created_date);
         setTokenCard(
           (
-            <GridContainer justify="center">
-
-              <GridItem xs={12} sm={12} md={6} lg={7} xl={7}>
-                <Card className={classes.root}>
-                  <CardMedia
-                    className={classes.media}
-                    image={token.image_url}
-                    title={token.tokenid}
-                  />
-                </Card>
+            <>
+              <GridItem xs={12} sm={12} md={6} lg={6} xl={6}>
+                <img className={classes.root} src={token.image_url}/>
               </GridItem>
-
-              <GridItem lg={5}>
+              <GridItem xs={12} sm={12} md={6} lg={6} xl={6}>
                 <CardContent>
                   <Typography variant="body1" color="textPrimary" component="p">
                     {token.name}
                   </Typography>
                 </CardContent>
-                <CardContent>
-                  <Typography variant="body2" color="textSecondary" component="p">
-                    {token.description}
-                  </Typography>
-                </CardContent>
+                {(token.description) ?
+                  <CardContent>
+                    <Typography variant="body2" color="textSecondary" component="p">
+                      {token.description}
+                    </Typography>
+                  </CardContent> :
+                  null
+                }
+
                 <h6 className={classes.tokenName}>Owned By: </h6>
                 <CardHeader
                   className={classes.ownerName}
@@ -93,8 +89,7 @@ export default function ImageDetailsPage(props) {
                   View on OpenSea
                 </Button>
               </GridItem>
-
-            </GridContainer>
+            </>
           )
         )
       })

@@ -101,7 +101,7 @@ a {
   background-color: transparent;
   &:hover,
   &:focus {
-    color: darken($link-color, 5%);
+    color: darken(#3b5998, 5%);
     text-decoration: none;
   }
 }
@@ -118,7 +118,6 @@ small {
   font-weight: 400;
 }
 img {
-  vertical-align: middle;
   border-style: none;
 }
 form {

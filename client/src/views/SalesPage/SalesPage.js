@@ -10,7 +10,6 @@ import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import CircularProgress from '@material-ui/core/CircularProgress';
-
 // core components
 import Footer from "components/Footer/Footer.js";
 import GridContainer from "components/Grid/GridContainer.js";
@@ -18,6 +17,8 @@ import GridItem from "components/Grid/GridItem.js";
 import Parallax from "components/Parallax/Parallax.js";
 import MainHeader from "components/MainComponents/MainHeader";
 import MainContainer from "components/MainComponents/MainContainer";
+import useSpinner from "components/Spinner/useSpinner";
+import { useAuth } from "context/auth";
 import ActivityImgCard from "components/ImageCards/SalesImgCard/SalesImgCard";
 // Images
 import background from "assets/img/weirdos/0011.jpeg";
@@ -82,6 +83,19 @@ export default function SalesPage(props) {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+  const [overlay, setOverlay] = useState(true);
+  const [spinner, showSpinner, hideSpinner] = useSpinner(overlay);
+
+  const { inAuth, setInAuth } = useAuth();
+
+  useEffect(() => {
+    if (inAuth) {
+      showSpinner();
+    } else {
+      hideSpinner();
+    }
+  }, [inAuth]);
 
   useEffect(() => {
     fetchLatestedBornHandler();
@@ -154,6 +168,7 @@ export default function SalesPage(props) {
   return (
       <>
         <MainHeader/>
+        {spinner}
         <Parallax small filter image={background} />
         <MainContainer>
           <div className={classes.section}>

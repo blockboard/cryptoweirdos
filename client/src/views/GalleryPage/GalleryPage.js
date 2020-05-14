@@ -1,8 +1,6 @@
-import React, {useEffect, useState} from "react";
-
+import React, {useEffect, useState, useRef, useCallback} from "react";
 // nodejs library that concatenates classes
 import classNames from "classnames";
-
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -14,9 +12,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import SwipeableViews from 'react-swipeable-views';
-
 // @material-ui/icons
-
 // core components
 import Footer from "components/Footer/Footer.js";
 import GridContainer from "components/Grid/GridContainer.js";
@@ -25,9 +21,10 @@ import Parallax from "components/Parallax/Parallax.js";
 import MainHeader from "components/MainComponents/MainHeader";
 import MainContainer from "components/MainComponents/MainContainer";
 import ImageCard from "components/ImageCards/ImageCard";
+import useSpinner from "components/Spinner/useSpinner";
+import { useAuth } from "context/auth";
 import TabPanel from "components/TabPanal/TabPanal";
 import PaginationControlled from "components/PaginationControlled/PaginationControlled";
-
 // Images
 import background from "assets/img/weirdos/0046.jpeg";
 import image1 from "assets/img/weirdos/01.png"
@@ -38,12 +35,10 @@ import image5 from "assets/img/weirdos/05.png"
 import image6 from "assets/img/weirdos/06.png"
 import image7 from "assets/img/weirdos/07.png"
 import image8 from "assets/img/weirdos/08.png"
-
-
-
 // Styles
 import styles from "assets/jss/material-kit-react/views/galleryPage.js";
 import LandingImgCard from "../../components/ImageCards/LandingImgCard/LandingImgCard";
+import useGallery from "./useGallery";
 
 const useStyles = makeStyles(styles);
 
@@ -51,75 +46,148 @@ export default function GalleryPage(props) {
   const classes = useStyles();
 
   const [tokenCard, setTokenCard] = useState(null);
+  const [offset, setOffset] = useState(0);
+  const [firstTime, setFirstTime] = useState(true);
 
-  const [totalSupply, setTotalSupply] = useState();
-  const [lastVisit, setLastVisit] = useState(80);
+  const { authTokens,setAuthTokens, accountAddress, setAccountAddress, totalSupply, setTotalSupply } = useAuth();
 
-  const [page, setPage] = useState(31);
-  const [totalPages, setTotalPages] = useState(null);
-  const [per, setPer] = useState(2);
+  const [overlay, setOverlay] = useState(true);
+  const [spinner, showSpinner, hideSpinner] = useSpinner(overlay);
 
-  const [value, setValue] = useState(0);
-
-  const handleChangeIndex = (event, newValue) => {
-    setValue(newValue);
-  };
+  const { inAuth, setInAuth } = useAuth();
 
   useEffect(() => {
-    // Fetching TotalSupply
-    fetch(`https://api.etherscan.io/api?module=stats&action=tokensupply&contractaddress=0x55a2525a0f4b0caa2005fb83a3aa3ac95683c661`, {
-      method: 'GET'
-    })
-        .then(res => res.json())
-        .then(resData => {
-          setTotalSupply(parseInt(resData.result));
-        });
+    const abortController = new AbortController();
 
-    fetchLatestedBornHandler();
-  }, []);
+    if (inAuth) {
+      showSpinner();
+    } else {
+      hideSpinner();
+    }
 
-  const fetchLatestedBornHandler = async () => {
-    fetch(`https://api.opensea.io/api/v1/assets/?asset_contract_address=0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661&order_by=token_id&order_direction=desc&limit=100`, {
-      method: 'GET'
-    })
-        .then(res => res.json())
-        .then(resData => {
-          for (let [key, value] of Object.entries(resData)) {
-            setTokenCard(value.map(token => {
-              return (
-                  <GridItem xs={12} sm={6} md={4} lg={4} xl={4}>
-                    <ImageCard
-                        accountAddress={token.owner.address}
-                        tokenId={token.token_id}
-                        faceImage={token.image_url}
-                        faceName={token.name}
-                        ownerImage={token.owner.profile_img_url}
-                        ownerName={ (token.owner.user === null) ? token.owner.address : token.owner.user.username}
-                        faceDate={""}
-                        imagePrice="0.1"
-                        // TODO: image price
-                        // TODO: Handle image date
-                    />
-                  </GridItem>)
-            }))
-          }
+    return function cleanup() {
+      abortController.abort();
+    }
+  }, [inAuth]);
+    /*return () => {
+        // Fetching TotalSupply
+        fetch(`https://api.etherscan.io/api?module=stats&action=tokensupply&contractaddress=0x55a2525a0f4b0caa2005fb83a3aa3ac95683c661`, {
+          method: 'GET'
         })
-        .catch(err => console.log(err));
-  };
+          .then(res => res.json())
+          .then(resData => {
+            console.log("from return", resData.result);
+            setTotalSupply(resData.result);
+          })
+      }*/
 
-  /*const loadMoreHandler = () => {
-    setLastVisit(lastVisit - 20);
-    fetchLatestedBornHandler(lastVisit);
-  };*/
+  const {
+    tokens,
+    hasMore,
+    loading,
+    error
+  } = useGallery(offset);
+
+  const observer = useRef();
+  const lastTokenElementRef = useCallback(node => {
+    if (loading) return;
+    if (observer.current) observer.current.disconnect();
+    observer.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMore) {
+        setOffset(prevOffset => prevOffset + 20);
+      }
+    });
+    if (node) observer.current.observe(node)
+  }, [loading, hasMore]);
+
 
   return (
       <>
         <MainHeader/>
+        {spinner}
         <Parallax small filter image={background} />
         <MainContainer>
           <div className={classes.section}>
-            <GridContainer justify="center" spacing="1">
-              {/*<Paper className={classes.root}>
+            <GridContainer justify="left" spacing="1">
+              {
+                (tokens.map((token, index) => {
+                  if (tokens.length === index + 1) {
+                    return (
+                        <GridItem key={token.tokenId} xs={12} sm={6} md={4} lg={4} xl={4}>
+                          <div ref={lastTokenElementRef}>
+                            {(token.ownerName === "CryptoWeirdos") ?
+                              <LandingImgCard
+                                accountAddress={token.ownerAddress}
+                                tokenId={token.tokenId}
+                                faceImage={token.image}
+                                faceName={token.imageName}
+                                ownerImage={token.ownerImage}
+                                ownerName={token.ownerName}
+                                faceDate={""}
+                                imagePrice="0.1"
+                                contractAddress={"0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661"}
+                              /> :
+                              <ImageCard
+                                accountAddress={token.ownerAddress}
+                                tokenId={token.tokenId}
+                                faceImage={token.image}
+                                faceName={token.imageName}
+                                ownerImage={token.ownerImage}
+                                ownerName={token.ownerName}
+                                faceDate={""}
+                                imagePrice="0.1"
+                                contractAddress={"0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661"}
+                              />
+                            }
+                          </div>
+                        </GridItem>
+                    )
+                  } else {
+                    return (
+                      <GridItem key={token.tokenId} xs={12} sm={6} md={4} lg={4} xl={4}>
+                        {(token.ownerName === "CryptoWeirdos") ?
+                          <LandingImgCard
+                            accountAddress={token.ownerAddress}
+                            tokenId={token.tokenId}
+                            faceImage={token.image}
+                            faceName={token.imageName}
+                            ownerImage={token.ownerImage}
+                            ownerName={token.ownerName}
+                            faceDate={""}
+                            imagePrice="0.1"
+                            contractAddress={"0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661"}
+                          /> :
+                          <ImageCard
+                            accountAddress={token.ownerAddress}
+                            tokenId={token.tokenId}
+                            faceImage={token.image}
+                            faceName={token.imageName}
+                            ownerImage={token.ownerImage}
+                            ownerName={token.ownerName}
+                            faceDate={""}
+                            imagePrice="0.1"
+                            contractAddress={"0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661"}
+                          />
+                        }
+                      </GridItem>
+                    )
+                  }
+                }))
+              }
+            </GridContainer>
+            <GridContainer justify="center">
+              {
+                (loading) ?
+                  <div className={classes.loading}>
+                    <CircularProgress disableShrink />
+                  </div>:
+                  null
+              }
+            </GridContainer>
+          </div>
+        </MainContainer>
+        <Footer />
+        {/*<Paper className={classes.root}>
                 <Tabs
                     value={value}
                     onChange={handleChangeIndex}
@@ -175,12 +243,6 @@ export default function GalleryPage(props) {
                   </TabPanel>
                 </SwipeableViews>
               </Paper>*/}
-              {(tokenCard === null) ?
-                <CircularProgress disableShrink /> : tokenCard}
-            </GridContainer>
-          </div>
-        </MainContainer>
-        <Footer />
       </>
   );
 }

@@ -1,64 +1,59 @@
 /*eslint-disable*/
 import React, {useEffect, useState} from "react";
 // react components
-import { Link, withRouter } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { withRouter } from 'react-router';
+import history from "../../history";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
-import ListItemText from '@material-ui/core/ListItemText';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import Switch from '@material-ui/core/Switch';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormGroup from '@material-ui/core/FormGroup';
-
-
-import Warning from "@material-ui/icons/Warning";
 // @material-ui/icons
 // core components
 import Button from "components/CustomButtons/Button.js";
-import CustomDropdown from "components/CustomDropdown/CustomDropdown.js";
-import SnackbarContent from "components/Snackbar/SnackbarContent.js";
+import useSpinner from "components/Spinner/useSpinner";
 // images
-import artistProfileImage from "assets/img/faces/s+.jpeg";
-import accountProfileImage from "assets/img/faces/i+avatar.jpg";
-
 import { useAuth } from "context/auth";
 // styles
 import styles from "assets/jss/material-kit-react/components/headerLinksStyle.js";
-import {Icon} from "@material-ui/core";
+import {Icon, SvgIcon} from "@material-ui/core";
 
-import MetaMaskIcon from "assets/img/svgs/metamask.svg"
+import MetaMaskIcon from "assets/img/svgs/metamask.svg";
 import Web3 from "web3";
 
 const useStyles = makeStyles(styles);
 
 function HeaderLinks(props) {
   const classes = useStyles();
-  let web3;
 
   const [anchorEl, setAnchorEl] = useState(null);
+
+  const [overlay, setOverlay] = useState(true);
+  const [spinner, showSpinner, hideSpinner] = useSpinner(overlay);
+
   const open = Boolean(anchorEl);
 
-  const { authTokens, setAuthTokens, accountAddress, setAccountAddress } = useAuth();
+  const { authTokens,setAuthTokens, accountAddress, setAccountAddress, inAuth, setInAuth} = useAuth();
 
-  useEffect(() => {
-    /*window.addEventListener("load", async () => {
+  const savedPublicAddress = localStorage.getItem("Public Address");
+  const savedToken = localStorage.getItem("JWT");
 
-    });*/
-
+  useEffect( () => {
+    if (
+      (savedToken !== "null") &&
+      (savedToken !== null) &&
+      (savedToken !== undefined)
+    ) {
+      setAuthTokens(savedToken, false);
+      setAccountAddress(savedPublicAddress, false);
+    }
   }, []);
 
   const signInMetaMaskHandler = (publicAddress) => {
-    console.log(`${process.env.REACT_APP_BACKEND_API}/accounts`);
     fetch(`${process.env.REACT_APP_BACKEND_API}/accounts`, {
       body: JSON.stringify({ publicAddress }),
       headers: {
@@ -83,10 +78,12 @@ function HeaderLinks(props) {
 
   const signMessageHandler = async (publicAddress, nonce) => {
     const signature = await web3.eth.personal.sign(
-      `Your Signature for CryptoWeirdos: \n I am signing my one-time nonce: ${nonce}`,
-      publicAddress,
-      // MetaMask will ignore the password argument here
-    );
+      `Your Signature for CryptoWeirdos: \n I am signing my one-time nonce: ${nonce}`, publicAddress
+    , (err) => {
+        if (err) {
+          setInAuth(false);
+        }
+      });
     await authenticateHandler(publicAddress, signature);
   };
 
@@ -102,9 +99,9 @@ function HeaderLinks(props) {
     })
       .then(res => res.json())
       .then(resData => {
-        console.log(`Tokens: ${resData.token}`);
-        setAuthTokens(resData.token);
-        setAccountAddress(resData.publicAddress);
+        setAuthTokens((resData.token).split('"').join(""), true);
+        setAccountAddress((resData.publicAddress).split('"').join(""), true);
+        setInAuth(false);
       })
       .catch(err => console.log('authenticateHandlerError: ', err));
   };
@@ -117,22 +114,28 @@ function HeaderLinks(props) {
 
         const publicAddress = await web3.eth.getCoinbase();
 
-        fetch(`${process.env.REACT_APP_BACKEND_API}/accounts/${publicAddress}`, {
-          method: 'GET'
-        })
-          .then(res => {
-            if (res.status === 404) {
-              signInMetaMaskHandler(publicAddress);
-            }
-            return res.json();
+        if (
+          savedToken === "null" ||
+          savedToken === null ||
+          savedToken === undefined
+        ) {
+          setInAuth(true);
+          fetch(`${process.env.REACT_APP_BACKEND_API}/accounts/${publicAddress}`, {
+            method: 'GET'
           })
-          .then(account => {
-            signMessageHandler(account.account.publicAddress, account.account.nonce);
-          })
-          .catch(err => {
-            console.log('checkHandlerError: ', err);
-          })
-
+            .then(res => {
+              if (res.status === 404) {
+                signInMetaMaskHandler(publicAddress);
+              }
+              return res.json();
+            })
+            .then(account => {
+              signMessageHandler(account.account.publicAddress, account.account.nonce);
+            })
+            .catch(err => {
+              console.log('checkHandlerError: ', err);
+            });
+        }
       } catch (error) {
         // User denied account access...
         console.log(error);
@@ -145,9 +148,6 @@ function HeaderLinks(props) {
     }
   };
 
-
-
-
   const handleChange = event => {
     setAuth(event.target.checked);
   };
@@ -157,81 +157,109 @@ function HeaderLinks(props) {
   };
 
   const signOutHandler = () => {
-    setAuthTokens(null);
+    localStorage.clear();
+    setAuthTokens(null, true);
+    setAccountAddress(null, true);
     setAnchorEl(null);
+    props.history.push("/");
   };
 
   const handleClose = () => {
     setAnchorEl(null);
   };
 
+  const goToGallery = () => {
+    props.history.push("/gallery")
+  };
+
+  const goToActivity = () => {
+    props.history.push("/activity")
+  };
+
+  const goToOffers = () => {
+    props.history.push("/offers")
+  };
+
+  const goToCreate = () => {
+    props.history.push("/create")
+  };
+
+  const goToGlitched = () => {
+    props.history.push("/glitched")
+  };
+
   return (
       <List className={classes.list}>
         {/*Gallery*/}
         <listItem className={classes.listItem}>
-          <Link to="/gallery" className={classes.linkColor}>
-<<<<<<< HEAD
-            <Button
-                color="transparent"
-                round={true}
-                className={classes.navLink}>
-=======
             {(props.location.pathname === "/gallery") ? <Button
               color="transparent"
               round
-              className={classes.selectedNavLink}>
->>>>>>> dev-glitches
+              className={classes.selectedNavLink}
+              onClick={goToGallery}>
               Gallery
             </Button> : <Button
               color="transparent"
               round
-              className={classes.navLink}>
+              className={classes.navLink}
+              onClick={goToGallery}>
               Gallery
             </Button>}
-          </Link>
+        </listItem>
+
+        {/*Glitched*/}
+        <listItem className={classes.listItem}>
+          {(props.location.pathname === "/glitched") ? <Button
+              color="transparent"
+              round
+              className={classes.selectedNavLink}
+              onClick={goToGlitched}>
+              Glitched
+            </Button> :
+            <Button
+              color="transparent"
+              round={true}
+              className={classes.navLink}
+              onClick={goToGlitched}>
+              Glitched
+            </Button>}
         </listItem>
 
         {/*Activity*/}
         <listItem className={classes.listItem}>
-          <Link to="/activity" className={classes.linkColor}>
             {(props.location.pathname === "/activity") ? <Button
               color="transparent"
               round
-              className={classes.selectedNavLink}>
+              className={classes.selectedNavLink}
+              onClick={goToActivity}>
               Activity
             </Button> :
             <Button
-<<<<<<< HEAD
-                color="transparent"
-                round={true}
-                className={classes.navLink}>
-=======
               color="transparent"
               round
-              className={classes.navLink}>
->>>>>>> dev-glitches
+              className={classes.navLink}
+              onClick={goToActivity}>
               Activity
             </Button>}
-          </Link>
         </listItem>
 
         {/*Sales*/}
-        <listItem className={classes.listItem}>
-          <Link to="/offers" className={classes.linkColor}>
+        {/*<listItem className={classes.listItem}>
             {(props.location.pathname === "/offers") ? <Button
                 color="transparent"
                 round
-                className={classes.selectedNavLink}>
+                className={classes.selectedNavLink}
+                onClick={goToOffers}>
                 Sales
               </Button> :
               <Button
                 color="transparent"
                 round={true}
-                className={classes.navLink}>
+                className={classes.navLink}
+                onClick={goToOffers}>
                 Sales
               </Button>}
-          </Link>
-        </listItem>
+        </listItem>*/}
 
         {/*Blog*/}
         {/*<listItem className={classes.listItem}>
@@ -247,20 +275,20 @@ function HeaderLinks(props) {
 
         {/*Create*/}
         <listItem className={classes.listItem}>
-          <Link to="/create" className={classes.linkColor}>
-            {(props.location.pathname === "/create") ? <Button
-                color="transparent"
-                round
-                className={classes.selectedNavLink}>
-                create
-              </Button> :
-              <Button
-                color="transparent"
-                round={true}
-                className={classes.navLink}>
-                Create
-              </Button>}
-          </Link>
+          {(props.location.pathname === "/create") ? <Button
+              color="transparent"
+              round
+              className={classes.selectedNavLink}
+              onClick={goToCreate}>
+              create
+            </Button> :
+            <Button
+              color="transparent"
+              round={true}
+              className={classes.navLink}
+              onClick={goToCreate}>
+              Create
+            </Button>}
         </listItem>
 
         {/*SignIn*/}

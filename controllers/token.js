@@ -8,7 +8,7 @@ const Token = require('../models/tokens');
 exports.getToken = (req, res, next) => {
   const tokenId = req.params.tokenId;
 
-  Token.findOne({ tokenId: tokenId,})
+  Token.findOne({ tokenId: tokenId })
     .then(token => {
       if (!token) {
         const error = new Error(`Token ${tokenId} is not found in database`);
@@ -16,8 +16,8 @@ exports.getToken = (req, res, next) => {
         throw error;
       }
       res.status(200).send({
-        message: `Token ${tokenId} is found in database`,
-        account: token
+        image: token.image,
+        name: token.name
       })
     })
     .catch(err => {
@@ -28,16 +28,16 @@ exports.getToken = (req, res, next) => {
     })
 };
 
-// POST /api/accounts
+// POST /api/tokens
 exports.postToken = (req, res,  next) => {
-  const tokenId = req.params.tokenId;
-  const image = req.params.image;
-  const external_url = req.params.external_url;
+  const tokenId = req.body.tokenId;
+  const image = req.body.image;
+  const name = req.body.name;
 
   const token = new Token({
     tokenId: tokenId,
     image: image,
-    external_url: external_url
+    name: name
   }).save()
     .then(result => {
       res.status(201).json({

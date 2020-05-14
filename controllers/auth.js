@@ -72,15 +72,15 @@ exports.signupMetaMask = (req, res, next) => {
         return account;
       })
   // Step 2: Verify digital signature
-      .then(acount => {
-        if (!(acount instanceof Account)) {
+      .then(account => {
+        if (!(account instanceof Account)) {
           // Should not happen, we should have already sent the response
           throw new Error(
               'User is not defined in "Verify digital signature".'
           );
         }
 
-        const msg = `I am signing my one-time nonce: ${acount.nonce}`;
+        const msg = `Your Signature for CryptoWeirdos: \n I am signing my one-time nonce: ${account.nonce}`;
 
         const msgBuffer = Buffer.from(msg, 'utf8');
 
@@ -95,7 +95,7 @@ exports.signupMetaMask = (req, res, next) => {
         // The signature verification is successful if the address found with
         // sigUtil.recoverPersonalSignature matches the initial publicAddress
         if (address.toLowerCase() === publicAddress.toLowerCase()) {
-          return acount;
+          return account;
         } else {
           const error = new Error('Signature verification failed');
           error.statusCode = 401;
@@ -121,7 +121,7 @@ exports.signupMetaMask = (req, res, next) => {
           publicAddress: publicAddress
         }, config.secret);
 
-        return res.json({
+        return res.status(200).json({
           message: 'Successful authentication',
           token: jwtToken,
           publicAddress: publicAddress

@@ -1,4 +1,3 @@
-# Bit-Vision
-A Glitch art tool based around pixel sorting. Bit Vision allows users to select their preferred sorting algorithm, sorting criteria(called 'comparator' on the app), directional increments, threshold, and magnitude. The program operates in real time, allowing an image to be sorted with different settings applied one after another to create unique effects.
+# CryptoWeirdos
 
-Future updates will likely include more sorting algorithms and comparators.
+A Non-Fungible Tokens (NFT) project on top of Ethereum with MetaMask login system. First I implemented two smart-contracts according to ERC\-721 standard. Then another smart-contract for the MarketPlace of these tokens, that provides different options on exchanging of tokens such as make an Offers, or Bundle Offers with the help of an Escrow Contract for handling the exchange process. A server-side RestAPI using NodeJS and ExpressJS for handling tokens metadata and storing it into MongoDB Atlas and IPFS for storing images, deployed on Heroku. A client-side with ReactJS and Material-UI liberary, deployed on Netlify.
