@@ -26,7 +26,7 @@ import { useAuth } from "context/auth";
 import TabPanel from "components/TabPanal/TabPanal";
 import PaginationControlled from "components/PaginationControlled/PaginationControlled";
 // Images
-import background from "assets/img/weirdos/07.png";
+import background from "assets/img/weirdos/5.jpg";
 // Styles
 import styles from "assets/jss/material-kit-react/views/galleryPage.js";
 import LandingImgCard from "../../components/ImageCards/LandingImgCard/LandingImgCard";

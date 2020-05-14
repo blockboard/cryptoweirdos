@@ -26,7 +26,7 @@ import { useAuth } from "context/auth";
 import TabPanel from "components/TabPanal/TabPanal";
 import PaginationControlled from "components/PaginationControlled/PaginationControlled";
 // Images
-import background from "assets/img/weirdos/0046.jpeg";
+import background from "assets/img/weirdos/1.jpg";
 import image1 from "assets/img/weirdos/01.png"
 import image2 from "assets/img/weirdos/02.png"
 import image3 from "assets/img/weirdos/03.png"

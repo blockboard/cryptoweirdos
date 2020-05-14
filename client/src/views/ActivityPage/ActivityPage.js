@@ -22,7 +22,7 @@ import useSpinner from "components/Spinner/useSpinner";
 import { useAuth } from "context/auth";
 import Button from "components/CustomButtons/Button.js";
 // Images
-import background from "assets/img/weirdos/0011.jpeg";
+import background from "assets/img/weirdos/2.jpg";
 // Styles
 import styles from "assets/jss/material-kit-react/views/activityPage.js";
 import SalesImgCard from "../../components/ImageCards/SalesImgCard/SalesImgCard";

@@ -19,7 +19,7 @@ import useSpinner from "components/Spinner/useSpinner";
 // styles
 import styles from "assets/jss/material-kit-react/views/landingPage.js";
 // Images
-import image1 from "assets/img/weirdos/0058.jpeg";
+import image1 from "assets/img/weirdos/4.jpg";
 // Sections for this page
 import LatestFaces from "./Sections/LatestFaces";
 import MostViewed from "./Sections/MostViewed";
