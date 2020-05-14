@@ -13,6 +13,7 @@ import CardActionArea from "@material-ui/core/CardActionArea";
 import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
+import Button from '@material-ui/core/Button';
 import Avatar from "@material-ui/core/Avatar";
 import IconButton from "@material-ui/core/IconButton";
 // Customized components
@@ -22,7 +23,6 @@ import MainContainer from "../../components/MainComponents/MainContainer";
 import GridContainer from "../../components/Grid/GridContainer";
 import GridItem from "../../components/Grid/GridItem.js";
 import Footer from "../../components/Footer/Footer";
-import Button from "components/CustomButtons/Button.js";
 // Images
 import background from "assets/img/weirdos/0014.jpeg";
 // Styles
@@ -30,8 +30,15 @@ import styles from "assets/jss/material-kit-react/views/ImageDetails";
 
 const useStyles = makeStyles(styles);
 
+const useStylesForCard = makeStyles({
+  root: {
+    maxWidth: 545,
+  },
+});
 export default function ImageDetailsPage(props) {
   const classes = useStyles();
+  const classesForCard = useStylesForCard()
+
   const [tokenCard, setTokenCard] = useState(null);
 
   useEffect(() => {
@@ -50,7 +57,45 @@ export default function ImageDetailsPage(props) {
         setTokenCard(
           (
             <>
-              <GridItem xs={12} sm={12} md={6} lg={6} xl={6}>
+              <Card className={classesForCard.root}>
+      <CardActionArea>
+        <CardMedia
+          component="img"
+          alt="Contemplative Reptile"
+          height="512"
+          width="512"
+          image={token.image_url}
+          title="Contemplative Reptile"
+        />
+        <CardContent>
+          <Typography gutterBottom variant="h5" component="h2">
+          {token.name}
+          </Typography>
+          <Typography variant="body2" color="textSecondary" component="p">
+          {(token.description) ?
+                  <CardContent>
+                    <Typography variant="body2" color="textSecondary" component="p">
+                      {token.description}
+                    </Typography>
+                  </CardContent> :
+                  null
+                }
+          </Typography>
+        </CardContent>
+      </CardActionArea>
+      <CardActions>
+        <Button 
+          size="small" 
+          color="primary"
+          target="_blank"
+          href={token.permalink}>
+        View on OpenSea
+        </Button>
+      </CardActions>
+    </Card>
+
+
+              {/* <GridItem xs={12} sm={12} md={6} lg={6} xl={6}>
                 <img className={classes.root} src={token.image_url}/>
               </GridItem>
               <GridItem xs={12} sm={12} md={6} lg={6} xl={6}>
@@ -88,7 +133,7 @@ export default function ImageDetailsPage(props) {
                 >
                   View on OpenSea
                 </Button>
-              </GridItem>
+              </GridItem> */}
             </>
           )
         )
