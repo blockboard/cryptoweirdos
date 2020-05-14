@@ -56,7 +56,7 @@ export default function Footer(props) {
           &copy; {1900 + new Date().getYear()}, made with{" "}
           <Favorite className={classes.icon}/> by {" "}
           <a
-            href="https://github.com/blockboard"
+            href="https://blockboard.weebly.com/"
             className={aClasses}
             target="_blank"
           >
