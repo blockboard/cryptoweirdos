@@ -25,6 +25,8 @@ import GridItem from "../../components/Grid/GridItem.js";
 import Footer from "../../components/Footer/Footer";
 // Images
 import background from "assets/img/weirdos/0014.jpeg";
+import image1 from "assets/img/weirdos/download.png";
+
 // Styles
 import styles from "assets/jss/material-kit-react/views/ImageDetails";
 
@@ -60,10 +62,10 @@ export default function ImageDetailsPage(props) {
               <Card className={classesForCard.root}>
                   <CardMedia
                     component="img"
-                    alt="Contemplative Reptile"
+                    alt={token.name}
                     height="512"
                     width="512"
-                    image={token.image_url}
+                    image={(token.image_url === "") ? image1 : token.image_url}
                     title={token.name}
                   />
                   <CardContent>

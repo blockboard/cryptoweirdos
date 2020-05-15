@@ -39,7 +39,7 @@ const StyledCardMedia = withStyles({
 
 const useStylesForCard = makeStyles((theme) => ({
   root: {
-    maxWidth: 512
+    maxWidth: 545,
   },
   /* details: {
     display: 'flex',
@@ -99,13 +99,6 @@ export default function ActivityImgCard(props) {
         </div>
       </div>
     </Card> */}
-
-
-
-
-
-
-
 
         <Card className={classesForCard.root}>
                   <CardMedia

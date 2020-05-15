@@ -3,6 +3,7 @@ import React, {useEffect, useState} from "react";
 // react components
 import { Link } from "react-router-dom";
 import { withRouter } from 'react-router';
+import Identicon from 'identicon.js';
 import history from "../../history";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
@@ -51,7 +52,7 @@ function HeaderLinks(props) {
       setAuthTokens(savedToken, false);
       setAccountAddress(savedPublicAddress, false);
     }
-  }, []);
+  }, [authTokens, accountAddress]);
 
   const signInMetaMaskHandler = (publicAddress) => {
     fetch(`${process.env.REACT_APP_BACKEND_API}/accounts`, {
@@ -314,7 +315,17 @@ function HeaderLinks(props) {
               onClick={handleMenu}
               color="inherit"
             >
-              <AccountCircle />
+              { (
+                accountAddress === "null" ||
+                accountAddress === null ||
+                accountAddress === undefined) ? null :
+                <img
+                className="ml-2"
+                width='30'
+                height='30'
+                src={`data:image/png;base64,${new Identicon(accountAddress, 30).toString()}`}
+                alt=""
+              />}
             </IconButton>
             <Menu
               id="menu-appbar"
