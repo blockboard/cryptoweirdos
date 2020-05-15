@@ -117,6 +117,32 @@ export default function ActivityImgCard(props) {
                     <h6>Sold</h6>
                     <h5>{props.imagePrice} ETH</h5>
                     </Typography>
+                    <h6>From: </h6>
+                  <CardHeader
+                    className={classes.headerContent}
+                    avatar={
+                      <a href={`/account/${props.sellerAddress}`}>
+                        <Avatar aria-label="recipe" className={classes.avatar}>
+                          <img className={classes.img} src={props.sellerImage} alt="..."/>
+                        </Avatar>
+                      </a>
+                    }
+                    title={props.sellerName}
+                    subheader={props.faceDate}
+                  />
+                  <h6>To: </h6>
+                  <CardHeader
+                    className={classes.headerContent}
+                    avatar={
+                      <a href={`/account/${props.ownerAddress}`}>
+                        <Avatar aria-label="recipe" className={classes.avatar}>
+                          <img className={classes.img} src={props.ownerImage} alt="..."/>
+                        </Avatar>
+                      </a>
+                    }
+                    title={props.ownerName}
+                    subheader={props.faceDate}
+                  />
                   </CardContent>
                 <CardActions>
                   <Button

@@ -7,6 +7,7 @@ import {makeStyles, withStyles} from "@material-ui/core/styles";
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
 import ImageCard from "components/ImageCards/ImageCard";
+import LandingImgCard from "components/ImageCards/LandingImgCard/LandingImgCard";
 import Typography from '@material-ui/core/Typography';
 // Images
 import image1 from "assets/img/faces/cf1.jpeg";
@@ -42,7 +43,7 @@ export default function MostViewed(props) {
   }, []);
 
   const fetchMostViewedHandler = async () => {
-    fetch('https://api.opensea.io/api/v1/assets?asset_contract_address=0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661&order_by=trending&limit=6', {
+    fetch('https://api.opensea.io/api/v1/assets?asset_contract_address=0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661&limit=6&on_sale=true', {
       method: 'GET'
     })
         .then(res => res.json())
@@ -51,7 +52,7 @@ export default function MostViewed(props) {
             setTokenCard(value.map(token => {
               return (
                   <GridItem xs={12} sm={6} md={4} lg={4} xl={4}>
-                    <ImageCard
+                    <LandingImgCard
                         accountAddress={token.owner.address}
                         tokenId={token.token_id}
                         faceImage={token.image_url}
@@ -60,6 +61,7 @@ export default function MostViewed(props) {
                         ownerName={(token.owner.user === null) ? null : token.owner.user.username}
                         faceDate={token.sell_orders.created_date}
                         imagePrice="0.1"
+                        contractAddress={"0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661"}
                         // TODO: image price
                     />
                   </GridItem>)
@@ -75,7 +77,7 @@ export default function MostViewed(props) {
         <div className={classes.section}>
           <GridContainer justify="center">
             <GridItem xs={12} sm={12} md={8}>
-              <h2 className={classes.title}>Most Viewed Weirdos</h2>
+              <h2 className={classes.title}>On Sale Weirdos</h2>
             </GridItem>
           </GridContainer>
         </div>
