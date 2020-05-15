@@ -3,19 +3,24 @@ import React from "react";
 import classNames from "classnames";
 import { withStyles } from '@material-ui/core/styles';
 // @material-ui/core components
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
+import CardActions from "@material-ui/core/CardActions";
 import CardActionArea from "@material-ui/core/CardActionArea";
 import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import Avatar from "@material-ui/core/Avatar";
+import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import SkipPreviousIcon from '@material-ui/icons/SkipPrevious';
+import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+import SkipNextIcon from '@material-ui/icons/SkipNext';
 // @material-ui/icons
 //Core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
-import Button from "components/CustomButtons/Button.js";
 // Styles
 import styles from "assets/jss/material-kit-react/components/imageCards/activityCardStyle";
 
@@ -32,12 +37,106 @@ const StyledCardMedia = withStyles({
   }
 })(CardMedia);
 
+const useStylesForCard = makeStyles((theme) => ({
+  root: {
+    maxWidth: 512
+  },
+  /* details: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  content: {
+    flex: '1 0 auto',
+  },
+  cover: {
+    height: 512,
+    width: 512
+  },
+  controls: {
+    display: 'flex',
+    alignItems: 'center',
+    paddingLeft: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
+  },
+  playIcon: {
+    height: 38,
+    width: 38,
+  }, */
+}));
+
 export default function ActivityImgCard(props) {
   const classes = useStyles();
+  const classesForCard = useStylesForCard();
+  const theme = useTheme();
 
   return (
       <>
-        <GridContainer justify="center" spacing="1">
+{/* <Card className={classesForCard.root}>
+      <CardMedia
+        className={classesForCard.cover}
+        image={props.faceImage}
+        title={props.faceName}
+      />
+      <div className={classesForCard.details}>
+        <CardContent className={classesForCard.content}>
+          <Typography component="h5" variant="h5">
+            {props.faceName}
+          </Typography>
+          <Typography variant="subtitle1" color="textSecondary">
+          Sold
+          <h5>{props.imagePrice} ETH</h5>
+          </Typography>
+        </CardContent>
+        
+        <div className={classesForCard.controls}>
+        <Button
+                    size="small"
+                    color="primary"
+                    target="_blank"
+                    href={props.openSeaLink}>
+                    View on OpenSea
+                  </Button>
+        </div>
+      </div>
+    </Card> */}
+
+
+
+
+
+
+
+
+        <Card className={classesForCard.root}>
+                  <CardMedia
+                    component="img"
+                    alt="Contemplative Reptile"
+                    height="512"
+                    width="512"
+                    image={props.faceImage}
+                    title={props.faceName}
+                  />
+                  <CardContent>
+                    <Typography gutterBottom variant="h5" component="h2">
+                      {props.faceName}
+                    </Typography>
+                    <Typography variant="h6" component="p">
+                    <h6>Sold</h6>
+                    <h5>{props.imagePrice} ETH</h5>
+                    </Typography>
+                  </CardContent>
+                <CardActions>
+                  <Button
+                    size="small"
+                    color="primary"
+                    target="_blank"
+                    href={props.openSeaLink}>
+                    View on OpenSea
+                  </Button>
+                </CardActions>
+              </Card>
+
+        {/* <GridContainer justify="center" spacing="1">
           <GridItem xs={12} sm={12} md={5} lg={5} xl={5}>
               <a href={`/token/${props.contractAddress}/${props.tokenId}`}>
                 <StyledCardMedia
@@ -113,7 +212,7 @@ export default function ActivityImgCard(props) {
               </GridContainer>
             </div>
           </GridItem>
-        </GridContainer>
+        </GridContainer> */}
       </>
   );
 }
