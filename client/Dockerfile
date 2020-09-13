@@ -1,10 +1,10 @@
-FROM node:alpine
+FROM node:10.14.2
 
 WORKDIR /app
 
 COPY package.json /app
 
-RUN yarn install && yarn cache clean
+RUN yarn install
 
 COPY . /app
 
