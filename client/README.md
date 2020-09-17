@@ -3,8 +3,7 @@
 <p align='center'>
   <a href='https://www.cryptoweirdos.space/'>
     <img src='./assets/react-logo.png' alt='screenshot' width="250" height="250"/>
-    <img src='./assets/logo.jpeg' alt='screenshot' style="
-  border-radius: 50%;"/>
+    <img src='./assets/logo.jpeg' alt='screenshot' style="border-radius: 50%"/>
   </a>
 </p>
 
