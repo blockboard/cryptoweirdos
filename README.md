@@ -5,6 +5,7 @@ A Non-Fungible Tokens (NFT) project on top of Ethereum with MetaMask login syste
  
 <p align='center'>
   <a href='https://www.cryptoweirdos.space/'>
-    <img src='./assets/logo.jpeg' alt='screenshot' />
+    <img src='./assets/logo.jpeg' alt='screenshot' style="
+  border-radius: 50%;"/>
   </a>
 </p>
