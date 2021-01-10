@@ -37,11 +37,11 @@ export default function LatestFaces(props) {
                     <LandingImgCard
                         accountAddress={token.owner.address}
                         tokenId={token.token_id}
-                        faceImage={token.image_url}
+                        faceImage={token.image_preview_url}
                         faceName={token.name}
-                        ownerImage={token.owner.profile_img_url}
+                        ownerImage={(token.owner.profile_img_url === null) ? token.owner.profile_img_url : token.owner.profile_img_url}
                         ownerName={(token.owner.user === null) ? null : token.owner.user.username}
-                        faceDate={token.sell_orders.created_date}
+                        faceDate={(token.sell_orders === null) ? null : token.sell_orders}
                         imagePrice="0.1"
                         contractAddress={"0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661"}
                       // TODO: image price
