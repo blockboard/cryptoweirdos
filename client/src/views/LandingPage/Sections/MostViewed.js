@@ -58,7 +58,7 @@ export default function MostViewed(props) {
                         faceName={token.name}
                         ownerImage={token.owner.profile_img_url}
                         ownerName={(token.owner.user === null) ? null : token.owner.user.username}
-                        faceDate={token.sell_orders.created_date}
+                        faceDate={(token.sell_orders === null) ? null : token.sell_orders}
                         imagePrice="0.1"
                         // TODO: image price
                     />
