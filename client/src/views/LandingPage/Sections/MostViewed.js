@@ -49,6 +49,14 @@ export default function MostViewed(props) {
         .then(resData => {
           for (let [key, value] of Object.entries(resData)) {
             setTokenCard(value.map(token => {
+              console.log("token.owner.address: ", token.owner.address);
+              console.log("token.token_id: ", token.token_id);
+              console.log("token.image_url", token.image_url);
+              console.log("token.name: ", token.name);
+              console.log("token.owner.profile_img_url", token.owner.profile_img_url); 
+              console.log("token.owner.user.username: ", token.owner.user.username);
+              console.log("token.sell_orders: ", token.sell_orders);
+
               return (
                   <GridItem xs={12} sm={6} md={4} lg={4} xl={4}>
                     <ImageCard
@@ -58,7 +66,7 @@ export default function MostViewed(props) {
                         faceName={token.name}
                         ownerImage={token.owner.profile_img_url}
                         ownerName={(token.owner.user === null) ? null : token.owner.user.username}
-                        faceDate={(token.sell_orders === null) ? null : token.sell_orders}
+                        faceDate={(token.sell_orders === null) ? null : null}
                         imagePrice="0.1"
                         // TODO: image price
                     />

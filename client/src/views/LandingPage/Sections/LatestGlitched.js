@@ -44,7 +44,7 @@ export default function LatestGlitched(props) {
                   faceName={token.name}
                   ownerImage={token.owner.profile_img_url}
                   ownerName={(token.owner.user === null) ? null : token.owner.user.username}
-                  faceDate={(token.sell_orders === null) ? null : token.sell_orders}
+                  faceDate={(token.sell_orders === null) ? null : null}
                   imagePrice="0.1"
                   contractAddress={NFT_CONTRACT_ADDRESS}
                   // TODO: image price
