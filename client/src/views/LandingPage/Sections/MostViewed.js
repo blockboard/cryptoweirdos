@@ -42,7 +42,7 @@ export default function MostViewed(props) {
   }, []);
 
   const fetchMostViewedHandler = async () => {
-    fetch('https://api.opensea.io/api/v1/assets?asset_contract_address=0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661&order_by=visitor_count&limit=6', {
+    fetch('https://api.opensea.io/api/v1/assets?asset_contract_address=0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661&order_by=sale_count&limit=6', {
       method: 'GET'
     })
         .then(res => res.json())
