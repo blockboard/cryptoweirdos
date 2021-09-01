@@ -18,7 +18,7 @@ export default function useGallery (offset) {
     setLoading(true);
     setError(false);
 
-    fetch(`https://api.opensea.io/api/v1/assets?asset_contract_address=0xd09014d944fc8c6707f1dfeff4938d723debab70&order_by=token_id&order_direction=desc&offset=${offset}`, {
+    fetch(`https://api.opensea.io/api/v1/assets?asset_contract_address=0xd09014d944fc8c6707f1dfeff4938d723debab70&order_by=pk&order_direction=desc&offset=${offset}`, {
       method: 'GET'
     })
       .then(res => res.json())

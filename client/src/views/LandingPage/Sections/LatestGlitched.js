@@ -27,7 +27,7 @@ export default function LatestGlitched(props) {
   }, []);
 
   const fetchLatestedBornHandler = async () => {
-    fetch(`https://api.opensea.io/api/v1/assets/?asset_contract_address=${NFT_CONTRACT_ADDRESS}&order_by=last_born&limit=3`, {
+    fetch(`https://api.opensea.io/api/v1/assets/?asset_contract_address=${NFT_CONTRACT_ADDRESS}&order_by=pk&limit=6`, {
       method: 'GET'
     })
       .then(res => res.json())
