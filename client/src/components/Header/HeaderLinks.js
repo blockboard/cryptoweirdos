@@ -208,7 +208,7 @@ function HeaderLinks(props) {
         </listItem>
 
         {/*Glitched*/}
-        <listItem className={classes.listItem}>
+        {/* <listItem className={classes.listItem}>
           {(props.location.pathname === "/glitched") ? <Button
               color="transparent"
               round
@@ -223,7 +223,7 @@ function HeaderLinks(props) {
               onClick={goToGlitched}>
               Glitched
             </Button>}
-        </listItem>
+        </listItem> */}
 
         {/*Activity*/}
         <listItem className={classes.listItem}>
@@ -274,7 +274,7 @@ function HeaderLinks(props) {
         </listItem>*/}
 
         {/*Create*/}
-        <listItem className={classes.listItem}>
+        {/* <listItem className={classes.listItem}>
           {(props.location.pathname === "/create") ? <Button
               color="transparent"
               round
@@ -289,7 +289,7 @@ function HeaderLinks(props) {
               onClick={goToCreate}>
               Create
             </Button>}
-        </listItem>
+        </listItem> */}
 
         {/*SignIn*/}
         { (authTokens === null) ?
