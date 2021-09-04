@@ -122,8 +122,8 @@ export default function App(props) {
             <Route exact path='/' component={LandingPage}/>
             <Route path="/gallery" component={GalleryPage}/>
             <Route path="/activity" component={ActivityPage}/>
-            <Route path="/create" component={CreatePage}/>
-            <Route path="/glitched" component={GlitchedPage}/>
+            {/* <Route path="/create" component={CreatePage}/>
+            <Route path="/glitched" component={GlitchedPage}/> */}
             <Route path="/mint" component={MintPage}/>
             <Route path={`/account/:publicAddress`} component={UserPage}/>
             <Route path="/token/:contractAddress/:tokenId" component={ImageDetailsPage}/>
