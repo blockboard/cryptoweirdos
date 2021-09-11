@@ -100,7 +100,7 @@ export default function LandingPage(props) {
         </Parallax>
         <MainContainer>
           <LatestFaces/>
-          <LatestGlitched/>
+          {/* <LatestGlitched/> */}
           <MostViewed/>
           {/* <GridContainer justify="center">
             <h5 className={classes.artBreederTitle}>CryptoWeirdos is created using ArtBreeder tool by Joel Simon</h5>
