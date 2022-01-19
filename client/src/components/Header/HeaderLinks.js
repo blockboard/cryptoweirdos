@@ -226,7 +226,7 @@ function HeaderLinks(props) {
         </listItem> */}
 
         {/*Activity*/}
-        <listItem className={classes.listItem}>
+        {/* <listItem className={classes.listItem}>
             {(props.location.pathname === "/activity") ? <Button
               color="transparent"
               round
@@ -241,7 +241,7 @@ function HeaderLinks(props) {
               onClick={goToActivity}>
               Activity
             </Button>}
-        </listItem>
+        </listItem> */}
 
         {/*Sales*/}
         {/*<listItem className={classes.listItem}>
