@@ -34,7 +34,7 @@ export default function Footer(props) {
           <List className={classes.list}>
             <ListItem className={classes.inlineBlock}>
               <a
-                  href="https://opensea.io/assets/crypto-weirdos"
+                  href="https://opensea.io/collection/crypto-weirdos"
                   className={classes.block}
                   target="_blank"
               >
