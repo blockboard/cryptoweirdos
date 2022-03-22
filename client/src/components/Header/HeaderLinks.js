@@ -191,7 +191,7 @@ function HeaderLinks(props) {
   return (
       <List className={classes.list}>
         {/*Gallery*/}
-        <listItem className={classes.listItem}>
+        {/* <listItem className={classes.listItem}>
             {(props.location.pathname === "/gallery") ? <Button
               color="transparent"
               round
@@ -205,7 +205,7 @@ function HeaderLinks(props) {
               onClick={goToGallery}>
               Gallery
             </Button>}
-        </listItem>
+        </listItem> */}
 
         {/*Glitched*/}
         {/* <listItem className={classes.listItem}>
@@ -292,7 +292,7 @@ function HeaderLinks(props) {
         </listItem> */}
 
         {/*SignIn*/}
-        { (authTokens === null) ?
+        {/* { (authTokens === null) ?
             <listItem className={classes.listItem}>
                 <Button
                     className={classes.signLink}
@@ -337,7 +337,7 @@ function HeaderLinks(props) {
               <MenuItem onClick={signOutHandler}>Sign Out</MenuItem>
             </Menu>
           </ListItem>
-        }
+        } */}
 
         {/*<SnackbarContent
           message={
