@@ -29,6 +29,11 @@ const landingPageStyle = {
     maxWidth: "500px",
     margin: "10px auto 0"
   },
+  link:{
+    color:"#fff",
+    marginLeft:"4px",
+    cursor:"pointer"
+  }
 };
 
 export default landingPageStyle;
