@@ -1,0 +1,100 @@
+.gallery {
+    display: grid;
+    column-gap: 100px;
+    grid-template-columns: repeat(5, 450vw);
+    transition: all 0.3s cubic-bezier(0.5, 0.8, 0.5, 0.2);
+    margin-top: -300px;
+    cursor:pointer;
+    margin-left: -500px;
+  }
+  
+  @media (min-width: 40em) {
+    .gallery {
+      grid-template-rows: repeat(2, 20vh);
+    }
+  }
+  @media (min-width: 10em) and (orientation: landscape) {
+    .gallery {
+      grid-template-columns: repeat(5, 18vw);
+      grid-template-rows: repeat(2, 45vh);
+    }
+  }
+  @media (min-width: 60em) {
+    .gallery {
+      grid-template-columns: repeat(10, 8vw);
+      grid-template-rows: 25vh;
+    }
+  }
+  
+  img {
+    object-fit: cover;
+    width: 150%;
+    height: 150%;
+    left: 0;
+    top: 0;
+    transition: all 0.15s cubic-bezier(0.3, 0.1, 0.3, 0.85);
+    position: relative;
+    box-shadow: 0 0 0 #0000;
+    border-radius: 5px;
+  }
+  /* img:first-child {
+    border-radius: 10px 10px 0 0;
+  }
+  img:last-child {
+    border-radius: 0 0 10px 10px;
+  } */
+  
+  
+  img:hover {
+    z-index: 1;
+    transition: all 0.3s cubic-bezier(0.3, 0.1, 0.3, 0.85);
+    border-radius: 5px;
+    width: 300%;
+    height: 300%;
+    padding-bottom: 20px;
+  }
+  @media (min-width: 40em) {
+    img:hover {
+      width: 250%;
+      height: 500%;
+      left: -75%;
+      top: -200%;
+    }
+  }
+  @media (min-width: 10em) and (orientation: landscape) {
+    img:hover {
+      width: 250%;
+      height: 200%;
+    }
+  }
+  @media (min-width: 40em) and (orientation: portrait) {
+    img:hover {
+      width: 300%;
+      height: 300%;
+      left: -100%;
+      top: -100%;
+    }
+  }
+  @media (min-width: 60em) {
+    img:hover {
+      width: 350%;
+      height: 150%;
+      left: -75%;
+      top: -25%;
+    }
+    img:hover ~ img {
+      left: 175%;
+    }
+  }
+  @media (min-width: 60em) and (orientation: landscape) {
+    img:hover {
+      width: 300%;
+      height: 300%;
+      left: -75%;
+      top: -100%;
+    }
+    img:hover ~ img {
+      left: 100%;
+    }
+  }
+  

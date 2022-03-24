@@ -71,7 +71,7 @@ export default function LandingPage(props) {
 
   return (
       <>
-        <MainHeader />
+        {/* <MainHeader /> */}
         {spinner}
         <Parallax small filter image={image1}>
           <div className={classes.container}>
@@ -81,7 +81,12 @@ export default function LandingPage(props) {
                 <br/>
                 <Quote
                     className={classes.title}
-                    text={<h5>Crypto's many faces. Find your Weirdo.</h5>}
+                    text={<h5>You can find CryptoWeirdos collection on 
+                      <a
+                        href="https://opensea.io/collection/crypto-weirdos"
+                        target="_blank"
+                        className={classes.link}
+                      >OpenSea</a>.</h5>}
                 />
               </GridItem>
             </GridContainer>
@@ -99,15 +104,16 @@ export default function LandingPage(props) {
             }
           </div>
         </Parallax>
-        {/* <MainContainer>
-          <LatestFaces/>
-          <LatestGlitched/>
+        <MainContainer>
+        <HavingProblem/>
+          {/* <LatestFaces/> */}
+          {/* <LatestGlitched/>
           <MostViewed/>
           <GridContainer justify="center">
             <h5 className={classes.artBreederTitle}>CryptoWeirdos is created using ArtBreeder tool by Joel Simon</h5>
-          </GridContainer>
-        </MainContainer> */}
-        <HavingProblem/>
+          </GridContainer> */}
+        </MainContainer>
+
         <Footer />
       </>
   );

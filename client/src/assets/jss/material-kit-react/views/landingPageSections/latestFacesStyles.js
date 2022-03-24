@@ -6,7 +6,8 @@ import imagesStyles from "assets/jss/material-kit-react/imagesStyles.js";
 const latestFacesStyle = {
   section: {
     padding: "70px 0",
-    textAlign: "center"
+    textAlign: "center",
+    height:"500px"
   },
   container,
   space50: {
