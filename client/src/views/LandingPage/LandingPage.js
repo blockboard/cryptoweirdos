@@ -46,33 +46,33 @@ export default function LandingPage(props) {
 
   const { inAuth, setInAuth } = useAuth();
 
-  useEffect( () => {
-    detectEth();
-    if (inAuth) {
-      showSpinner();
-    } else {
-      hideSpinner();
-    }
-  }, [inAuth]);
+  // useEffect( () => {
+  //   detectEth();
+  //   if (inAuth) {
+  //     showSpinner();
+  //   } else {
+  //     hideSpinner();
+  //   }
+  // }, [inAuth]);
 
 
-  const detectEth = async () => {
-    if (window.ethereum) {
-      window.web3 = new web3(window.ethereum);
-      await window.ethereum.enable()
-    }
-    else if (window.web3) {
-      window.web3 = new web3(window.web3.currentProvider);
-    }
-    else {
-      setEthWarning(true);
-    }
-  };
+  // const detectEth = async () => {
+  //   if (window.ethereum) {
+  //     window.web3 = new web3(window.ethereum);
+  //     await window.ethereum.enable()
+  //   }
+  //   else if (window.web3) {
+  //     window.web3 = new web3(window.web3.currentProvider);
+  //   }
+  //   else {
+  //     setEthWarning(true);
+  //   }
+  // };
 
   return (
       <>
         {/* <MainHeader /> */}
-        {spinner}
+        {/* {spinner} */}
         <Parallax small filter image={image1}>
           <div className={classes.container}>
             <GridContainer justify="right">
@@ -90,7 +90,7 @@ export default function LandingPage(props) {
                 />
               </GridItem>
             </GridContainer>
-            {(ethWarning) ?
+            {/* {(ethWarning) ?
               <GridContainer justify="center">
                 <GridItem xs={12} sm={12} md={12} lg={12} xl={12}>
                   <Alert
@@ -101,7 +101,7 @@ export default function LandingPage(props) {
                 </GridItem>
               </GridContainer> :
               null
-            }
+            } */}
           </div>
         </Parallax>
         <MainContainer>
