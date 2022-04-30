@@ -71,7 +71,7 @@ export default function LandingPage(props) {
 
   return (
       <>
-        {/* <MainHeader /> */}
+        <MainHeader />
         {/* {spinner} */}
         <Parallax small filter image={image1}>
           <div className={classes.container}>
@@ -105,11 +105,11 @@ export default function LandingPage(props) {
           </div>
         </Parallax>
         <MainContainer>
-        <HavingProblem/>
-          {/* <LatestFaces/> */}
-          {/* <LatestGlitched/>
+        {/* <HavingProblem/> */}
+          <LatestFaces/>
+          {/* <LatestGlitched/> */}
           <MostViewed/>
-          <GridContainer justify="center">
+          {/* <GridContainer justify="center">
             <h5 className={classes.artBreederTitle}>CryptoWeirdos is created using ArtBreeder tool by Joel Simon</h5>
           </GridContainer> */}
         </MainContainer>

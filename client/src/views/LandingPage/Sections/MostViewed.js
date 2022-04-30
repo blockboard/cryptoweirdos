@@ -43,19 +43,20 @@ export default function MostViewed(props) {
 
   const fetchMostViewedHandler = async () => {
     fetch('https://api.opensea.io/api/v1/assets?asset_contract_address=0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661&order_by=sale_count&limit=6', {
-      method: 'GET'
+      method: 'GET',
+      headers: {Accept: 'application/json', 'X-API-KEY': '560248ea4c5a46ef9f02e7ef321f6ff3'}
     })
         .then(res => res.json())
         .then(resData => {
-          for (let [key, value] of Object.entries(resData)) {
-            setTokenCard(value.map(token => {
-              console.log("token.owner.address: ", token.owner.address);
-              console.log("token.token_id: ", token.token_id);
-              console.log("token.image_url", token.image_url);
-              console.log("token.name: ", token.name);
-              console.log("token.owner.profile_img_url", token.owner.profile_img_url); 
-              console.log("token.owner.user.username: ", token.owner.user.username);
-              console.log("token.sell_orders: ", token.sell_orders);
+          // for (let [key, value] of Object.entries(resData)) {
+            setTokenCard(resData.assets.map(token => {
+              console.log("MV token.owner.address: ", token.owner.address);
+              console.log("MV token.token_id: ", token.token_id);
+              console.log("MV token.image_url", token.image_url);
+              console.log("MV token.name: ", token.name);
+              console.log("MV token.owner.profile_img_url", token.owner.profile_img_url); 
+              console.log("MV token.owner.user.username: ", token.owner.user.username);
+              console.log("MV token.sell_orders: ", token.sell_orders);
 
               return (
                   <GridItem xs={12} sm={6} md={4} lg={4} xl={4}>
@@ -68,11 +69,12 @@ export default function MostViewed(props) {
                         ownerName={(token.owner.user === null) ? null : token.owner.user.username}
                         faceDate={(token.sell_orders === null) ? null : null}
                         imagePrice="0.1"
+                        contractAddress={"0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661"}
                         // TODO: image price
                     />
                   </GridItem>)
             }))
-          }
+          // }
         })
         .catch(err => console.log(err));
   };
@@ -83,7 +85,7 @@ export default function MostViewed(props) {
         <div className={classes.section}>
           <GridContainer justify="center">
             <GridItem xs={12} sm={12} md={8}>
-              <h2 className={classes.title}>Most Viewed Weirdos</h2>
+              <h2 className={classes.title} style={{marginTop:100}}>Most Viewed Weirdos</h2>
             </GridItem>
           </GridContainer>
         </div>

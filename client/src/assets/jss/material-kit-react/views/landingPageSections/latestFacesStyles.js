@@ -7,7 +7,7 @@ const latestFacesStyle = {
   section: {
     padding: "70px 0",
     textAlign: "center",
-    height:"500px"
+    height:"300px"
   },
   container,
   space50: {
@@ -30,7 +30,7 @@ const latestFacesStyle = {
     color: "inherit",
     position: "relative",
     padding: "0.9375rem",
-    marginTop: "15px",
+    marginTop: "30px",
     //paddingTop: "10px",
     fontWeight: "500",
     fontSize: "13px",

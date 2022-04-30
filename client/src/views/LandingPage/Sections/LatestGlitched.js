@@ -28,12 +28,13 @@ export default function LatestGlitched(props) {
 
   const fetchLatestedBornHandler = async () => {
     fetch(`https://api.opensea.io/api/v1/assets/?asset_contract_address=${NFT_CONTRACT_ADDRESS}&order_by=pk&limit=3`, {
-      method: 'GET'
+      method: 'GET',
+      headers: {Accept: 'application/json', 'X-API-KEY': '560248ea4c5a46ef9f02e7ef321f6ff3'}
     })
       .then(res => res.json())
       .then(resData => {
-        for (let [key, value] of Object.entries(resData)) {
-          setTokenCard(value.map(token => {
+        // for (let [key, value] of Object.entries(resData)) {
+          setTokenCard(resData.assets.map(token => {
             console.log(token)
             return (
               <GridItem xs={12} sm={6} md={4} lg={4} xl={4}>
@@ -51,7 +52,7 @@ export default function LatestGlitched(props) {
                 />
               </GridItem>)
           }))
-        }
+        // }
       })
       .catch(err => console.log(err));
   };

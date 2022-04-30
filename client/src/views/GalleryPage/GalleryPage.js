@@ -106,6 +106,7 @@ export default function GalleryPage(props) {
         <MainHeader/>
         {spinner}
         <Parallax small filter image={background} />
+        
         <MainContainer>
           <div className={classes.section}>
             <GridContainer justify="left" spacing="1">

@@ -25,15 +25,23 @@ export default function LatestFaces(props) {
   }, []);
 
   const fetchLatestedBornHandler = async () => {
-    fetch('https://api.opensea.io/api/v1/assets/?asset_contract_address=0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661&order_by=pk&limit=6', {
-          method: 'GET'
+    fetch('https://api.opensea.io/api/v1/assets?asset_contract_address=0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661&order_by=pk&limit=6', {
+          method: 'GET',
+          headers: {Accept: 'application/json', 'X-API-KEY': '560248ea4c5a46ef9f02e7ef321f6ff3'}
     })
         .then(res => res.json())
         .then(resData => {
-          for (let [key, value] of Object.entries(resData)) {
-            setTokenCard(value.map(token => {
+          // for (let [key, value] of Object.entries(resData)) {
+            setTokenCard(resData.assets.map(token => {
+              console.log("LF token.owner.address: ", token.owner.address);
+              console.log("LF token.token_id: ", token.token_id);
+              console.log("LF token.image_url", token.image_preview_url);
+              console.log("LF token.name: ", token.name);
+              console.log("LF token.owner.profile_img_url", token.owner.profile_img_url); 
+              console.log("LF token.owner.user.username: ", token.owner.user.username);
+              console.log("LF token.sell_orders: ", token.sell_orders);
               return (
-                  <GridItem key={key} xs={12} sm={6} md={4} lg={4} xl={4}>
+                  <GridItem xs={12} sm={6} md={4} lg={4} xl={4}>
                     <LandingImgCard
                         accountAddress={token.owner.address}
                         tokenId={token.token_id}
@@ -47,8 +55,9 @@ export default function LatestFaces(props) {
                       // TODO: image price
                     />
                   </GridItem>)
-            }))
-          }
+            }
+            ))
+          // }
         })
         .catch(err => console.log(err));
   };
