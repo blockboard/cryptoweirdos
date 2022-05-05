@@ -25,31 +25,23 @@ export default function LatestFaces(props) {
   }, []);
 
   const fetchLatestedBornHandler = async () => {
-    fetch('https://api.opensea.io/api/v1/assets?asset_contract_address=0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661&order_by=pk&limit=6', {
+    fetch('https://api.opensea.io/api/v1/events?asset_contract_address=0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661&event_type=transfer&limit=6', {
           method: 'GET',
-          headers: {Accept: 'application/json', 'X-API-KEY': '560248ea4c5a46ef9f02e7ef321f6ff3'}
+          headers: { 'X-API-KEY': '560248ea4c5a46ef9f02e7ef321f6ff3'}
     })
         .then(res => res.json())
         .then(resData => {
-          // for (let [key, value] of Object.entries(resData)) {
-            setTokenCard(resData.assets.map(token => {
-              console.log("LF token.owner.address: ", token.owner.address);
-              console.log("LF token.token_id: ", token.token_id);
-              console.log("LF token.image_url", token.image_preview_url);
-              console.log("LF token.name: ", token.name);
-              console.log("LF token.owner.profile_img_url", token.owner.profile_img_url); 
-              console.log("LF token.owner.user.username: ", token.owner.user.username);
-              console.log("LF token.sell_orders: ", token.sell_orders);
+            setTokenCard(resData.asset_events.map(token => {
               return (
                   <GridItem xs={12} sm={6} md={4} lg={4} xl={4}>
                     <LandingImgCard
-                        accountAddress={token.owner.address}
-                        tokenId={token.token_id}
-                        faceImage={token.image_preview_url}
-                        faceName={token.name}
-                        ownerImage={(token.owner.profile_img_url === null) ? token.owner.profile_img_url : token.owner.profile_img_url}
-                        ownerName={(token.owner.user === null) ? null : token.owner.user.username}
-                        faceDate={(token.sell_orders === null) ? null : null}
+                        accountAddress={token.asset.owner.address}
+                        tokenId={token.asset.token_id}
+                        faceImage={token.asset.image_preview_url}
+                        faceName={token.asset.name}
+                        ownerImage={(token.asset.owner.profile_img_url === null) ? token.asset.owner.profile_img_url : token.asset.owner.profile_img_url}
+                        ownerName={(token.asset.owner.user === null) ? null : token.asset.owner.user.username}
+                        faceDate={(token.asset.sell_orders === null) ? null : null}
                         imagePrice="0.1"
                         contractAddress={"0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661"}
                       // TODO: image price
@@ -57,7 +49,6 @@ export default function LatestFaces(props) {
                   </GridItem>)
             }
             ))
-          // }
         })
         .catch(err => console.log(err));
   };
@@ -68,7 +59,7 @@ export default function LatestFaces(props) {
           <GridContainer justify="center">
             <GridItem xs={12} sm={12} md={8}>
               <h1 className={classes.title}>Choose Your Weirdo.</h1>
-              <h2 className={classes.title}>Latest CryptoWeirdos</h2>
+              <h2 className={classes.title}>Recent Transfers</h2>
             </GridItem>
           </GridContainer>
         </div>

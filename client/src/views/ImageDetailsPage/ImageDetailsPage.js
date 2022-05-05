@@ -38,62 +38,119 @@ export default function ImageDetailsPage(props) {
     fetchTokenDataHandler();
   }, []);
 
-  let { contractAddress ,tokenId } = useParams();
+  let { tokenId } = useParams();
 
   const fetchTokenDataHandler = () => {
-    fetch(`https://api.opensea.io/api/v1/asset/${contractAddress}/${tokenId}/`, {
-      method: 'GET'
-    })
-      .then(res => res.json())
-      .then(token => {
-        console.log(token.collection.created_date);
-        setTokenCard(
-          (
-            <>
-              <GridItem xs={12} sm={12} md={6} lg={6} xl={6}>
-                <img className={classes.root} src={token.image_url}/>
-              </GridItem>
-              <GridItem xs={12} sm={12} md={6} lg={6} xl={6}>
-                <CardContent>
-                  <Typography variant="body1" color="textPrimary" component="p">
-                    {token.name}
-                  </Typography>
-                </CardContent>
-                {(token.description) ?
-                  <CardContent>
-                    <Typography variant="body2" color="textSecondary" component="p">
-                      {token.description}
-                    </Typography>
-                  </CardContent> :
-                  null
-                }
-
-                <h6 className={classes.tokenName}>Owned By: </h6>
-                <CardHeader
-                  className={classes.ownerName}
-                  avatar={
-                    <Avatar aria-label="recipe" className={classes.avatar}>
-                      <img src={token.owner.profile_img_url} alt="..."/>
-                    </Avatar>
-                  }
-                  title={(token.owner.user === null) ? token.owner.address : token.owner.user.username}
-                  subheader={""}
-                />
-                <Button
-                  className={classes.btn}
-                  round
-                  target="_blank"
-                  color="facebook"
-                  href={token.permalink}
-                >
-                  View on OpenSea
-                </Button>
-              </GridItem>
-            </>
-          )
-        )
+    if(tokenId > 170 ){
+      fetch(`https://api.opensea.io/api/v1/asset/0x495f947276749Ce646f68AC8c248420045cb7b5e/${tokenId}/`, {
+        method: 'GET',
+        headers: { 'X-API-KEY': '560248ea4c5a46ef9f02e7ef321f6ff3'}
       })
-      .catch(err => console.log(err));
+        .then(res => res.json())
+        .then(token => {
+          setTokenCard(
+            (
+              <>
+                <GridItem xs={12} sm={12} md={6} lg={6} xl={6}>
+                  <img className={classes.root} src={token.image_url}/>
+                </GridItem>
+                <GridItem xs={12} sm={12} md={6} lg={6} xl={6}>
+                  <CardContent>
+                    <Typography variant="body1" color="textPrimary" component="p">
+                      {token.name}
+                    </Typography>
+                  </CardContent>
+                  {(token.description) ?
+                    <CardContent>
+                      <Typography variant="body2" color="textSecondary" component="p">
+                        {token.description}
+                      </Typography>
+                    </CardContent> :
+                    null
+                  }
+  
+                  <h6 className={classes.tokenName}>Owned By: </h6>
+                  <CardHeader
+                    className={classes.ownerName}
+                    avatar={
+                      <Avatar aria-label="recipe" className={classes.avatar}>
+                        <img src={token.owner.profile_img_url} alt="..."/>
+                      </Avatar>
+                    }
+                    title={(token.owner.user === null) ? token.owner.address : token.owner.user.username}
+                    subheader={""}
+                  />
+                  <Button
+                    className={classes.btn}
+                    round
+                    target="_blank"
+                    color="facebook"
+                    href={token.permalink}
+                  >
+                    View on OpenSea
+                  </Button>
+                </GridItem>
+              </>
+            )
+          )
+        })
+        .catch(err => console.log(err));
+    }else{
+      fetch(`https://api.opensea.io/api/v1/asset/0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661/${tokenId}/`, {
+        method: 'GET',
+        headers: { 'X-API-KEY': '560248ea4c5a46ef9f02e7ef321f6ff3'}
+      })
+        .then(res => res.json())
+        .then(token => {
+          setTokenCard(
+            (
+              <>
+                <GridItem xs={12} sm={12} md={6} lg={6} xl={6}>
+                  <img className={classes.root} src={token.image_url}/>
+                </GridItem>
+                <GridItem xs={12} sm={12} md={6} lg={6} xl={6}>
+                  <CardContent>
+                    <Typography variant="body1" color="textPrimary" component="p">
+                      {token.name}
+                    </Typography>
+                  </CardContent>
+                  {(token.description) ?
+                    <CardContent>
+                      <Typography variant="body2" color="textSecondary" component="p">
+                        {token.description}
+                      </Typography>
+                    </CardContent> :
+                    null
+                  }
+  
+                  <h6 className={classes.tokenName}>Owned By: </h6>
+                  <CardHeader
+                    className={classes.ownerName}
+                    avatar={
+                      <Avatar aria-label="recipe" className={classes.avatar}>
+                        <img src={token.owner.profile_img_url} alt="..."/>
+                      </Avatar>
+                    }
+                    title={(token.owner.user === null) ? token.owner.address : token.owner.user.username}
+                    subheader={""}
+                  />
+                  <Button
+                    className={classes.btn}
+                    round
+                    target="_blank"
+                    color="facebook"
+                    href={token.permalink}
+                  >
+                    View on OpenSea
+                  </Button>
+                </GridItem>
+              </>
+            )
+          )
+        })
+        .catch(err => console.log(err));
+    }
+
   };
 
   return (

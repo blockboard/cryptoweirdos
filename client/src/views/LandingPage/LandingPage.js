@@ -21,12 +21,14 @@ import styles from "assets/jss/material-kit-react/views/landingPage.js";
 // Images
 import image1 from "assets/img/weirdos/0058.jpeg";
 // Sections for this page
-import LatestFaces from "./Sections/LatestFaces";
+import RecentTransfers from "./Sections/LatestFaces";
 import MostViewed from "./Sections/MostViewed";
 import RandomSelection from "./Sections/RandomSelection";
 import MuiAlert from "@material-ui/lab/Alert";
 import LatestGlitched from "./Sections/LatestGlitched";
 import HavingProblem from "./Sections/HavingProblem";
+import Oldestweirdo from "./Sections/Oldestweirdos"
+import LatestFaces from "./Sections/LatestFaces";
 
 const useStyles = makeStyles(styles);
 
@@ -109,6 +111,7 @@ export default function LandingPage(props) {
           <LatestFaces/>
           {/* <LatestGlitched/> */}
           <MostViewed/>
+          <Oldestweirdo/>
           {/* <GridContainer justify="center">
             <h5 className={classes.artBreederTitle}>CryptoWeirdos is created using ArtBreeder tool by Joel Simon</h5>
           </GridContainer> */}

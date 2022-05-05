@@ -3,7 +3,7 @@ import useLoading from "../../components/Loading/useLoading";
 import { useAuth } from "context/auth";
 
 export default function useGallery (offset) {
-  const [totalSupply, setTotalSupply] = useState(130);
+  const [totalSupply, setTotalSupply] = useState(200);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [hasMore, setHasMore] = useState(false);
@@ -24,8 +24,9 @@ export default function useGallery (offset) {
     })
       .then(res => res.json())
       .then(resData => {
-        // for (let [key, value] of Object.entries(resData)) {
           setTokens(prevToken => {
+            console.log("prev token")
+            console.log(prevToken)
             return [...prevToken, ...resData.assets.map(token => {
               return {
                 tokenId: token.token_id,
@@ -37,7 +38,6 @@ export default function useGallery (offset) {
               };
             })]
           });
-        // }
         setHasMore(offset < totalSupply);
         setLoading(false)
       })
