@@ -3,7 +3,7 @@ import useLoading from "../../components/Loading/useLoading";
 import { useAuth } from "context/auth";
 
 export default function useGallery (offset) {
-  const [totalSupply, setTotalSupply] = useState(130);
+  const [totalSupply, setTotalSupply] = useState(200);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [hasMore, setHasMore] = useState(false);
@@ -19,13 +19,15 @@ export default function useGallery (offset) {
     setError(false);
 
     fetch(`https://api.opensea.io/api/v1/assets?asset_contract_address=0x55a2525a0f4b0caa2005fb83a3aa3ac95683c661&order_by=pk&order_direction=desc&offset=${offset}`, {
-      method: 'GET'
+      method: 'GET',
+      headers: {Accept: 'application/json', 'X-API-KEY': '560248ea4c5a46ef9f02e7ef321f6ff3'}
     })
       .then(res => res.json())
       .then(resData => {
-        for (let [key, value] of Object.entries(resData)) {
           setTokens(prevToken => {
-            return [...prevToken, ...value.map(token => {
+            console.log("prev token")
+            console.log(prevToken)
+            return [...prevToken, ...resData.assets.map(token => {
               return {
                 tokenId: token.token_id,
                 imageName: token.name,
@@ -36,7 +38,6 @@ export default function useGallery (offset) {
               };
             })]
           });
-        }
         setHasMore(offset < totalSupply);
         setLoading(false)
       })

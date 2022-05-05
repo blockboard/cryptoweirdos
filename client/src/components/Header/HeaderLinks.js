@@ -187,7 +187,7 @@ function HeaderLinks(props) {
   const goToGlitched = () => {
     props.history.push("/glitched")
   };
-
+  
   return (
       <List className={classes.list}>
         {/*Gallery*/}

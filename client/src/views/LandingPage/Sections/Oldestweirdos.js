@@ -9,6 +9,7 @@ import GridItem from "components/Grid/GridItem.js";
 import ImageCard from "components/ImageCards/ImageCard";
 import Typography from '@material-ui/core/Typography';
 import LandingImgCard from "components/ImageCards/LandingImgCard/LandingImgCard";
+
 // Images
 import image1 from "assets/img/faces/cf1.jpeg";
 import image2 from "assets/img/faces/cf2.jpeg";
@@ -43,7 +44,7 @@ export default function MostViewed(props) {
   }, []);
 
   const fetchMostViewedHandler = async () => {
-    fetch('https://api.opensea.io/api/v1/assets?owner=0x7cEF4B8A78b2B64749EFA91094512Ac2f65A0B1f&order_direction=asc&asset_contract_address=0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661&limit=6', {
+    fetch('https://api.opensea.io/api/v1/assets?order_direction=desc&asset_contract_address=0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661&limit=6', {
       method: 'GET',
       headers: {Accept: 'application/json', 'X-API-KEY': '560248ea4c5a46ef9f02e7ef321f6ff3'}
     })
@@ -77,7 +78,7 @@ export default function MostViewed(props) {
         <div className={classes.section}>
           <GridContainer justify="center">
             <GridItem xs={12} sm={12} md={8}>
-              <h2 className={classes.title} style={{marginTop:100}}>For sale</h2>
+              <h2 className={classes.title} style={{marginTop:100}}>Last Weirdos</h2>
             </GridItem>
           </GridContainer>
         </div>
