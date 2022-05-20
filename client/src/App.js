@@ -24,6 +24,8 @@ import CreatePage from "./views/CreatePage/CreatePage";
 import MintPage from "./views/MintPage/MintPage";
 import GlitchedPage from "./views/Glitched/GlitchedPage";
 
+import ReactGa from 'react-ga'
+
 export default function App(props) {
   const [authTokens, setAuthTokens] = useState(null);
   const [accountAddress, setAccountAddress] = useState(null);
@@ -37,12 +39,18 @@ export default function App(props) {
   const [minted, setMinted] = useState(false);
   const [inMintWindow, setInMintWindow] = useState(false);
 
+  useEffect(()=>{
+    ReactGa.initialize('G-36THSQEWKN');
+
+    ReactGa.pageview(window.location.pathname + window.location.search);
+  });
+
   useEffect(() => {
     const abortController = new AbortController();
 
     return function cleanup() {
       abortController.abort();
-    }
+    }    
   }, []);
 
   const setTokens = (data, notExists) => {
