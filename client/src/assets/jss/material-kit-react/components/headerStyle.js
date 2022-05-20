@@ -8,7 +8,6 @@ import {
   dangerColor,
   roseColor,
   transition,
-  boxShadow,
   drawerWidth
 } from "assets/jss/material-kit-react.js";
 

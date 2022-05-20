@@ -1,6 +1,4 @@
-import React, {useEffect, useState} from "react";
-
-import classNames from "classnames";
+import React from "react";
 
 // Core components
 import Header from "components/Header/Header.js";

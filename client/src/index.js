@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import App from "./App";
 import {BrowserRouter as Router} from "react-router-dom";
 import history from "./history";
-import {AuthContext} from "./context/auth";
+import { HelmetProvider } from 'react-helmet-async';
 
 const dotenv = require('dotenv');
 const dotenvExpand = require('dotenv-expand');
@@ -15,6 +15,8 @@ dotenvExpand(config);
 
 ReactDOM.render(
   <Router history={history}>
-    <App/>
+    <HelmetProvider>
+      <App/>
+    </HelmetProvider>
   </Router>
   , document.getElementById("root"));

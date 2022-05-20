@@ -1,22 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { Link, Redirect } from "react-router-dom";
-// nodejs library that concatenates classes
-import classNames from "classnames";
+import { Link } from "react-router-dom";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import CircularProgress from "@material-ui/core/CircularProgress";
+
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
-import ImageCard from "components/ImageCards/ImageCard";
 import Button from "components/CustomButtons/Button.js";
-// Style
 import styles from "assets/jss/material-kit-react/views/landingPageSections/latestFacesStyles.js";
 import LandingImgCard from "components/ImageCards/LandingImgCard/LandingImgCard";
 
 const useStyles = makeStyles(styles);
 
-export default function LatestFaces(props) {
+export default function RecentTransfers(props) {
   const classes = useStyles();
   const [tokenCard, setTokenCard] = useState(null);
 

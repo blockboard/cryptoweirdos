@@ -1,9 +1,8 @@
 /*eslint-disable*/
 import React, {useEffect, useState} from "react";
-// react components
+import Web3 from "web3";
 import { Link } from "react-router-dom";
 import { withRouter } from 'react-router';
-import history from "../../history";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
@@ -12,18 +11,14 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import IconButton from '@material-ui/core/IconButton';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-// @material-ui/icons
+
 // core components
 import Button from "components/CustomButtons/Button.js";
-import useSpinner from "components/Spinner/useSpinner";
-// images
 import { useAuth } from "context/auth";
-// styles
 import styles from "assets/jss/material-kit-react/components/headerLinksStyle.js";
-import {Icon, SvgIcon} from "@material-ui/core";
-
+import {Icon} from "@material-ui/core";
 import MetaMaskIcon from "assets/img/svgs/metamask.svg";
-import Web3 from "web3";
+
 
 const useStyles = makeStyles(styles);
 
@@ -32,12 +27,9 @@ function HeaderLinks(props) {
 
   const [anchorEl, setAnchorEl] = useState(null);
 
-  const [overlay, setOverlay] = useState(true);
-  const [spinner, showSpinner, hideSpinner] = useSpinner(overlay);
-
   const open = Boolean(anchorEl);
 
-  const { authTokens,setAuthTokens, accountAddress, setAccountAddress, inAuth, setInAuth} = useAuth();
+  const { authTokens,setAuthTokens, accountAddress, setAccountAddress, setInAuth} = useAuth();
 
   const savedPublicAddress = localStorage.getItem("Public Address");
   const savedToken = localStorage.getItem("JWT");
@@ -88,7 +80,6 @@ function HeaderLinks(props) {
   };
 
   const authenticateHandler = (publicAddress, signature) => {
-    console.log(`publicAddress: ${publicAddress}, \n signature: ${signature}`);
 
     fetch(`${process.env.REACT_APP_BACKEND_API}/auth/signin`, {
       body: JSON.stringify({ publicAddress, signature }),
@@ -148,10 +139,6 @@ function HeaderLinks(props) {
     }
   };
 
-  const handleChange = event => {
-    setAuth(event.target.checked);
-  };
-
   const handleMenu = event => {
     setAnchorEl(event.currentTarget);
   };
@@ -170,22 +157,6 @@ function HeaderLinks(props) {
 
   const goToGallery = () => {
     props.history.push("/gallery")
-  };
-
-  const goToActivity = () => {
-    props.history.push("/activity")
-  };
-
-  const goToOffers = () => {
-    props.history.push("/offers")
-  };
-
-  const goToCreate = () => {
-    props.history.push("/create")
-  };
-
-  const goToGlitched = () => {
-    props.history.push("/glitched")
   };
   
   return (
@@ -206,90 +177,6 @@ function HeaderLinks(props) {
               Gallery
             </Button>}
         </listItem>
-
-        {/*Glitched*/}
-        {/* <listItem className={classes.listItem}>
-          {(props.location.pathname === "/glitched") ? <Button
-              color="transparent"
-              round
-              className={classes.selectedNavLink}
-              onClick={goToGlitched}>
-              Glitched
-            </Button> :
-            <Button
-              color="transparent"
-              round={true}
-              className={classes.navLink}
-              onClick={goToGlitched}>
-              Glitched
-            </Button>}
-        </listItem> */}
-
-        {/*Activity*/}
-        {/* <listItem className={classes.listItem}>
-            {(props.location.pathname === "/activity") ? <Button
-              color="transparent"
-              round
-              className={classes.selectedNavLink}
-              onClick={goToActivity}>
-              Activity
-            </Button> :
-            <Button
-              color="transparent"
-              round
-              className={classes.navLink}
-              onClick={goToActivity}>
-              Activity
-            </Button>}
-        </listItem> */}
-
-        {/*Sales*/}
-        {/*<listItem className={classes.listItem}>
-            {(props.location.pathname === "/offers") ? <Button
-                color="transparent"
-                round
-                className={classes.selectedNavLink}
-                onClick={goToOffers}>
-                Sales
-              </Button> :
-              <Button
-                color="transparent"
-                round={true}
-                className={classes.navLink}
-                onClick={goToOffers}>
-                Sales
-              </Button>}
-        </listItem>*/}
-
-        {/*Blog*/}
-        {/*<listItem className={classes.listItem}>
-          <Link to="/blog" className={classes.linkColor}>
-            <Button
-                color="transparent"
-                round={true}
-                className={classes.navLink}>
-              Blog
-            </Button>
-          </Link>
-        </listItem>*/}
-
-        {/*Create*/}
-        {/* <listItem className={classes.listItem}>
-          {(props.location.pathname === "/create") ? <Button
-              color="transparent"
-              round
-              className={classes.selectedNavLink}
-              onClick={goToCreate}>
-              create
-            </Button> :
-            <Button
-              color="transparent"
-              round={true}
-              className={classes.navLink}
-              onClick={goToCreate}>
-              Create
-            </Button>}
-        </listItem> */}
 
         {/*SignIn*/}
         { (authTokens === null) ?
@@ -338,18 +225,6 @@ function HeaderLinks(props) {
             </Menu>
           </ListItem>
         }
-
-        {/*<SnackbarContent
-          message={
-            <span>
-            <b>WARNING ALERT:</b> You{"'"}ve got some friends nearby, stop
-            looking at your phone and find them...
-          </span>
-          }
-          close
-          color="warning"
-          icon={Warning}
-        />*/}
       </List>
   );
 }

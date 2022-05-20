@@ -1,4 +1,3 @@
-import { container, title } from "assets/jss/material-kit-react.js";
 import { red } from '@material-ui/core/colors';
 
 import imagesStyles from "assets/jss/material-kit-react/imagesStyles.js";

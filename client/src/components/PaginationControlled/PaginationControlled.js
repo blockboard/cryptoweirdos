@@ -25,8 +25,6 @@ export default function PaginationControlled() {
             <Pagination
                 count={10}
                 page={page}
-                //siblingCount={0}
-                //boundaryCount={2}
                 onChange={handleChange} />
         </div>
     );

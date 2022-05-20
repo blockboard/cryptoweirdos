@@ -1,21 +1,14 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useCallback} from "react";
 import { useParams } from "react-router-dom";
-// nodejs library that concatenates classes
-import classNames from "classnames";
-// @material-ui/core components
+import { Helmet } from "react-helmet-async";
 import { makeStyles } from "@material-ui/core/styles";
 import CircularProgress from "@material-ui/core/CircularProgress";
+
 // Core components
-import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
-import CardActions from "@material-ui/core/CardActions";
-import CardActionArea from "@material-ui/core/CardActionArea";
-import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import Avatar from "@material-ui/core/Avatar";
-import IconButton from "@material-ui/core/IconButton";
-// Customized components
 import MainHeader from "../../components/MainComponents/MainHeader";
 import Parallax from "../../components/Parallax/Parallax";
 import MainContainer from "../../components/MainComponents/MainContainer";
@@ -23,9 +16,7 @@ import GridContainer from "../../components/Grid/GridContainer";
 import GridItem from "../../components/Grid/GridItem.js";
 import Footer from "../../components/Footer/Footer";
 import Button from "components/CustomButtons/Button.js";
-// Images
 import background from "assets/img/weirdos/0014.jpeg";
-// Styles
 import styles from "assets/jss/material-kit-react/views/ImageDetails";
 
 const useStyles = makeStyles(styles);
@@ -34,13 +25,9 @@ export default function ImageDetailsPage(props) {
   const classes = useStyles();
   const [tokenCard, setTokenCard] = useState(null);
 
-  useEffect(() => {
-    fetchTokenDataHandler();
-  }, []);
-
   let { tokenId } = useParams();
 
-  const fetchTokenDataHandler = () => {
+  const fetchTokenDataHandler = useCallback(() => {
     if(tokenId > 170 ){
       fetch(`https://api.opensea.io/api/v1/asset/0x495f947276749Ce646f68AC8c248420045cb7b5e/${tokenId}/`, {
         method: 'GET',
@@ -52,7 +39,7 @@ export default function ImageDetailsPage(props) {
             (
               <>
                 <GridItem xs={12} sm={12} md={6} lg={6} xl={6}>
-                  <img className={classes.root} src={token.image_url}/>
+                  <img className={classes.root} src={token.image_url} alt=""/>
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6} lg={6} xl={6}>
                   <CardContent>
@@ -106,7 +93,7 @@ export default function ImageDetailsPage(props) {
             (
               <>
                 <GridItem xs={12} sm={12} md={6} lg={6} xl={6}>
-                  <img className={classes.root} src={token.image_url}/>
+                  <img className={classes.root} src={token.image_url} alt=""/>
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6} lg={6} xl={6}>
                   <CardContent>
@@ -151,10 +138,18 @@ export default function ImageDetailsPage(props) {
         .catch(err => console.log(err));
     }
 
-  };
+  },[classes.avatar, classes.btn, classes.ownerName, classes.root, classes.tokenName, tokenId]);
+
+  useEffect(() => {
+    fetchTokenDataHandler();
+  }, [fetchTokenDataHandler]);
 
   return (
     <>
+        <Helmet>
+          <meta name="description" 
+            content="Details page gives you details about every Crypto face that comes from OpenSea marketplace"/>
+        </Helmet>
       <MainHeader/>
       <Parallax small filter image={background}/>
       <MainContainer>

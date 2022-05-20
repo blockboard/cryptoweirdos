@@ -1,25 +1,18 @@
 import React, { useState, Fragment } from "react";
-
 // react components
 import { Link, Redirect } from "react-router-dom";
-
 // pkgs
 import axios from 'axios-instance';
 import Web3 from "web3";
-
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Icon from "@material-ui/core/Icon";
 import CardActions from "@material-ui/core/CardActions";
-
-// @material-ui/icons
 import People from "@material-ui/icons/People";
 
-// svg icons
-import MetaMaskIcon from "assets/img/svgs/metamask.svg";
-
 // core components
+import MetaMaskIcon from "assets/img/svgs/metamask.svg";
 import Footer from "components/Footer/Footer.js";
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
@@ -31,11 +24,8 @@ import CardFooter from "components/Card/CardFooter.js";
 import CustomInput from "components/CustomInput/CustomInput.js";
 import MainHeader from "components/MainComponents/MainHeader";
 import SnackbarContent from "components/Snackbar/SnackbarContent.js";
-
 import { useAuth } from "context/auth";
-
 import styles from "assets/jss/material-kit-react/views/signInPage.js";
-
 import image from "assets/img/bg7.jpg";
 
 const useStyles = makeStyles(styles);
@@ -44,12 +34,9 @@ export default function SignInPage(props) {
   const web3 = new Web3(window.ethereum);
 
   const classes = useStyles();
-  const { ...rest } = props;
 
   const [cardAnimaton, setCardAnimation] = useState("cardHidden");
-  const [nonce, setNonce] = useState();
   const [publicAddress, setPublicAddress] = useState();
-  const [signature, setSignature] = useState();
   const [username, setUsername] = useState("iskande");
   const [password, setPassword] = useState("iskanderi");
   const [userId, setUserId] = useState();
@@ -57,7 +44,7 @@ export default function SignInPage(props) {
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [isError, setIsError] = useState(false);
 
-  const { setAuthTokens, authTokens, setCurrentPublicAddress, currentPublicAddress } = useAuth();
+  const { setAuthTokens } = useAuth();
 
   setTimeout(function() {
     setCardAnimation("");

@@ -1,40 +1,17 @@
 import React, {useEffect, useState} from "react";
-// nodejs library that concatenates classes
-import classNames from "classnames";
 // @material-ui/core components
-import {makeStyles, withStyles} from "@material-ui/core/styles";
+import {makeStyles} from "@material-ui/core/styles";
+import CircularProgress from "@material-ui/core/CircularProgress";
+
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
-import ImageCard from "components/ImageCards/ImageCard";
-import Typography from '@material-ui/core/Typography';
 import LandingImgCard from "components/ImageCards/LandingImgCard/LandingImgCard";
-
-// Images
-import image1 from "assets/img/faces/cf1.jpeg";
-import image2 from "assets/img/faces/cf2.jpeg";
-import image3 from "assets/img/faces/cf3.jpeg";
-import image4 from "assets/img/faces/cf4.jpeg";
-import image5 from "assets/img/faces/cf5.jpeg";
-import image6 from "assets/img/faces/cf6.jpeg";
-import image7 from "assets/img/faces/cf7.jpeg";
-import image8 from "assets/img/faces/cf8.jpeg";
-
-
-import team1 from "assets/img/s+.jpeg";
-import team2 from "assets/img/faces/i+avatar.jpg";
-
-// Style
 import styles from "assets/jss/material-kit-react/views/landingPageSections/latestFacesStyles.js";
-
-import CardMedia from "@material-ui/core/CardMedia";
-import CircularProgress from "@material-ui/core/CircularProgress";
 
 const useStyles = makeStyles(styles);
 
-
-
-export default function MostViewed(props) {
+export default function ForSale(props) {
   const classes = useStyles();
 
   const [tokenCard, setTokenCard] = useState(null);
@@ -44,7 +21,7 @@ export default function MostViewed(props) {
   }, []);
 
   const fetchMostViewedHandler = async () => {
-    fetch('https://api.opensea.io/api/v1/assets?order_direction=desc&asset_contract_address=0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661&limit=6', {
+    fetch('https://api.opensea.io/api/v1/assets?owner=0x7cEF4B8A78b2B64749EFA91094512Ac2f65A0B1f&order_direction=asc&asset_contract_address=0x55a2525A0f4B0cAa2005fb83A3Aa3AC95683C661&limit=6', {
       method: 'GET',
       headers: {Accept: 'application/json', 'X-API-KEY': '560248ea4c5a46ef9f02e7ef321f6ff3'}
     })
@@ -78,7 +55,7 @@ export default function MostViewed(props) {
         <div className={classes.section}>
           <GridContainer justify="center">
             <GridItem xs={12} sm={12} md={8}>
-              <h2 className={classes.title} style={{marginTop:100}}>Last Weirdos</h2>
+              <h2 className={classes.title} style={{marginTop:100}}>For sale</h2>
             </GridItem>
           </GridContainer>
         </div>

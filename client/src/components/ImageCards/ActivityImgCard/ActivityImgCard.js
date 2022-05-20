@@ -1,27 +1,19 @@
 import React from "react";
 // nodejs library that concatenates classes
-import classNames from "classnames";
 import { withStyles } from '@material-ui/core/styles';
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
-import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
-import CardActionArea from "@material-ui/core/CardActionArea";
 import CardMedia from "@material-ui/core/CardMedia";
-import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import Avatar from "@material-ui/core/Avatar";
-// @material-ui/icons
+
 //Core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
 import Button from "components/CustomButtons/Button.js";
 // Styles
 import styles from "assets/jss/material-kit-react/components/imageCards/activityCardStyle";
-
-import {Link, Redirect} from "react-router-dom";
-
-import Web3 from "web3";
 
 const useStyles = makeStyles(styles);
 

@@ -6,10 +6,9 @@ import { makeStyles } from "@material-ui/core/styles";
 import Snack from "@material-ui/core/SnackbarContent";
 import IconButton from "@material-ui/core/IconButton";
 import Icon from "@material-ui/core/Icon";
-// @material-ui/icons
 import Close from "@material-ui/icons/Close";
-// core components
 
+// core components
 import styles from "assets/jss/material-kit-react/components/snackbarContentStyle.js";
 
 const useStyles = makeStyles(styles);

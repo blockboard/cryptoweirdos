@@ -1,18 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import useLoading from "../../components/Loading/useLoading";
-import { useAuth } from "context/auth";
+import { useState, useEffect } from 'react';
 
 export default function useGallery (offset) {
-  const [totalSupply, setTotalSupply] = useState(200);
+  const [totalSupply] = useState(200);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [hasMore, setHasMore] = useState(false);
   const [tokens, setTokens] = useState([]);
-  const [overlay, setOverlay] = useState(true);
-
-  const [progress, showLoading, hideLoading] = useLoading(overlay);
-
-  //const { totalSupply, setTotalSupply } = useAuth();
 
   useEffect(() => {
     setLoading(true);
@@ -42,7 +35,7 @@ export default function useGallery (offset) {
         setLoading(false)
       })
       .catch(err => setError(true));
-  }, [offset]);
+  }, [offset, totalSupply]);
 
   return { loading, error, tokens: tokens, hasMore }
 };

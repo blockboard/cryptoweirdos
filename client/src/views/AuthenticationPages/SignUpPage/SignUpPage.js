@@ -1,14 +1,10 @@
 import React, { useState, Component } from "react";
-
 // pkgs
 import axios from 'axios';
-
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Icon from "@material-ui/core/Icon";
-
-// @material-ui/icons
 import Email from "@material-ui/icons/Email";
 import People from "@material-ui/icons/People";
 
@@ -22,9 +18,7 @@ import CardBody from "components/Card/CardBody.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardFooter from "components/Card/CardFooter.js";
 import CustomInput from "components/CustomInput/CustomInput.js";
-
 import styles from "assets/jss/material-kit-react/views/signInPage.js";
-
 import image from "assets/img/bg7.jpg";
 import MainHeader from "components/MainComponents/MainHeader";
 
@@ -41,7 +35,6 @@ export default function SignUpPage(props) {
   }, 700);
 
   const classes = useStyles();
-  const { ...rest } = props;
 
   const signupHandler = (event, authData) => {
     // TODO: solve auto detection issue
