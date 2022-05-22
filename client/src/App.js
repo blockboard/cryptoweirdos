@@ -40,10 +40,10 @@ export default function App(props) {
   const [inMintWindow, setInMintWindow] = useState(false);
 
   useEffect(()=>{
-    ReactGa.initialize('G-36THSQEWKN');
+    ReactGa.initialize('UA-229617965-1'); 
 
     ReactGa.pageview(window.location.pathname + window.location.search);
-  });
+  },[]);
 
   useEffect(() => {
     const abortController = new AbortController();
